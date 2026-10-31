@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101816">
+  <title>EnigmAkhi — L’Atlantide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="EnigmAkhi accueil"><span class="brand-mark">E</span><span>ENIGMAKHI<small>UNE EXPÉDITION COOPÉRATIVE</small></span></a>
+    <div class="top-meta"><span class="live-dot"></span><span id="connection-label">Connexion en direct</span><span class="top-divider"></span><span>CHAPITRE 01 <b>/</b> 04</span></div>
+    <button id="share-button" class="share-button"><span>↗</span> Inviter des joueurs</button>
+  </header>
+
+  <main class="shell">
+    <section class="hero-row">
+      <div><div class="eyebrow"><span class="eyebrow-line"></span> ENIGMAKHI <span class="eyebrow-slash">/</span> L’ATLANTIDE</div><h1>La salle <em>bleue</em></h1><p class="hero-copy">Une cité engloutie. Des mécanismes anciens. Vous ne trouverez la sortie qu’ensemble.</p></div>
+      <div class="chapter-card"><div class="chapter-icon">⌁</div><div><span>OBJECTIF DE L’EXPÉDITION</span><strong>Réveiller le mécanisme</strong></div><div class="chapter-progress"><i id="progress-fill"></i></div></div>
+    </section>
+
+    <section class="game-grid">
+      <div class="primary-column">
+        <div class="room-card panel">
+          <div class="panel-heading"><div><span class="section-label">EXPLORATION</span><h2>Sanctuaire des profondeurs</h2></div><div class="room-status"><span class="live-dot"></span> EN EXPLORATION</div></div>
+          <div class="map-wrap"><img id="room-map" src="/assets/blue_room_map_1.png" alt="Plan circulaire du sanctuaire bleu"><div id="torch-points" class="torch-points"></div><div class="map-vignette"></div><div class="map-caption"><span class="caption-mark">✳</span><span><b>12 statues</b><small>Les flammes réagissent aux gestes des joueurs</small></span></div></div>
+          <div class="map-legend"><span><i class="legend-flame"></i> Flamme active</span><span><i class="legend-mural"></i> Fresque</span><span class="legend-hint">Cliquez sur une flamme allumée pour la déplacer</span></div>
+        </div>
+
+        <div class="lower-grid">
+          <section class="panel objects-panel"><div class="panel-heading compact"><div><span class="section-label">LIEUX & OBJETS</span><h2>Autour de vous</h2></div><span id="object-count" class="count-pill">0 objets</span></div><div id="object-grid" class="object-grid"></div><div id="action-feedback" class="feedback" aria-live="polite"></div></section>
+          <section class="panel inventory-panel"><div class="panel-heading compact"><div><span class="section-label">ÉQUIPE</span><h2>Inventaire commun</h2></div><span id="inventory-count" class="count-pill">0</span></div><div id="inventory-list" class="inventory-list"></div><div class="team-box"><div class="team-heading"><span>EXPÉDITION</span><b id="team-count">0 joueur</b></div><div id="player-list" class="player-list"></div><div id="join-box" class="join-box"><input id="player-name" maxlength="22" placeholder="Votre nom" autocomplete="nickname"><button id="join-button">Rejoindre <span>→</span></button></div></div></section>
+        </div>
+      </div>
+
+      <aside class="side-column">
+        <section class="panel story-panel"><span class="section-label">CARNET DE BORD <span class="journal-live"><i></i> LIVE</span></span><h2>Chronologie</h2><div id="journal" class="journal"></div></section>
+        <section class="panel clue-panel"><div class="clue-top"><span class="section-label">PISTE DE L’ÉNIGME</span><span class="clue-spark">✦</span></div><h3>Les flammes bleues</h3><p>La carte indique que les statues se répondent par paires. Faites circuler la flamme en éteignant une torche allumée.</p><div class="clue-sequence"><span>STATUE</span><span>FLAMME</span><span>ÉTAT</span></div><div id="flame-sequence" class="flame-sequence"></div></section>
+        <section class="objective-panel"><div class="objective-number">01</div><div><span>PROGRESSION</span><strong id="objective-title">Explorer les statues</strong><small id="objective-detail">Observez les flammes et les fresques de la salle.</small></div></section>
+        <div class="footer-note"><span>✦</span> Chaque découverte est partagée avec l’expédition.</div>
+      </aside>
+    </section>
+    <footer>ENIGMAKHI <span>·</span> PROTOTYPE INTERACTIF <span class="footer-right">CONÇU POUR JOUER ENSEMBLE</span></footer>
+  </main>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
