@@ -44,7 +44,7 @@
         <div class="expedition-track">
           <article class="expedition-card first-chapter"><div class="expedition-art art-blue"><span class="expedition-number">01</span><span class="art-symbol">≈</span><span class="art-coordinate">ATLANTIQUE · BERMUDES</span></div><div class="expedition-copy"><span class="chapter-state"><i></i> PREMIÈRE EXPÉDITION · À JOUER</span><h3>Le site englouti</h3><p>Une découverte au cœur de l’Atlantique va changer la vie d’Omar.</p><b class="place-tag">Salle bleue <span>→</span></b></div></article>
           <article class="expedition-card"><div class="expedition-art art-green"><span class="expedition-number">02</span><span class="art-symbol">⌁</span><span class="art-coordinate">JAVA · INDONÉSIE</span></div><div class="expedition-copy"><span class="chapter-state future"><i></i> 2E EXPÉDITION · À VENIR</span><h3>Gunung Padang</h3><p>Des strates anciennes gardent la mémoire d’un passage.</p><b class="place-tag">Salle verte <span>·</span></b></div></article>
-          <article class="expedition-card"><div class="expedition-art art-red"><span class="expedition-number">03</span><span class="art-symbol">✳</span><span class="art-coordinate">ĦAL SAFLIENI · MALTE</span></div><div class="expedition-copy"><span class="chapter-state future"><i></i> 3E EXPÉDITION · À VENIR</span><h3>Le dernier témoin</h3><p>George Herbert est retrouvé mort. Quatre archéologues, un secret.</p><b class="place-tag">Salle rouge <span>·</span></b></div></article>
+          <article class="expedition-card red-preview-card"><div class="expedition-art art-red"><span class="expedition-number">03</span><span class="art-symbol">✳</span><span class="art-coordinate">ĦAL SAFLIENI · MALTE</span></div><div class="expedition-copy"><span class="chapter-state red-ready"><i></i> 3E EXPÉDITION · ENQUÊTE JOUABLE</span><h3>Le dernier témoin</h3><p>George Herbert est retrouvé mort. Quatre archéologues, un secret.</p><b class="place-tag">Salle rouge <span>↗</span></b></div></article>
           <article class="expedition-card"><div class="expedition-art art-gold"><span class="expedition-number">04</span><span class="art-symbol">△</span><span class="art-coordinate">GIZEH · ÉGYPTE</span></div><div class="expedition-copy"><span class="chapter-state future"><i></i> 4E EXPÉDITION · À VENIR</span><h3>Les pierres du désert</h3><p>La piste se rapproche de l’origine du pacte d’Omar.</p><b class="place-tag">Salle jaune <span>·</span></b></div></article>
           <article class="expedition-card final-chapter"><div class="expedition-art art-black"><span class="expedition-number">05</span><span class="art-symbol">◉</span><span class="art-coordinate">PYRAMIDE DE MYKÉRINOS</span></div><div class="expedition-copy"><span class="chapter-state future"><i></i> DERNIÈRE EXPÉDITION · À VENIR</span><h3>La chambre scellée</h3><p>La salle où Omar a découvert ce qu’il ne pouvait révéler.</p><b class="place-tag">Salle noire <span>·</span></b></div></article>
         </div>
@@ -77,6 +77,57 @@
         <aside class="side-column"><section class="panel story-panel"><span class="section-label">CARNET DE BORD <span class="journal-live"><i></i> LIVE</span></span><h2>Chronologie</h2><div id="journal" class="journal"></div></section><section class="panel clue-panel"><div class="clue-top"><span class="section-label">PISTE DE L’ÉNIGME</span><span class="clue-spark">✦</span></div><h3>Les flammes bleues</h3><p>Les statues se répondent par paires. Déplacez une flamme allumée et observez comment le motif évolue.</p><div class="clue-sequence"><span>STATUE</span><span>FLAMME</span><span>ÉTAT</span></div><div id="flame-sequence" class="flame-sequence"></div></section><section class="objective-panel"><div class="objective-number">01</div><div><span>PROGRESSION</span><strong id="objective-title">Explorer les statues</strong><small id="objective-detail">Observez les flammes et les fresques de la salle.</small></div></section><div class="footer-note"><span>✦</span> Les découvertes sont partagées avec toute l’équipe.</div></aside>
       </section>
       <footer class="game-footer">ENIGMAKHI <span>·</span> EXPÉDITION 01 <span>·</span> ATLANTIQUE <span class="footer-right">CONÇU POUR JOUER ENSEMBLE</span></footer>
+    </section>
+
+    <section id="red-screen" class="game-screen red-screen hidden">
+      <div class="game-intro red-game-intro"><button id="back-to-welcome-red" class="text-button">← Vue d’ensemble</button><div class="chapter-breadcrumb">EXPÉDITION 03 <span>/</span> ĦAL SAFLIENI, MALTE</div><div class="game-heading"><div><div class="eyebrow"><span class="eyebrow-line red-line"></span> ENQUÊTE COOPÉRATIVE <span class="eyebrow-slash">/</span> 2E SOUS-SOL</div><h1>La salle <em class="red-title">rouge</em></h1><p class="hero-copy">George Herbert a été assassiné. La police arrive. Démêlez les alibis avant qu’Howard n’impose sa version.</p></div><div class="case-clock"><span>FENÊTRE DU CRIME</span><strong>13:44 <i>—</i> 14:04</strong><small>Le corps est découvert encore chaud à 14 h 04.</small></div></div></div>
+      <div class="red-case-strip"><div><span>DOSSIER</span><b>GEORGE HERBERT</b></div><div><span>SCÈNE</span><b>ĦAL SAFLIENI · MALTE</b></div><div><span>CAUSE PROBABLE</span><b>3 IMPACTS DE BALLE</b></div><div><span>ÉQUIPE SUR PLACE</span><b>4 SUSPECTS</b></div></div>
+      <div class="red-layout">
+        <div class="red-main-column">
+          <section class="panel red-map-panel"><div class="panel-heading"><div><span class="section-label">PLAN DU 2E SOUS-SOL</span><h2>Explorer les secteurs</h2></div><span class="room-status red-status"><span class="live-dot"></span> PÉRIMÈTRE SCELLÉ</span></div>
+            <div class="red-map-frame">
+              <svg class="red-map-art" viewBox="0 0 900 520" role="img" aria-label="Plan schématique des salles du deuxième sous-sol de Ħal Saflieni">
+                <defs><pattern id="stone-grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#ad9b73" stroke-opacity=".05" stroke-width="1"/></pattern></defs>
+                <path class="cave-outline" d="M72 79Q85 48 126 58L332 66Q370 72 380 104L416 164L484 165Q522 146 568 108Q600 80 646 82L801 91Q850 99 844 144L837 378Q837 427 791 434L615 446Q571 443 551 408L510 365L394 361Q362 398 332 430Q307 451 268 446L109 438Q63 429 66 384L66 132Q65 99 72 79Z"/>
+                <path class="stone-wash" d="M72 79Q85 48 126 58L332 66Q370 72 380 104L416 164L484 165Q522 146 568 108Q600 80 646 82L801 91Q850 99 844 144L837 378Q837 427 791 434L615 446Q571 443 551 408L510 365L394 361Q362 398 332 430Q307 451 268 446L109 438Q63 429 66 384L66 132Q65 99 72 79Z"/>
+                <path class="passage" d="M324 185C369 190 405 181 444 200S500 242 550 238M323 336C373 322 408 318 454 302S512 278 555 278M450 202C443 239 446 271 454 302M385 166C390 185 390 210 382 228"/>
+                <path class="hidden-passage" d="M350 132C376 111 404 106 438 115"/>
+                <path class="room-wall horse-wall" d="M102 105Q104 85 128 86L297 90Q326 92 327 119L325 192Q322 212 295 211L121 209Q98 205 99 182Z"/>
+                <path class="room-wall whale-wall" d="M102 267Q104 243 132 243L292 246Q324 249 326 276L322 388Q318 411 292 412L126 409Q99 405 99 379Z"/>
+                <path class="room-wall falcon-wall" d="M352 223Q356 203 380 203L510 207Q532 211 532 236L529 304Q526 324 502 324L378 321Q351 318 351 295Z"/>
+                <path class="room-wall phoenix-wall" d="M565 145Q569 121 596 120L787 128Q818 132 817 160L810 361Q807 390 780 390L597 382Q565 379 563 350Z"/>
+                <rect class="map-detail" x="126" y="126" width="63" height="26" rx="4"/><rect class="map-detail" x="217" y="128" width="64" height="24" rx="4"/>
+                <path class="map-detail" d="M126 295h34m-34 16h34m-34 16h34m94-32h30m-30 16h30m-30 16h30"/>
+                <ellipse class="map-altar" cx="689" cy="255" rx="63" ry="36"/><path class="map-detail" d="M631 189v-22m26 22v-22m26 22v-22m26 22v-22m26 22v-22m26 22v-22"/>
+                <circle class="map-ring" cx="442" cy="262" r="37"/><path class="map-detail" d="M425 262h34m-17-17v34"/>
+                <text x="212" y="104" text-anchor="middle">CHEVAL · HOWARD</text><text x="212" y="271" text-anchor="middle">BALEINE · HUGH</text><text x="442" y="232" text-anchor="middle">FAUCON · OMAR</text><text x="690" y="164" text-anchor="middle">PHÉNIX · GEORGE</text>
+                <text class="map-subtitle" x="690" y="346" text-anchor="middle">SCÈNE DU CRIME</text><text class="map-subtitle" x="212" y="390" text-anchor="middle">BASSINS · EVELYN</text>
+                <text class="map-secret" x="392" y="101" text-anchor="middle">PASSAGE CACHÉ ?</text><text class="map-secret" x="490" y="345" text-anchor="middle">FRESQUE À TROUS</text>
+              </svg>
+              <button class="map-hotspot hotspot-horse" data-red-clue="horse-zone" aria-label="Explorer la salle du Cheval et le secteur de Howard">01</button>
+              <button class="map-hotspot hotspot-whale" data-red-clue="whale-zone" aria-label="Explorer la salle de la Baleine et le secteur de Hugh">02</button>
+              <button class="map-hotspot hotspot-falcon" data-red-clue="falcon-zone" aria-label="Explorer la salle du Faucon et le secteur d’Omar">03</button>
+              <button class="map-hotspot hotspot-phoenix" data-red-clue="phoenix-zone" aria-label="Explorer la salle du Phénix et la scène du crime">04</button>
+              <button class="map-hotspot hotspot-passage" data-red-clue="passage-clue" aria-label="Examiner le passage dissimulé">⌁</button>
+              <div class="map-compass"><span>N</span><i>✥</i></div>
+            </div>
+            <div class="red-map-legend"><span><i class="legend-hotspot"></i> Secteur à examiner</span><span><i class="legend-secret"></i> Passage dissimulé</span><small>Chaque découverte est partagée en direct avec l’équipe.</small></div>
+          </section>
+          <section class="panel red-inspector"><div class="inspector-icon" id="red-inspector-icon">✦</div><div class="inspector-body"><span class="section-label" id="red-inspector-kicker">CARNET D’ENQUÊTE</span><h2 id="red-inspector-title">Choisissez un secteur sur le plan</h2><p id="red-inspector-copy">Inspectez la scène du crime, comparez les horaires d’arrivée et écoutez les versions des quatre archéologues.</p><div id="red-inspector-actions" class="red-inspector-actions"></div></div></section>
+        </div>
+        <aside class="red-side-column">
+          <section class="panel suspect-panel"><div class="panel-heading compact"><div><span class="section-label">PERSONNES PRÉSENTES</span><h2>Les quatre archéologues</h2></div><span class="count-pill">4 dossiers</span></div><div class="suspect-list">
+            <button class="suspect-card" data-red-clue="suspect-howard"><span class="suspect-avatar howard-avatar">HC</span><span><b>Howard Carter</b><small>48 ans · archéologue · arrivé 13 h 50</small></span><i>↗</i></button>
+            <button class="suspect-card" data-red-clue="suspect-evelyn"><span class="suspect-avatar evelyn-avatar">EB</span><span><b>Evelyn Beauchamp</b><small>27 ans · chercheuse · a découvert le corps</small></span><i>↗</i></button>
+            <button class="suspect-card" data-red-clue="suspect-hugh"><span class="suspect-avatar hugh-avatar">HW</span><span><b>Hugh White</b><small>40 ans · historien · parti à 13 h 53</small></span><i>↗</i></button>
+            <button class="suspect-card" data-red-clue="suspect-omar"><span class="suspect-avatar omar-avatar">OZ</span><span><b>Omar Zboubi</b><small>32 ans · archéologue · arrivé trois jours plus tôt</small></span><i>↗</i></button>
+          </div></section>
+          <section class="panel evidence-panel"><div class="panel-heading compact"><div><span class="section-label">PIÈCES À CONVICTION</span><h2>Éléments partagés</h2></div><span id="red-evidence-count" class="count-pill">0</span></div><div id="red-evidence-list" class="evidence-list"><p class="empty-state">Les découvertes de l’équipe apparaîtront ici.</p></div></section>
+          <section class="panel red-mechanism-panel"><div class="panel-heading compact"><div><span class="section-label">LES DEUX PASSAGES SECRETS</span><h2>Progression</h2></div><span class="red-lock">✧</span></div><div class="mechanism-status" id="red-mechanism-status"></div></section>
+          <section class="panel red-log-panel"><div class="panel-heading compact"><div><span class="section-label">ÉQUIPE EN DIRECT</span><h2>Chronologie</h2></div><span class="journal-live"><i></i> LIVE</span></div><div id="red-journal" class="journal red-journal"></div></section>
+        </aside>
+      </div>
+      <footer class="game-footer">ENIGMAKHI <span>·</span> EXPÉDITION 03 <span>·</span> ĦAL SAFLIENI <span class="footer-right">LE DOSSIER EST PARTAGÉ</span></footer>
     </section>
   </main>
   <div id="toast" class="toast" role="status"></div>

@@ -45,6 +45,7 @@ function freshState() {
     statueItems: {},
     insertedGears: ['old_gear'],
     finished: false,
+    red: { started: false, inspected: [], plugs: [], plugged: [], usedPlugs: [], ventus: [], windReady: false, horseOpen: false, falconOpen: false, howardSecured: false, relicFound: false, finished: false },
     items: Object.fromEntries(Object.entries(itemSeed).map(([id, [name, image, location, pickable]]) => [id, { id, name, image, location, pickable }])),
   };
 }
@@ -83,7 +84,88 @@ const muralTarget = [6, 3, 12, 9];
 function act(data) {
   const { action, itemId, torchId, playerId } = data;
   const actor = state.players.find((p) => p.id === playerId)?.name || 'Un joueur';
-  if (state.finished) return 'La salle a déjà été résolue.';
+  const red = state.red;
+  if (String(action || '').startsWith('red-') && !state.players.some((player) => player.id === playerId)) return 'Rejoins l’équipe pour participer à l’enquête.';
+
+  if (action === 'red-enter') {
+    if (!red.started) {
+      red.started = true;
+      note(`${actor} ouvre le dossier du meurtre de George Herbert à Ħal Saflieni.`);
+    }
+    return null;
+  }
+
+  if (action === 'red-inspect') {
+    const clueId = String(data.clueId || '');
+    const valid = new Set(['horse-zone','whale-zone','falcon-zone','phoenix-zone','passage-clue','suspect-howard','suspect-evelyn','suspect-hugh','suspect-omar','horse-mark','whale-mark','falcon-mark','phoenix-mark','crime-scene','handkerchief','entry-log','horse-inscription','wind-holes','plug-whale','plug-corridor','plug-phoenix','horse-cache','falcon-cache','red-relic']);
+    if (!valid.has(clueId)) return 'Cet élément ne figure pas dans le dossier.';
+    if (clueId === 'horse-cache' && !red.horseOpen) return 'La salle du Cheval est encore fermée.';
+    if (clueId === 'falcon-cache' && !red.falconOpen) return 'La salle du Faucon est encore inaccessible.';
+    if (clueId === 'red-relic' && !red.relicFound) return 'La relique n’a pas encore été révélée.';
+    if (!red.inspected.includes(clueId)) {
+      red.inspected.push(clueId);
+      const plugForClue = { 'plug-whale': 'Bouchon de la Baleine', 'plug-corridor': 'Bouchon du couloir', 'plug-phoenix': 'Bouchon du Phénix' };
+      if (plugForClue[clueId] && !red.plugs.includes(clueId)) red.plugs.push(clueId);
+      const label = plugForClue[clueId] || clueId.replaceAll('-', ' ');
+      note(`${actor} consigne « ${label} » dans le carnet d’enquête.`);
+    }
+    return null;
+  }
+
+  if (action === 'red-activate') {
+    const room = String(data.room || '');
+    const marks = { horse: 'horse-mark', whale: 'whale-mark', falcon: 'falcon-mark' };
+    if (!marks[room] || !red.inspected.includes(marks[room])) return 'Examine d’abord la fresque de cette salle.';
+    if (red.ventus.includes(room)) return 'Le signe Ventus est déjà activé dans cette salle.';
+    red.ventus.push(room);
+    if (red.ventus.length === 3) {
+      red.windReady = true;
+      note(`${actor} active le Ventus dans les trois salles accessibles. Un souffle traverse la fresque à trous du Faucon.`);
+    } else note(`${actor} active le signe Ventus dans la salle de la ${room === 'horse' ? 'Cheval' : room === 'whale' ? 'Baleine' : 'Faucon'}.`);
+    return null;
+  }
+
+  if (action === 'red-place-plug') {
+    const slot = Number(data.slot);
+    if (!red.windReady) return 'Le Ventus doit d’abord réveiller la fresque centrale.';
+    if (!Number.isInteger(slot) || slot < 1 || slot > 3) return 'Choisis l’un des trois trous de la fresque.';
+    if (red.plugged.includes(slot)) return 'Ce trou est déjà bouché.';
+    const available = red.plugs.find((id) => !red.usedPlugs.includes(id));
+    if (!available) return 'Il faut encore trouver un bouchon dans le site.';
+    red.plugged.push(slot);
+    red.usedPlugs.push(available);
+    if (red.plugged.length === 3) {
+      red.falconOpen = true;
+      red.inspected.push('falcon-cache');
+      note(`${actor} place le troisième bouchon. La fresque pivote et révèle l’annexe cachée du Faucon.`);
+    } else note(`${actor} insère un bouchon dans le trou ${slot} de la fresque.`);
+    return null;
+  }
+
+  if (action === 'red-open-horse') {
+    if (!red.inspected.includes('horse-inscription')) return 'Examine d’abord l’inscription du passage.';
+    if (String(data.code || '').trim().toUpperCase() !== 'EQUUS') return 'La séquence ne correspond pas au nom latin de la monture.';
+    if (red.horseOpen) return 'La salle du Cheval est déjà ouverte.';
+    red.horseOpen = true;
+    red.howardSecured = true;
+    red.inspected.push('horse-cache');
+    note(`${actor} déverrouille EQUUS. Dans l’annexe, le Beretta et le carnet de George confondent Howard, qui est ligoté par le groupe.`);
+    return null;
+  }
+
+  if (action === 'red-finalize') {
+    const murals = ['horse-mark','whale-mark','falcon-mark','phoenix-mark'];
+    if (!red.horseOpen || !red.falconOpen) return 'Les deux salles cachées doivent être découvertes.';
+    if (!murals.every((id) => red.inspected.includes(id))) return 'Lisez les quatre fresques avant d’actionner le mécanisme final.';
+    if (red.finished) return 'La relique a déjà été révélée.';
+    red.finished = true;
+    red.relicFound = true;
+    red.inspected.push('red-relic');
+    note(`${actor} active le mécanisme final. Omar retrouve la relique et reçoit une vision de Gizeh, prochaine étape de l’expédition.`);
+    return null;
+  }
+
+  if (state.finished && !String(action || '').startsWith('red-')) return 'La salle a déjà été résolue.';
 
   if (action === 'cycle-torch') {
     const index = state.torches.indexOf(Number(torchId));
