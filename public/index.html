@@ -3,49 +3,80 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101816">
-  <title>EnigmAkhi — L’Atlantide</title>
+  <meta name="theme-color" content="#11120f">
+  <meta name="description" content="Une aventure archéologique coopérative à travers cinq expéditions et un secret enfoui depuis des siècles.">
+  <title>EnigmAkhi — Le secret des huit pièces</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Marcellus&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <div class="grain" aria-hidden="true"></div>
   <header class="topbar">
-    <a class="brand" href="/" aria-label="EnigmAkhi accueil"><span class="brand-mark">E</span><span>ENIGMAKHI<small>UNE EXPÉDITION COOPÉRATIVE</small></span></a>
-    <div class="top-meta"><span class="live-dot"></span><span id="connection-label">Connexion en direct</span><span class="top-divider"></span><span>CHAPITRE 01 <b>/</b> 04</span></div>
-    <button id="share-button" class="share-button"><span>↗</span> Inviter des joueurs</button>
+    <a class="brand" href="#accueil" id="home-link" aria-label="EnigmAkhi, accueil"><span class="brand-mark">E</span><span>ENIGMAKHI<small>UNE EXPÉDITION COOPÉRATIVE</small></span></a>
+    <div class="top-meta"><span class="live-dot"></span><span id="connection-label">Chargement de l’expédition</span><span class="top-divider"></span><span id="header-player-count">0 AKHI</span></div>
+    <button id="share-button" class="share-button"><span>↗</span> Inviter l’équipe</button>
   </header>
 
-  <main class="shell">
-    <section class="hero-row">
-      <div><div class="eyebrow"><span class="eyebrow-line"></span> ENIGMAKHI <span class="eyebrow-slash">/</span> L’ATLANTIDE</div><h1>La salle <em>bleue</em></h1><p class="hero-copy">Une cité engloutie. Des mécanismes anciens. Vous ne trouverez la sortie qu’ensemble.</p></div>
-      <div class="chapter-card"><div class="chapter-icon">⌁</div><div><span>OBJECTIF DE L’EXPÉDITION</span><strong>Réveiller le mécanisme</strong></div><div class="chapter-progress"><i id="progress-fill"></i></div></div>
-    </section>
-
-    <section class="game-grid">
-      <div class="primary-column">
-        <div class="room-card panel">
-          <div class="panel-heading"><div><span class="section-label">EXPLORATION</span><h2>Sanctuaire des profondeurs</h2></div><div class="room-status"><span class="live-dot"></span> EN EXPLORATION</div></div>
-          <div class="map-wrap"><img id="room-map" src="/assets/blue_room_map_1.png" alt="Plan circulaire du sanctuaire bleu"><div id="torch-points" class="torch-points"></div><div class="map-vignette"></div><div class="map-caption"><span class="caption-mark">✳</span><span><b>12 statues</b><small>Les flammes réagissent aux gestes des joueurs</small></span></div></div>
-          <div class="map-legend"><span><i class="legend-flame"></i> Flamme active</span><span><i class="legend-mural"></i> Fresque</span><span class="legend-hint">Cliquez sur une flamme allumée pour la déplacer</span></div>
+  <main>
+    <section id="welcome-screen" class="welcome-screen">
+      <div class="welcome-hero" id="accueil">
+        <div class="welcome-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> LE MYSTÈRE DES HUIT PIÈCES <span class="eyebrow-slash">/</span> LYON, 2020</div>
+          <h1>Une boîte.<br>Huit pièces.<br><em>Un secret sans âge.</em></h1>
+          <p class="lead">Un après-midi ordinaire, les Akhis tombent sur une boîte venue d’Égypte. À l’intérieur : huit anciennes pièces et une consigne, « Chacun choisit sa pièce ». La première expédition commence ici.</p>
+          <div class="hero-actions"><a class="primary-cta" href="#rejoindre">Rejoindre l’expédition <span>↓</span></a><span class="players-online"><i class="live-dot"></i><b id="welcome-player-count">0</b> dans l’équipe</span></div>
+          <p class="fiction-note">Une fiction d’aventure inspirée de lieux historiques et de légendes.</p>
         </div>
-
-        <div class="lower-grid">
-          <section class="panel objects-panel"><div class="panel-heading compact"><div><span class="section-label">LIEUX & OBJETS</span><h2>Autour de vous</h2></div><span id="object-count" class="count-pill">0 objets</span></div><div id="object-grid" class="object-grid"></div><div id="action-feedback" class="feedback" aria-live="polite"></div></section>
-          <section class="panel inventory-panel"><div class="panel-heading compact"><div><span class="section-label">ÉQUIPE</span><h2>Inventaire commun</h2></div><span id="inventory-count" class="count-pill">0</span></div><div id="inventory-list" class="inventory-list"></div><div class="team-box"><div class="team-heading"><span>EXPÉDITION</span><b id="team-count">0 joueur</b></div><div id="player-list" class="player-list"></div><div id="join-box" class="join-box"><input id="player-name" maxlength="22" placeholder="Votre nom" autocomplete="nickname"><button id="join-button">Rejoindre <span>→</span></button></div></div></section>
+        <div class="artifact-scene" aria-label="Illustration d’une boîte ancienne et de huit pièces">
+          <div class="scene-orbit orbit-one"></div><div class="scene-orbit orbit-two"></div>
+          <div class="artifact-caption"><span>OBJET N° 01</span><b>La boîte des Akhis</b><small>Origine inconnue · trouvée à Lyon</small></div>
+          <div class="coin constellation coin-a">𓆣</div><div class="coin constellation coin-b">☼</div><div class="coin constellation coin-c">𓂀</div>
+          <div class="relic-box"><div class="box-lid"><span>𓋹</span><i></i></div><div class="box-front"><b>ENIGMAKHI</b><span>ANTIQUAE MEMORIAE</span></div><div class="box-shadow"></div></div>
+          <div class="scene-seal">8 <small>PIÈCES</small></div>
         </div>
       </div>
 
-      <aside class="side-column">
-        <section class="panel story-panel"><span class="section-label">CARNET DE BORD <span class="journal-live"><i></i> LIVE</span></span><h2>Chronologie</h2><div id="journal" class="journal"></div></section>
-        <section class="panel clue-panel"><div class="clue-top"><span class="section-label">PISTE DE L’ÉNIGME</span><span class="clue-spark">✦</span></div><h3>Les flammes bleues</h3><p>La carte indique que les statues se répondent par paires. Faites circuler la flamme en éteignant une torche allumée.</p><div class="clue-sequence"><span>STATUE</span><span>FLAMME</span><span>ÉTAT</span></div><div id="flame-sequence" class="flame-sequence"></div></section>
-        <section class="objective-panel"><div class="objective-number">01</div><div><span>PROGRESSION</span><strong id="objective-title">Explorer les statues</strong><small id="objective-detail">Observez les flammes et les fresques de la salle.</small></div></section>
-        <div class="footer-note"><span>✦</span> Chaque découverte est partagée avec l’expédition.</div>
-      </aside>
+      <section class="expedition-section" aria-labelledby="journey-title">
+        <div class="section-heading"><div><span class="section-kicker">CINQ EXPÉDITIONS · UN SEUL FIL ROUGE</span><h2 id="journey-title">La trace d’Omar</h2></div><p>Chaque salle révèle une partie de ce que l’archéologue a découvert — et tenté de transmettre.</p></div>
+        <div class="expedition-track">
+          <article class="expedition-card first-chapter"><div class="expedition-art art-blue"><span class="expedition-number">01</span><span class="art-symbol">≈</span><span class="art-coordinate">ATLANTIQUE · BERMUDES</span></div><div class="expedition-copy"><span class="chapter-state"><i></i> PREMIÈRE EXPÉDITION · À JOUER</span><h3>Le site englouti</h3><p>Une découverte au cœur de l’Atlantique va changer la vie d’Omar.</p><b class="place-tag">Salle bleue <span>→</span></b></div></article>
+          <article class="expedition-card"><div class="expedition-art art-green"><span class="expedition-number">02</span><span class="art-symbol">⌁</span><span class="art-coordinate">JAVA · INDONÉSIE</span></div><div class="expedition-copy"><span class="chapter-state future"><i></i> 2E EXPÉDITION</span><h3>Gunung Padang</h3><p>Des strates anciennes gardent la mémoire d’un passage.</p><b class="place-tag">Salle verte <span>·</span></b></div></article>
+          <article class="expedition-card"><div class="expedition-art art-red"><span class="expedition-number">03</span><span class="art-symbol">✳</span><span class="art-coordinate">ĦAL SAFLIENI · MALTE</span></div><div class="expedition-copy"><span class="chapter-state future"><i></i> 3E EXPÉDITION</span><h3>Le dernier témoin</h3><p>George Herbert est retrouvé mort. Quatre archéologues, un secret.</p><b class="place-tag">Salle rouge <span>·</span></b></div></article>
+          <article class="expedition-card"><div class="expedition-art art-gold"><span class="expedition-number">04</span><span class="art-symbol">△</span><span class="art-coordinate">GIZEH · ÉGYPTE</span></div><div class="expedition-copy"><span class="chapter-state future"><i></i> 4E EXPÉDITION</span><h3>Les pierres du désert</h3><p>La piste se rapproche de l’origine du pacte d’Omar.</p><b class="place-tag">Salle jaune <span>·</span></b></div></article>
+          <article class="expedition-card final-chapter"><div class="expedition-art art-black"><span class="expedition-number">05</span><span class="art-symbol">◉</span><span class="art-coordinate">PYRAMIDE DE MYKÉRINOS</span></div><div class="expedition-copy"><span class="chapter-state future"><i></i> DERNIÈRE EXPÉDITION</span><h3>La chambre scellée</h3><p>La salle où Omar a découvert ce qu’il ne pouvait révéler.</p><b class="place-tag">Salle noire <span>·</span></b></div></article>
+        </div>
+        <div class="fiction-footnote"><span>✦</span> Les expéditions mêlent des lieux réels et des éléments imaginaires. L’Atlantide et les événements d’Omar relèvent de la fiction.</div>
+      </section>
+
+      <section id="rejoindre" class="join-section">
+        <div class="join-intro"><span class="section-kicker">AVANT DE DESCENDRE</span><h2>Choisis ta pièce.</h2><p>Chaque personne choisit une pièce de la boîte. Pour cette première version, elle te représente dans l’équipe ; son pouvoir pourra être défini avec les règles du jeu.</p>
+          <div class="team-preview"><div class="team-avatars" id="welcome-players"></div><span><b id="team-preview-count">Personne n’a rejoint pour l’instant</b><small>Tout le monde partage les découvertes et l’inventaire.</small></span></div>
+        </div>
+        <div class="join-card">
+          <label for="player-name">TON NOM D’AKHI</label><input id="player-name" maxlength="22" placeholder="Ex. Akhi Zino" autocomplete="nickname">
+          <div class="coin-heading"><span>TA PIÈCE</span><small>choisis parmi les huit</small></div><div class="coin-picker" id="coin-picker" role="radiogroup" aria-label="Choisis ta pièce"></div>
+          <div id="welcome-join-controls"><button id="join-button" class="join-submit">Rejoindre la partie <span>→</span></button></div>
+          <div class="join-footnote"><span>◎</span> En équipe, vos indices et objets sont mis en commun.</div>
+        </div>
+      </section>
+      <footer class="site-footer"><span>ENIGMAKHI</span><span>UNE HISTOIRE À DÉCHIFFRER ENSEMBLE</span><span>LYON · DEPUIS 2020</span></footer>
     </section>
-    <footer>ENIGMAKHI <span>·</span> PROTOTYPE INTERACTIF <span class="footer-right">CONÇU POUR JOUER ENSEMBLE</span></footer>
+
+    <section id="game-screen" class="game-screen hidden">
+      <div class="game-intro"><button id="back-to-welcome" class="text-button">← Vue d’ensemble</button><div class="chapter-breadcrumb">EXPÉDITION 01 <span>/</span> ATLANTIQUE</div><div class="game-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> PREMIÈRE EXPÉDITION <span class="eyebrow-slash">/</span> SITE ENFOUI</div><h1>La salle <em>bleue</em></h1><p class="hero-copy">Une cité engloutie. Des mécanismes anciens. Vous ne trouverez la sortie qu’ensemble.</p></div><div class="chapter-card"><div class="chapter-icon">⌁</div><div><span>OBJECTIF DE L’EXPÉDITION</span><strong>Réveiller le mécanisme</strong></div><div class="chapter-progress"><i id="progress-fill"></i></div></div></div>
+      </div>
+      <section class="game-grid">
+        <div class="primary-column">
+          <div class="room-card panel"><div class="panel-heading"><div><span class="section-label">EXPLORATION</span><h2>Sanctuaire des profondeurs</h2></div><div class="room-status"><span class="live-dot"></span> EN EXPLORATION</div></div><div class="map-wrap"><img id="room-map" src="/assets/blue_room_map_1.png" alt="Plan du sanctuaire de la première expédition"><div id="torch-points" class="torch-points"></div><div class="map-vignette"></div><div class="map-caption"><span class="caption-mark">✳</span><span><b>12 statues</b><small>Les flammes réagissent aux gestes de l’équipe</small></span></div></div><div class="map-legend"><span><i class="legend-flame"></i> Flamme active</span><span><i class="legend-mural"></i> Fresque</span><span class="legend-hint">Cliquez sur une flamme active pour la déplacer</span></div></div>
+          <div class="lower-grid"><section class="panel objects-panel"><div class="panel-heading compact"><div><span class="section-label">LIEUX & OBJETS</span><h2>Autour de vous</h2></div><span id="object-count" class="count-pill">0 objets</span></div><div id="object-grid" class="object-grid"></div><div id="action-feedback" class="feedback" aria-live="polite"></div></section>
+          <section class="panel inventory-panel"><div class="panel-heading compact"><div><span class="section-label">ÉQUIPE</span><h2>Inventaire commun</h2></div><span id="inventory-count" class="count-pill">0</span></div><div id="inventory-list" class="inventory-list"></div><div class="team-box"><div class="team-heading"><span>EXPÉDITION</span><b id="team-count">0 joueur</b></div><div id="player-list" class="player-list"></div><div id="join-box" class="join-box"></div></div></section></div>
+        </div>
+        <aside class="side-column"><section class="panel story-panel"><span class="section-label">CARNET DE BORD <span class="journal-live"><i></i> LIVE</span></span><h2>Chronologie</h2><div id="journal" class="journal"></div></section><section class="panel clue-panel"><div class="clue-top"><span class="section-label">PISTE DE L’ÉNIGME</span><span class="clue-spark">✦</span></div><h3>Les flammes bleues</h3><p>Les statues se répondent par paires. Déplacez une flamme allumée et observez comment le motif évolue.</p><div class="clue-sequence"><span>STATUE</span><span>FLAMME</span><span>ÉTAT</span></div><div id="flame-sequence" class="flame-sequence"></div></section><section class="objective-panel"><div class="objective-number">01</div><div><span>PROGRESSION</span><strong id="objective-title">Explorer les statues</strong><small id="objective-detail">Observez les flammes et les fresques de la salle.</small></div></section><div class="footer-note"><span>✦</span> Les découvertes sont partagées avec toute l’équipe.</div></aside>
+      </section>
+      <footer class="game-footer">ENIGMAKHI <span>·</span> EXPÉDITION 01 <span>·</span> ATLANTIQUE <span class="footer-right">CONÇU POUR JOUER ENSEMBLE</span></footer>
+    </section>
   </main>
   <div id="toast" class="toast" role="status"></div>
   <script src="/app.js" defer></script>

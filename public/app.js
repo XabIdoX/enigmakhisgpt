@@ -9,10 +9,18 @@ const placeByStatue = { 3: 'stone', 5: 'pickaxe', 10: 'bucket', 8: 'spear' };
 let game = null;
 let playerId = localStorage.getItem('enigmakhi-player-id') || null;
 let draftName = localStorage.getItem('enigmakhi-player-name') || '';
+let selectedCoin = Number(localStorage.getItem('enigmakhi-player-coin') || 1);
 let toastTimer;
+const coins = [
+  { icon: '𓆣', name: 'Scarabée' }, { icon: '𓂀', name: 'Œil' },
+  { icon: '𓋹', name: 'Ankh' }, { icon: '☼', name: 'Soleil' },
+  { icon: '𓃭', name: 'Lion' }, { icon: '♜', name: 'Tour' },
+  { icon: '◈', name: 'Sceau' }, { icon: '⚱', name: 'Vase' },
+];
 
 const $ = (selector) => document.querySelector(selector);
 const esc = (value) => String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+$('#player-name').value = draftName;
 function toast(message) {
   const node = $('#toast');
   node.textContent = message;
@@ -109,10 +117,32 @@ function renderInventory() {
 }
 function renderPlayers() {
   $('#team-count').textContent = `${game.players.length} joueur${game.players.length === 1 ? '' : 's'}`;
-  $('#player-list').innerHTML = game.players.map((player) => `<span class="player-chip"><i style="--player-color:${esc(player.color)}"></i>${esc(player.name)}${player.id === playerId ? ' · vous' : ''}</span>`).join('') || '<span class="empty-state">L’expédition vous attend.</span>';
+  $('#player-list').innerHTML = game.players.map((player) => `<span class="player-chip"><i style="--player-color:${esc(player.color)}"></i>${coins[(Number(player.coin || 1) - 1) % coins.length].icon} ${esc(player.name)}${player.id === playerId ? ' · vous' : ''}</span>`).join('') || '<span class="empty-state">L’expédition vous attend.</span>';
   const isMember = game.players.some((player) => player.id === playerId);
   $('#join-box').classList.toggle('joined', isMember);
   $('#join-box').innerHTML = isMember ? '<span class="joined-label">✓ Vous faites partie de l’expédition</span>' : `<input id="player-name" maxlength="22" placeholder="Votre nom" autocomplete="nickname" value="${esc(draftName)}"><button id="join-button">Rejoindre <span>→</span></button>`;
+}
+function renderLanding() {
+  const count = game.players.length;
+  $('#welcome-player-count').textContent = count;
+  $('#header-player-count').textContent = `${count} AKHI${count === 1 ? '' : 'S'}`;
+  $('#team-preview-count').textContent = count ? `${count} joueur${count === 1 ? '' : 's'} dans l’équipe` : 'Personne n’a rejoint pour l’instant';
+  $('#welcome-players').innerHTML = game.players.slice(0, 8).map((player) => `<span class="coin-avatar" title="${esc(player.name)}">${coins[(Number(player.coin || 1) - 1) % coins.length].icon}</span>`).join('');
+  $('#coin-picker').innerHTML = coins.map((coin, index) => `<button type="button" class="coin-choice ${selectedCoin === index + 1 ? 'selected' : ''}" role="radio" aria-checked="${selectedCoin === index + 1}" aria-label="Pièce ${index + 1} : ${coin.name}" title="${coin.name}" data-coin="${index + 1}">${coin.icon}</button>`).join('');
+  const isMember = game.players.some((player) => player.id === playerId);
+  const controls = $('#welcome-join-controls');
+  if (isMember) {
+    const player = game.players.find((entry) => entry.id === playerId);
+    controls.innerHTML = `<div class="joined-panel"><span class="coin-avatar">${coins[(Number(player.coin || 1) - 1) % coins.length].icon}</span><span>Ta pièce est choisie.<br><b>${esc(player.name)}</b></span><button id="start-game-button">Entrer dans la salle bleue →</button></div>`;
+  } else {
+    controls.innerHTML = '<button id="join-button" class="join-submit">Rejoindre la partie <span>→</span></button>';
+  }
+}
+function showScreen(screen) {
+  const showGame = screen === 'game';
+  $('#welcome-screen').classList.toggle('hidden', showGame);
+  $('#game-screen').classList.toggle('hidden', !showGame);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function renderJournal() {
   $('#journal').innerHTML = game.log.map((entry) => `<div class="journal-entry"><time>${esc(entry.time)}</time>${esc(entry.text)}</div>`).join('');
@@ -128,7 +158,8 @@ function renderClues() {
 }
 function render() {
   if (!game) return;
-  renderMap(); renderObjects(); renderInventory(); renderPlayers(); renderJournal(); renderClues();
+  renderMap(); renderObjects(); renderInventory(); renderPlayers(); renderJournal(); renderClues(); renderLanding();
+  $('#connection-label').textContent = 'Équipe synchronisée';
 }
 async function join() {
   const input = $('#player-name');
@@ -136,10 +167,11 @@ async function join() {
   if (!name) return toast('Entre ton nom pour rejoindre l’expédition.');
   draftName = name;
   try {
-    const result = await api('/api/join', { name });
+    const result = await api('/api/join', { name, coin: selectedCoin, playerId });
     playerId = result.player.id;
     localStorage.setItem('enigmakhi-player-id', playerId);
     localStorage.setItem('enigmakhi-player-name', name);
+    localStorage.setItem('enigmakhi-player-coin', selectedCoin);
     toast(`Bienvenue dans l’expédition, ${name} !`);
     render();
   } catch (error) { toast(error.message); }
@@ -154,7 +186,22 @@ document.addEventListener('click', (event) => {
     if (target.dataset.statueId) extra.statueId = target.dataset.statueId;
     act(target.dataset.action, extra);
   }
+  const coin = event.target.closest('[data-coin]');
+  if (coin) {
+    selectedCoin = Number(coin.dataset.coin);
+    localStorage.setItem('enigmakhi-player-coin', selectedCoin);
+    document.querySelectorAll('.coin-choice').forEach((button) => {
+      const selected = Number(button.dataset.coin) === selectedCoin;
+      button.classList.toggle('selected', selected);
+      button.setAttribute('aria-checked', String(selected));
+    });
+  }
   if (event.target.closest('#join-button')) join();
+  if (event.target.closest('#start-game-button')) showScreen('game');
+  if (event.target.closest('#back-to-welcome') || event.target.closest('#home-link')) {
+    event.preventDefault();
+    showScreen('welcome');
+  }
   if (event.target.closest('#share-button')) {
     navigator.clipboard?.writeText(location.href).then(() => toast('Lien de la partie copié.')).catch(() => toast('Copie le lien affiché dans la barre d’adresse.'));
   }

@@ -206,8 +206,11 @@ const server = createServer(async (req, res) => {
       const data = await bodyJson(req);
       const name = String(data.name || '').trim().slice(0, 22);
       if (!name) return reply(res, 400, { error: 'Entre un nom pour rejoindre la partie.' });
+      const returningPlayer = state.players.find((player) => player.id === data.playerId);
+      if (returningPlayer) return reply(res, 200, { player: returningPlayer });
       if (state.players.length >= 24) return reply(res, 400, { error: 'La partie est complète.' });
-      const player = { id: randomUUID(), name, color: ['#8ed9e6', '#d0a56a', '#b6a4e8', '#8fc3a0'][state.players.length % 4] };
+      const coin = Math.max(1, Math.min(8, Number(data.coin) || 1));
+      const player = { id: randomUUID(), name, coin, color: ['#8ed9e6', '#d0a56a', '#b6a4e8', '#8fc3a0'][state.players.length % 4] };
       state.players.push(player);
       note(`${name} rejoint l’expédition.`);
       return reply(res, 200, { player });
