@@ -1,3 +1,4 @@
+import { startApprovalBot } from './discord-approvals.mjs';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { dirname, extname, join, resolve, sep } from 'node:path';
@@ -81,6 +82,11 @@ const mcpTools = [
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
   },
   {
+    name: 'lire_idees_validees_discord',
+    description: 'Lit les synthèses publiées automatiquement par le bot après les OK de XabIdoX. Utiliser ces synthèses comme file des idées validées lorsque XabIdoX dit « lance » dans la conversation.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
     name: 'publier_compte_rendu_discord',
     description: 'Publie le compte rendu fourni par l’assistant dans le salon Discord réservé aux updates du site EnigmAkhi.',
     inputSchema: {
@@ -122,11 +128,31 @@ async function readDiscordIdeas() {
   return messages.filter((message) => !message.author?.bot).map((message) => ({
     id: message.id,
     auteur: message.author?.global_name || message.author?.username || 'Membre Discord',
+    auteur_id: message.author?.id,
     date: message.timestamp,
     texte: message.content || '',
     pieces_jointes: (message.attachments || []).map(({ filename, url }) => ({ nom: filename, url })),
     lien: `https://discord.com/channels/${channel.guild_id || '@me'}/${channelId}/${message.id}`,
   }));
+}
+
+async function readApprovedIdeaSummaries() {
+  const channelId = process.env.DISCORD_IDEAS_CHANNEL_ID;
+  if (!channelId) throw new Error('L’identifiant du salon idées n’est pas encore configuré sur Render.');
+  const [channel, messages] = await Promise.all([
+    discordApi(`/channels/${encodeURIComponent(channelId)}`),
+    discordApi(`/channels/${encodeURIComponent(channelId)}/messages?limit=100`),
+  ]);
+  const summaries = messages
+    .filter((message) => message.author?.bot && message.content?.startsWith('📌 SYNTHÈSE DES IDÉES VALIDÉES'))
+    .map((message) => ({
+      id: message.id,
+      date: message.timestamp,
+      texte: message.content.replace(/\\|\\|ENIGMAKHI_CURSOR:\\d{17,20}\\|\\|/g, '').trim(),
+      lien: `https://discord.com/channels/${channel.guild_id || '@me'}/${channelId}/${message.id}`,
+    }))
+    .reverse();
+  return { nombre: summaries.length, syntheses: summaries };
 }
 
 async function publishDiscordUpdate(message) {
@@ -143,7 +169,7 @@ async function publishDiscordUpdate(message) {
   return { id: posted.id, lien: `https://discord.com/channels/${channel.guild_id || '@me'}/${channelId}/${posted.id}` };
 }
 
-const mcpServerInfo = { name: 'enigmakhi-discord-relay', version: '1.0.0' };
+const mcpServerInfo = { name: 'enigmakhi-discord-relay', version: '1.1.0' };
 const mcpServerInfoMeta = { 'io.modelcontextprotocol/serverInfo': mcpServerInfo };
 function isModernMcpRequest(req, params) {
   return params?._meta?.['io.modelcontextprotocol/protocolVersion'] === '2026-07-28'
@@ -210,6 +236,9 @@ async function handleMcp(req, res) {
       if (params.name === 'lire_idees_discord') {
         const messages = await readDiscordIdeas();
         result = { content: [{ type: 'text', text: JSON.stringify({ nombre: messages.length, propositions: messages }) }] };
+      } else if (params.name === 'lire_idees_validees_discord') {
+        const summaries = await readApprovedIdeaSummaries();
+        result = { content: [{ type: 'text', text: JSON.stringify(summaries) }] };
       } else if (params.name === 'publier_compte_rendu_discord') {
         const posted = await publishDiscordUpdate(params.arguments?.message);
         result = { content: [{ type: 'text', text: `Compte rendu publié : ${posted.lien}` }] };
@@ -477,4 +506,10 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(port, '0.0.0.0', () => console.log(`EnigmAkhi prêt sur le port ${port}`));
+
+startApprovalBot({
+  token: process.env.DISCORD_BOT_TOKEN,
+  channelId: process.env.DISCORD_IDEAS_CHANNEL_ID,
+  approverId: process.env.DISCORD_APPROVER_USER_ID,
+});
 
