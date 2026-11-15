@@ -45,7 +45,7 @@ function formatIdea(message, index) {
   const attachments = [...(message.attachments?.values?.() || [])]
     .map((attachment) => attachment.url)
     .join(' ');
-  const excerpt = (body || (attachments ? 'Pièce jointe' : 'Message sans texte')).slice(0, 190);
+  const excerpt = (body || (attachments ? 'Pièce jointe' : 'Message sans texte')).slice(0, 120);
   return `• **${index + 1}. ${author}** : ${excerpt}${attachments ? ` — ${attachments}` : ''}\n  <${message.url}>`;
 }
 
