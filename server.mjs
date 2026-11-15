@@ -148,7 +148,7 @@ async function readApprovedIdeaSummaries() {
     .map((message) => ({
       id: message.id,
       date: message.timestamp,
-      texte: message.content.replace(/\\|\\|ENIGMAKHI_CURSOR:\\d{17,20}\\|\\|/g, '').trim(),
+      texte: message.content.replace(/\|\|ENIGMAKHI_CURSOR:\d{17,20}\|\|/g, '').trim(),
       lien: `https://discord.com/channels/${channel.guild_id || '@me'}/${channelId}/${message.id}`,
     }))
     .reverse();
