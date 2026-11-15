@@ -143,6 +143,17 @@ async function publishDiscordUpdate(message) {
   return { id: posted.id, lien: `https://discord.com/channels/${channel.guild_id || '@me'}/${channelId}/${posted.id}` };
 }
 
+const mcpServerInfo = { name: 'enigmakhi-discord-relay', version: '1.0.0' };
+const mcpServerInfoMeta = { 'io.modelcontextprotocol/serverInfo': mcpServerInfo };
+function isModernMcpRequest(req, params) {
+  return params?._meta?.['io.modelcontextprotocol/protocolVersion'] === '2026-07-28'
+    || req.headers['mcp-protocol-version'] === '2026-07-28';
+}
+function mcpResult(result, modern) {
+  if (!modern) return result;
+  return { resultType: 'complete', ...result, _meta: { ...result._meta, ...mcpServerInfoMeta } };
+}
+
 async function handleMcp(req, res) {
   if (req.method !== 'POST') return reply(res, 405, { error: 'MCP accepte les requêtes POST.' });
   const requestPath = new URL(req.url, `http://${req.headers.host || 'localhost'}`).pathname;
@@ -164,28 +175,35 @@ async function handleMcp(req, res) {
     return reply(res, 200, {
       jsonrpc: '2.0', id,
       result: {
-        supportedVersions: ['2025-03-26'],
-        capabilities: { tools: {} },
+        resultType: 'complete',
+        supportedVersions: ['2026-07-28'],
+        capabilities: { tools: { listChanged: false } },
+        _meta: mcpServerInfoMeta,
         instructions: 'Relais Discord EnigmAkhi : lire les idées récentes et publier les comptes rendus approuvés.',
-        ttlMs: 30000,
-        cacheScope: 'PUBLIC',
-        _meta: { 'io.modelcontextprotocol/serverInfo': { name: 'enigmakhi-discord-relay', version: '1.0.0' } },
+        ttlMs: 0,
+        cacheScope: 'public',
       },
     });
   }
   if (method === 'initialize') {
+    const legacyVersions = ['2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05'];
+    const protocolVersion = legacyVersions.includes(params.protocolVersion) ? params.protocolVersion : '2025-03-26';
     return reply(res, 200, {
       jsonrpc: '2.0', id,
       result: {
-        protocolVersion: '2025-03-26',
+        protocolVersion,
         capabilities: { tools: { listChanged: false } },
-        serverInfo: { name: 'enigmakhi-discord-relay', version: '1.0.0' },
+        serverInfo: mcpServerInfo,
         instructions: 'Relais Discord EnigmAkhi : lire les idées récentes et publier les comptes rendus approuvés.',
       },
     });
   }
-  if (method === 'ping') return reply(res, 200, { jsonrpc: '2.0', id, result: {} });
-  if (method === 'tools/list') return reply(res, 200, { jsonrpc: '2.0', id, result: { tools: mcpTools } });
+  const modern = isModernMcpRequest(req, params);
+  if (method === 'ping') return reply(res, 200, { jsonrpc: '2.0', id, result: mcpResult({}, modern) });
+  if (method === 'tools/list') return reply(res, 200, {
+    jsonrpc: '2.0', id,
+    result: mcpResult({ tools: mcpTools, ...(modern && { ttlMs: 0, cacheScope: 'public' }) }, modern),
+  });
   if (method === 'tools/call') {
     try {
       let result;
@@ -198,9 +216,9 @@ async function handleMcp(req, res) {
       } else {
         return reply(res, 200, { jsonrpc: '2.0', id, error: { code: -32602, message: 'Outil inconnu.' } });
       }
-      return reply(res, 200, { jsonrpc: '2.0', id, result });
+      return reply(res, 200, { jsonrpc: '2.0', id, result: mcpResult(result, modern) });
     } catch (error) {
-      return reply(res, 200, { jsonrpc: '2.0', id, result: { isError: true, content: [{ type: 'text', text: error.message || 'Erreur du relais Discord.' }] } });
+      return reply(res, 200, { jsonrpc: '2.0', id, result: mcpResult({ isError: true, content: [{ type: 'text', text: error.message || 'Erreur du relais Discord.' }] }, modern) });
     }
   }
   return reply(res, 200, { jsonrpc: '2.0', id, error: { code: -32601, message: 'Méthode inconnue.' } });
