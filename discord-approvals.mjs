@@ -1,7 +1,7 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 
 const SUMMARY_MARKER = '📌 SYNTHÈSE DES IDÉES VALIDÉES';
-const CURSOR_PATTERN = /\|\|ENIGMAKHI_CURSOR:(\d{17,20})\|\|/;
+    `||ENIGMAKHI_CURSOR:${approvalMessage.id}||`,
 
 function compareSnowflakes(a, b) {
   return BigInt(a) < BigInt(b) ? -1 : BigInt(a) > BigInt(b) ? 1 : 0;
@@ -56,7 +56,7 @@ async function publishBatch(channel, messages, approvalMessage) {
     SUMMARY_MARKER,
     `Validée par ${approvalMessage.author.globalName || approvalMessage.author.username} — ${new Date(approvalMessage.createdTimestamp).toLocaleString('fr-FR')}`,
     messages.length ? items.join('\n') : 'Aucune nouvelle idée entre les deux OK.',
-    \`||ENIGMAKHI_CURSOR:\${approvalMessage.id}||\`,
+    `||ENIGMAKHI_CURSOR:${approvalMessage.id}||`,
   ].join('\n\n');
   await channel.send({ content: summary, allowedMentions: { parse: [] } });
 }
