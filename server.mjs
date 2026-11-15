@@ -94,7 +94,7 @@ const mcpTools = [
 
 function securePathMatch(pathname) {
   const expectedPath = process.env.MCP_ACCESS_PATH;
-  if (!expectedPath || !/^[a-f0-9]{48,128}$/i.test(expectedPath)) return false;
+  if (!expectedPath || !/^[A-Za-z0-9._~-]{32,128}$/.test(expectedPath)) return false;
   const received = Buffer.from(pathname);
   const expected = Buffer.from(`/mcp/${expectedPath}`);
   return received.length === expected.length && timingSafeEqual(received, expected);
@@ -156,14 +156,31 @@ async function handleMcp(req, res) {
   if (rpc?.jsonrpc !== '2.0' || typeof method !== 'string') {
     return reply(res, 400, { jsonrpc: '2.0', id: id ?? null, error: { code: -32600, message: 'Requête JSON-RPC invalide.' } });
   }
-  if (method === 'notifications/initialized' || method.startsWith('notifications/')) return reply(res, 202, {});
+  if (method === 'notifications/initialized' || method.startsWith('notifications/')) {
+    res.writeHead(202, { 'cache-control': 'no-store' });
+    return res.end();
+  }
+  if (method === 'server/discover') {
+    return reply(res, 200, {
+      jsonrpc: '2.0', id,
+      result: {
+        supportedVersions: ['2025-03-26'],
+        capabilities: { tools: {} },
+        instructions: 'Relais Discord EnigmAkhi : lire les idées récentes et publier les comptes rendus approuvés.',
+        ttlMs: 30000,
+        cacheScope: 'PUBLIC',
+        _meta: { 'io.modelcontextprotocol/serverInfo': { name: 'enigmakhi-discord-relay', version: '1.0.0' } },
+      },
+    });
+  }
   if (method === 'initialize') {
     return reply(res, 200, {
       jsonrpc: '2.0', id,
       result: {
-        protocolVersion: params.protocolVersion || '2025-03-26',
-        capabilities: { tools: {} },
+        protocolVersion: '2025-03-26',
+        capabilities: { tools: { listChanged: false } },
         serverInfo: { name: 'enigmakhi-discord-relay', version: '1.0.0' },
+        instructions: 'Relais Discord EnigmAkhi : lire les idées récentes et publier les comptes rendus approuvés.',
       },
     });
   }
