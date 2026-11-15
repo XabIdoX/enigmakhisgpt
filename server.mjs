@@ -137,7 +137,7 @@ async function readDiscordIdeas() {
   const syntheses = messages.filter((message) => message.author?.bot && message.content?.startsWith('📌 SYNTHÈSE DES IDÉES VALIDÉES')).map((message) => ({
     id: message.id,
     date: message.timestamp,
-    texte: message.content.replace(/\\|\\|ENIGMAKHI_CURSOR:\\d{17,20}\\|\\|/g, '').trim(),
+    texte: message.content.replace(/\|\|ENIGMAKHI_CURSOR:\d{17,20}\|\|/g, '').trim(),
     lien: 'https://discord.com/channels/' + (channel.guild_id || '@me') + '/' + channelId + '/' + message.id,
   })).reverse();
   return { nombre: proposals.length, propositions: proposals, nombre_syntheses: syntheses.length, syntheses };
@@ -154,7 +154,7 @@ async function readApprovedIdeaSummaries() {
     .map((message) => ({
       id: message.id,
       date: message.timestamp,
-      texte: message.content.replace(/\|\|ENIGMAKHI_CURSOR:\d{17,20}\|\|/g, '').trim(),
+    texte: message.content.replace(/\|\|ENIGMAKHI_CURSOR:\d{17,20}\|\|/g, '').trim(),
       lien: `https://discord.com/channels/${channel.guild_id || '@me'}/${channelId}/${message.id}`,
     }))
     .reverse();
