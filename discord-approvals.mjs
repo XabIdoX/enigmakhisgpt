@@ -42,9 +42,7 @@ async function messagesAfter(channel, cursor) {
 function formatIdea(message, index) {
   const author = message.author?.globalName || message.author?.username || 'Membre Discord';
   const body = String(message.content || '').trim().replace(/\s+/g, ' ');
-  const attachments = [...(message.attachments?.values?.() || [])]
-    .map((attachment) => String(attachment.name || 'fichier').slice(0, 50))
-    .join(' ');
+  const attachments = message.attachments?.size ? 'Pièce jointe' : '';
   const excerpt = (body || (attachments ? 'Pièce jointe' : 'Message sans texte')).slice(0, 120);
   return `• **${index + 1}. ${author}** : ${excerpt}${attachments ? ` — ${attachments}` : ''}\n  <${message.url}>`;
 }
