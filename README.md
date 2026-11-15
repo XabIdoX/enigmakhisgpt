@@ -30,7 +30,7 @@ Le serveur expose un petit endpoint MCP sur `/mcp/<MCP_ACCESS_PATH>`. Il propose
 - `DISCORD_BOT_TOKEN` : jeton du bot obtenu dans le Discord Developer Portal. À garder dans les variables secrètes de Render, jamais dans Git ni dans un message.
 - `DISCORD_IDEAS_CHANNEL_ID` : identifiant du salon où sont postées les propositions.
 - `DISCORD_UPDATES_CHANNEL_ID` : identifiant du salon où le relais publiera les comptes rendus.
-- `MCP_ACCESS_PATH` : chaîne hexadécimale aléatoire d’au moins 48 caractères. Elle fait partie de l’URL privée du relais. Pour en générer une localement avec Node.js : `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
+- `MCP_ACCESS_PATH` : clé aléatoire de 32 à 128 caractères composée de lettres, chiffres et caractères URL sûrs (`.`, `_`, `~`, `-`). Elle fait partie de l’URL privée du relais. La valeur **Generate** de Render convient.
 
 Dans ChatGPT, ajouter un serveur MCP personnalisé avec l’URL `https://enigmakhi-preview.onrender.com/mcp/<MCP_ACCESS_PATH>` et l’option d’authentification **Aucune**. L’URL complète doit rester privée : toute personne qui la connaît pourrait lire les propositions ou publier dans le salon updates. Si elle fuit, remplacer `MCP_ACCESS_PATH` dans Render et mettre à jour l’URL du plugin.
 
