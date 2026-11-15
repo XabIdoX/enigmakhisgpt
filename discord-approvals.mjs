@@ -1,7 +1,7 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 
 const SUMMARY_MARKER = '📌 SYNTHÈSE DES IDÉES VALIDÉES';
-const CURSOR_PATTERN = /\\|\\|ENIGMAKHI_CURSOR:(\\d{17,20})\\|\\|/;
+const CURSOR_PATTERN = /\|\|ENIGMAKHI_CURSOR:(\d{17,20})\|\|/;
 
 function compareSnowflakes(a, b) {
   return BigInt(a) < BigInt(b) ? -1 : BigInt(a) > BigInt(b) ? 1 : 0;
@@ -41,9 +41,9 @@ async function messagesAfter(channel, cursor) {
 
 function formatIdea(message, index) {
   const author = message.author?.globalName || message.author?.username || 'Membre Discord';
-  const body = String(message.content || '').trim().replace(/\\s+/g, ' ');
+  const body = String(message.content || '').trim().replace(/\s+/g, ' ');
   const attachments = [...(message.attachments?.values?.() || [])]
-    .map((attachment) => attachment.url)
+    .map((attachment) => String(attachment.name || 'fichier').slice(0, 50))
     .join(' ');
   const excerpt = (body || (attachments ? 'Pièce jointe' : 'Message sans texte')).slice(0, 120);
   return `• **${index + 1}. ${author}** : ${excerpt}${attachments ? ` — ${attachments}` : ''}\n  <${message.url}>`;
@@ -54,11 +54,11 @@ async function publishBatch(channel, messages, approvalMessage) {
   if (messages.length > 6) items.push(`• … et ${messages.length - 6} autre(s) message(s) de cette période.`);
   const summary = [
     SUMMARY_MARKER,
-    `Validée par <@${approvalMessage.author.id}> — ${new Date(approvalMessage.createdTimestamp).toLocaleString('fr-FR')}`,
-    messages.length ? items.join('\\n') : 'Aucune nouvelle idée entre les deux OK.',
-    `||ENIGMAKHI_CURSOR:${approvalMessage.id}||`,
-  ].join('\\n\\n').slice(0, 1990);
-  await channel.send({ content: summary, allowedMentions: { users: [approvalMessage.author.id] } });
+    \`Validée par \${approvalMessage.author.globalName || approvalMessage.author.username} — \${new Date(approvalMessage.createdTimestamp).toLocaleString('fr-FR')}\`,
+    messages.length ? items.join('\n') : 'Aucune nouvelle idée entre les deux OK.',
+    \`||ENIGMAKHI_CURSOR:\${approvalMessage.id}||\`,
+  ].join('\n\n');
+  await channel.send({ content: summary, allowedMentions: { parse: [] } });
 }
 
 export function startApprovalBot({ token, channelId, approverId }) {
