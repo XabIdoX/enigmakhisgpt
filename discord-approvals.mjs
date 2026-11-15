@@ -1,7 +1,7 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 
 const SUMMARY_MARKER = '📌 SYNTHÈSE DES IDÉES VALIDÉES';
-    `||ENIGMAKHI_CURSOR:${approvalMessage.id}||`,
+const CURSOR_PATTERN = /\|\|ENIGMAKHI_CURSOR:(\d{17,20})\|\|/;
 
 function compareSnowflakes(a, b) {
   return BigInt(a) < BigInt(b) ? -1 : BigInt(a) > BigInt(b) ? 1 : 0;
