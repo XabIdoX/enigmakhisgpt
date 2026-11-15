@@ -54,7 +54,7 @@ async function publishBatch(channel, messages, approvalMessage) {
   if (messages.length > 6) items.push(`• … et ${messages.length - 6} autre(s) message(s) de cette période.`);
   const summary = [
     SUMMARY_MARKER,
-    \`Validée par \${approvalMessage.author.globalName || approvalMessage.author.username} — \${new Date(approvalMessage.createdTimestamp).toLocaleString('fr-FR')}\`,
+    `Validée par ${approvalMessage.author.globalName || approvalMessage.author.username} — ${new Date(approvalMessage.createdTimestamp).toLocaleString('fr-FR')}`,
     messages.length ? items.join('\n') : 'Aucune nouvelle idée entre les deux OK.',
     \`||ENIGMAKHI_CURSOR:\${approvalMessage.id}||\`,
   ].join('\n\n');
