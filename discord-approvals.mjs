@@ -8,7 +8,8 @@ function compareSnowflakes(a, b) {
 }
 
 function isApprovalSummary(message, botId) {
-  return message.author?.id === botId && message.content?.startsWith(SUMMARY_MARKER);
+  return message.author?.id === botId && (message.content?.startsWith(SUMMARY_MARKER)
+    || (message.reference?.messageId && message.embeds.some((embed) => embed.title === 'Idées validées')));
 }
 
 async function latestCursor(channel, botId) {
@@ -18,7 +19,7 @@ async function latestCursor(channel, botId) {
     if (!page.size) return null;
     const ordered = [...page.values()].sort((a, b) => compareSnowflakes(b.id, a.id));
     const summary = ordered.find((message) => isApprovalSummary(message, botId));
-    if (summary) return summary.content.match(CURSOR_PATTERN)?.[1] || null;
+    if (summary) return summary.reference?.messageId || summary.content.match(CURSOR_PATTERN)?.[1] || null;
     if (page.size < 100) return null;
     before = ordered.at(-1).id;
   }
@@ -42,21 +43,36 @@ async function messagesAfter(channel, cursor) {
 function formatIdea(message, index) {
   const author = message.author?.globalName || message.author?.username || 'Membre Discord';
   const body = String(message.content || '').trim().replace(/\s+/g, ' ');
-  const attachments = message.attachments?.size ? 'Pièce jointe' : '';
-  const excerpt = (body || (attachments ? 'Pièce jointe' : 'Message sans texte')).slice(0, 120);
-  return `• **${index + 1}. ${author}** : ${excerpt}${attachments ? ` — ${attachments}` : ''}\n  <${message.url}>`;
+  const excerpt = body.length > 300 ? body.slice(0, 299) + '…' : body;
+  return {
+    name: (index + 1) + ' · ' + author,
+    value: (excerpt || 'Message sans texte') + '\n[Voir le message original](' + message.url + ')',
+  };
 }
 
 async function publishBatch(channel, messages, approvalMessage) {
-  const items = messages.slice(0, 6).map(formatIdea);
-  if (messages.length > 6) items.push(`• … et ${messages.length - 6} autre(s) message(s) de cette période.`);
-  const summary = [
-    SUMMARY_MARKER,
-    `Validée par ${approvalMessage.author.globalName || approvalMessage.author.username} — ${new Date(approvalMessage.createdTimestamp).toLocaleString('fr-FR')}`,
-    messages.length ? items.join('\n') : 'Aucune nouvelle idée entre les deux OK.',
-    `||ENIGMAKHI_CURSOR:${approvalMessage.id}||`,
-  ].join('\n\n');
-  await channel.send({ content: summary, allowedMentions: { parse: [] } });
+  const fields = messages.slice(0, 6).map(formatIdea);
+  if (messages.length > fields.length) {
+    fields.push({ name: 'Suite du lot', value: (messages.length - fields.length)
+      + ' autres messages à consulter dans le salon, avant cet OK.' });
+  }
+  const count = messages.length;
+  const label = count === 1 ? 'proposition' : 'propositions';
+  await channel.send({
+    embeds: [{
+      title: 'Idées validées',
+      color: 0xb9874e,
+      description: count ? '✅ **' + count + ' ' + label + '** dans ce lot.'
+        : 'Aucune nouvelle idée depuis le dernier OK.',
+      fields,
+      footer: { text: 'EnigmAkhi · Validation par ' + (approvalMessage.author.globalName || approvalMessage.author.username) },
+      timestamp: approvalMessage.createdAt.toISOString(),
+    }],
+    reply: { messageReference: approvalMessage.id },
+    allowedMentions: { parse: [], repliedUser: false },
+    nonce: approvalMessage.id,
+    enforceNonce: true,
+  });
 }
 
 export function startApprovalBot({ token, channelId, approverId }) {
