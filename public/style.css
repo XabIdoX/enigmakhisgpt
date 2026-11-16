@@ -8,3 +8,25 @@
 @media(max-width:1050px){.red-layout{grid-template-columns:minmax(0,1fr) 270px}.red-map-art{min-height:260px}.red-case-strip>div{padding:10px 11px}}
 @media(max-width:760px){.red-layout{grid-template-columns:1fr}.red-side-column{display:grid;grid-template-columns:1fr 1fr}.red-map-panel,.red-inspector{grid-column:1/-1}.red-map-art{min-height:0}.red-case-strip{grid-template-columns:1fr 1fr}.red-case-strip>div:nth-child(2){border-right:0}.red-case-strip>div:nth-child(1),.red-case-strip>div:nth-child(2){border-bottom:1px solid #4a3830}.case-clock{width:100%}.red-game-intro .game-heading{gap:13px}}
 @media(max-width:540px){.room-choice{grid-template-columns:1fr}.red-case-strip b{font-size:8px}.red-case-strip span{font-size:6px}.red-map-frame{margin:0 7px}.red-map-art text{font-size:14px}.red-map-art .map-subtitle,.red-map-art .map-secret{font-size:10px}.map-hotspot{width:28px;height:28px;font-size:9px}.hotspot-passage{width:24px;height:24px}.red-map-legend{gap:8px;flex-wrap:wrap;font-size:7px}.red-map-legend small{width:100%;margin:3px 0 0}.red-side-column{grid-template-columns:1fr}.suspect-panel,.evidence-panel,.red-mechanism-panel,.red-log-panel{grid-column:1/-1}.red-inspector{grid-template-columns:31px 1fr;gap:9px;padding:13px}.inspector-icon{width:29px;height:29px;font-size:14px}.inspector-body h2{font-size:17px}.red-action-button{padding:8px 9px}.plug-controls>div{flex-wrap:wrap}}
+
+.sanctuary-map { background: #102426; }
+.sanctuary-map img { width: 100%; max-height: none; height: auto; filter: none; }
+.sanctuary-map .torch-point { background: #13272e; border-color: #92b1b3; color: #e1edf0; cursor: pointer; }
+.sanctuary-map .is-flame { background: #573d22; border-color: #ffd38c; color: #fff0d0; }
+.sanctuary-map .is-mural { border-radius: 5px; background: #154352; border-color: #70bed4; color: #bdf1ff; }
+.sanctuary-map .map-landmark { font-size: 17px; }
+.sanctuary-map .torch-point:hover,
+.sanctuary-map .torch-point[aria-pressed="true"],
+.sanctuary-map .torch-point:focus-visible { outline: 2px solid #fff1d1; outline-offset: 2px; z-index: 2; }
+.sanctuary-legend { flex-wrap: wrap; }
+.sanctuary-legend a { margin-left: auto; color: #b6dde3; }
+.sanctuary-inspector { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin: 0 18px 14px; padding: 10px 12px; border: 1px solid #385155; background: #18272a; }
+.sanctuary-inspector > div { display: flex; align-items: center; gap: 8px; }
+.sanctuary-inspector button { font-size: 12px; min-height: 32px; }
+@media (max-width: 540px) {
+  .sanctuary-map .torch-point { width: 23px; height: 23px; }
+  .sanctuary-inspector { margin-inline: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sanctuary-map .is-flame { animation: none; }
+}

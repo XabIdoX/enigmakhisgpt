@@ -1,9 +1,9 @@
 const stateUrl = '/api/state';
 const torchPositions = [
-  [70, 18], [83, 32], [88, 49], [80, 68], [68, 81], [50, 88],
-  [32, 80], [17, 67], [12, 49], [17, 32], [31, 18], [50, 13],
+  [71, 22], [78, 32], [83, 45], [81, 56], [75, 66], [64, 73],
+  [35, 73], [25, 66], [19, 56], [17, 45], [22, 32], [29, 22],
 ];
-const muralPositions = [[96, 39], [96, 61], [81, 90], [63, 96], [38, 96], [16, 84], [3, 63], [3, 39]];
+const muralPositions = [[88, 28], [94, 49], [89, 70], [75, 88], [25, 88], [11, 70], [6, 49], [12, 28]];
 const itemOrder = ['stone', 'bucket', 'tape_1', 'tape_2', 'document_1', 'document_2', 'document_3', 'tape_recorder', 'small_gear', 'medium_gear', 'big_gear', 'pickaxe', 'spear', 'old_gear', 'blue_relic'];
 const placeByStatue = { 3: 'stone', 5: 'pickaxe', 10: 'bucket', 8: 'spear' };
 let game = null;
@@ -11,6 +11,7 @@ let playerId = localStorage.getItem('enigmakhi-player-id') || null;
 let draftName = localStorage.getItem('enigmakhi-player-name') || '';
 let selectedCoin = Number(localStorage.getItem('enigmakhi-player-coin') || 1);
 let toastTimer;
+let selectedMural;
 const coins = [
   { icon: '𓆣', name: 'Scarabée' }, { icon: '𓂀', name: 'Œil' },
   { icon: '𓋹', name: 'Ankh' }, { icon: '☼', name: 'Soleil' },
@@ -86,10 +87,18 @@ function renderMap() {
     const isActive = active.has(id);
     return `<button class="torch-point ${isActive ? 'is-flame' : ''}" style="left:${x}%;top:${y}%" aria-label="Statue ${id}${isActive ? ', torche allumée' : ''}" title="${isActive ? `Faire avancer la flamme ${id}` : `Statue ${id}`}" ${isActive ? `data-action="cycle-torch" data-torch-id="${id}"` : 'disabled'}>${id}</button>`;
   }).join('');
-  const murals = muralPositions.map(([x, y], index) => `<span class="torch-point is-mural" style="left:${x}%;top:${y}%;pointer-events:none" aria-hidden="true">${index + 1}</span>`).join('');
+  const murals = muralPositions.map(([x, y], index) => `<button class="torch-point is-mural" type="button" data-map-mural="${index + 1}" aria-label="Fresque ${index + 1}" style="left:${x}%;top:${y}%">${index + 1}</button>`).join('');
   $('#torch-points').innerHTML = torches + murals;
   const mapSrc = game.rotated ? '/assets/blue_room_map_2.jpg' : '/assets/blue_room_map_1.jpg';
-  if ($('#room-map').getAttribute('src') !== mapSrc) $('#room-map').src = mapSrc;
+  document.querySelector('#room-plan').href = mapSrc;
+  if (selectedMural) renderMuralInspector();
+}
+
+function renderMuralInspector() {
+  const inspector = $('#sanctuary-inspector');
+  const details = '<strong>Fresque ' + selectedMural + '</strong>' +
+    objectActions({ id: 'mural-' + selectedMural });
+  if (inspector.innerHTML !== details) inspector.innerHTML = details;
 }
 function objectActions(item) {
   const inv = game.inventory;
@@ -277,6 +286,11 @@ async function join() {
 }
 document.addEventListener('input', (event) => { if (event.target.id === 'player-name') draftName = event.target.value; });
 document.addEventListener('click', (event) => {
+  const mural = event.target.closest('[data-map-mural]');
+  if (mural) {
+    selectedMural = Number(mural.dataset.mapMural);
+    renderMuralInspector();
+  }
   const redClue = event.target.closest('[data-red-clue]');
   if (redClue) {
     activeRedClue = redClue.dataset.redClue;
