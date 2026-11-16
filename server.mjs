@@ -371,12 +371,13 @@ function act(data) {
     const cycle = phaseRules[state.phase][index];
     state.torches[index] = cycle[(cycle.indexOf(state.torches[index]) + 1) % cycle.length];
     const flames = state.torches;
-    if (flames.join(',') === muralTarget.join(',')) {
+    if (!state.muralSolved && flames.join(',') === muralTarget.join(',')) {
       state.muralSolved = true;
       note(`${actor} règle les torches sur un motif. Un mécanisme répond derrière les fresques.`);
       return null;
     }
-    if (flames.join(',') === torchTargets[state.phase].join(',')) {
+    const floorOpen = state.phase === 1 ? state.floor1 : state.floor2;
+    if (!floorOpen && flames.join(',') === torchTargets[state.phase].join(',')) {
       if (state.phase === 1) {
         state.floor1 = true;
         state.items.medium_gear.location = 'hidden-floor-1';
@@ -396,7 +397,7 @@ function act(data) {
   if (action === 'take') {
     const item = state.items[itemId];
     if (!item || !item.pickable) return 'Cet élément ne peut pas être ramassé.';
-    const available = item.location === 'room' || item.location === 'center-table'
+    const available = item.location === 'room'
       || (item.location === 'hidden-floor-1' && state.floor1)
       || (item.location === 'hidden-floor-2' && state.floor2)
       || (item.location === 'under-statue' && state.underStatue)
@@ -412,6 +413,7 @@ function act(data) {
     const required = { 3: 'stone', 5: 'pickaxe', 10: 'bucket', 8: 'spear' };
     const id = Number(data.statueId);
     const wanted = required[id];
+    if (state.statueItems[id]) return 'Cette statue a déjà reçu son objet.';
     const spearAlreadyOnStatue = id === 8 && state.items.spear.location === 'statue-8';
     if (!wanted || (!state.inventory.includes(wanted) && !spearAlreadyOnStatue)) return 'Il manque l’objet qui correspond à cette statue.';
     state.inventory = state.inventory.filter((itemId) => itemId !== wanted);
@@ -427,7 +429,8 @@ function act(data) {
   }
 
   if (action === 'break-mural') {
-    if (!state.inventory.includes('pickaxe')) return 'Il faut d’abord récupérer la pioche.';
+    if (state.muralBroken) return 'La fresque est déjà brisée.';
+    if (!state.inventory.includes('pickaxe') && state.statueItems[5] !== 'pickaxe') return 'Il faut d’abord récupérer la pioche.';
     if (!state.muralSolved) return 'Le motif des flammes doit d’abord révéler la fresque fragile.';
     state.muralBroken = true;
     state.items.small_gear.location = 'hidden-wall';
@@ -448,6 +451,7 @@ function act(data) {
   }
 
   if (action === 'rotate-table') {
+    if (state.rotated) return 'La salle a déjà pivoté.';
     if (!state.tableActive) return 'Il manque encore des roues au mécanisme.';
     state.rotated = true;
     state.phase = 2;
@@ -459,7 +463,7 @@ function act(data) {
   if (action === 'use-relic') {
     if (!state.inventory.includes('blue_relic') || !state.floor2) return 'La relique n’est pas encore accessible.';
     state.finished = true;
-    note(`${actor} utilise la relique. La porte rouge s’ouvre : la salle suivante est accessible !`);
+    note(`${actor} utilise la relique. Une porte s’ouvre au fond de la salle !`);
     return null;
   }
   if (action === 'reset') {
