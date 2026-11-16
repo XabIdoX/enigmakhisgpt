@@ -1,5 +1,21 @@
 # Modernisation de l’interface — 16 novembre 2026
 
+## Livraison terminée
+
+- Version applicative publiée sur `main` : `d433c95879e1181e5e3efe9751ff8ba5425db141`.
+- Déploiement Render `dep-dbtir3mtlv9c73achv9g`, confirmé `live` le 16 novembre 2026 à 17 h 22 (Paris).
+- Service existant `enigmakhi-preview` / `srv-dbj057tg1s2s73edtcbg` dans l’espace `My Workspace` (`tea-dbivqtp42hec73bla4tg`), explicitement confirmé par DoX.
+- URL : https://enigmakhi-preview.onrender.com/.
+- Après reprise du quota : code et fichiers existants conservés, déploiement vérifié sans le relancer. Accueil, prologue et connexion SSE contrôlés en production ; aucune erreur JavaScript détectée pendant ce contrôle.
+- Compte rendu Discord publié : https://discord.com/channels/1073679166844702772/1571883063997104260/1571996004633411705.
+- Capture de la production conservée dans `../modernisation-en-ligne.jpg` depuis le dossier du dépôt ; aperçu local antérieur conservé dans `../modernisation-apercu.jpg`.
+- Aucun travail restant pour cette refonte. Les limites ci-dessous sont des chantiers ultérieurs, pas des étapes interrompues.
+
+Le push n’avait pas déclenché de déploiement malgré l’option autoDeploy activée.
+Après vérification de l’absence de déploiement en cours, un déploiement explicite
+de la dernière version a été lancé et a abouti. Ne pas supposer qu’un prochain
+push sera automatiquement publié : vérifier l’historique Render.
+
 ## Direction retenue
 
 L’accueil devient un carnet d’expédition : une scène photographique de la boîte,
