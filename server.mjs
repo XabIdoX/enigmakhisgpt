@@ -91,7 +91,11 @@ const mcpTools = [
     description: 'Publie le compte rendu fourni par l’assistant dans le salon Discord réservé aux updates du site EnigmAkhi.',
     inputSchema: {
       type: 'object',
-      properties: { message: { type: 'string', description: 'Compte rendu à publier, maximum 1800 caractères.' } },
+      properties: {
+        message: { type: 'string', description: 'Compte rendu à publier, maximum 1800 caractères.' },
+        salle: { type: 'string', enum: ['bleue', 'verte', 'rouge', 'jaune', 'noire', 'generale'],
+          description: 'Salle principale. Utiliser generale si plusieurs salles sont concernées.' },
+      },
       required: ['message'],
       additionalProperties: false,
     },
@@ -174,16 +178,35 @@ async function readApprovedIdeaSummaries() {
   return { nombre: summaries.length, syntheses: summaries };
 }
 
-async function publishDiscordUpdate(message) {
+const updateColors = {
+  bleue: 0x367bc9,
+  verte: 0x3a9162,
+  rouge: 0xc64747,
+  jaune: 0xe3b438,
+  noire: 0x29292f,
+};
+
+async function publishDiscordUpdate(message, salle) {
   const channelId = process.env.DISCORD_UPDATES_CHANNEL_ID;
   if (!channelId) throw new Error('L’identifiant du salon updates n’est pas encore configuré sur Render.');
   const clean = String(message || '').trim();
   if (!clean) throw new Error('Le compte rendu est vide.');
   if (clean.length > 1800) throw new Error('Le compte rendu dépasse 1800 caractères.');
+  const mentionedRooms = new Set(
+    [...clean.toLowerCase().matchAll(/\bsalle\s+(bleue|verte|rouge|jaune|noire)\b/g)].map((match) => match[1]),
+  );
+  const room = salle ?? (mentionedRooms.size === 1 ? [...mentionedRooms][0] : 'generale');
+  const color = Object.hasOwn(updateColors, room) ? updateColors[room] : 0xb9874e;
+  const title = Object.hasOwn(updateColors, room)
+    ? 'Mise à jour · Salle ' + room[0].toUpperCase() + room.slice(1)
+    : 'Mise à jour · EnigmAkhi';
   const channel = await discordApi(`/channels/${encodeURIComponent(channelId)}`);
   const posted = await discordApi(`/channels/${encodeURIComponent(channelId)}/messages`, {
     method: 'POST',
-    body: JSON.stringify({ content: clean, allowed_mentions: { parse: [] } }),
+    body: JSON.stringify({
+      embeds: [{ title, description: clean, color, timestamp: new Date().toISOString() }],
+      allowed_mentions: { parse: [] },
+    }),
   });
   return { id: posted.id, lien: `https://discord.com/channels/${channel.guild_id || '@me'}/${channelId}/${posted.id}` };
 }
@@ -259,7 +282,7 @@ async function handleMcp(req, res) {
         const summaries = await readApprovedIdeaSummaries();
         result = { content: [{ type: 'text', text: JSON.stringify(summaries) }] };
       } else if (params.name === 'publier_compte_rendu_discord') {
-        const posted = await publishDiscordUpdate(params.arguments?.message);
+        const posted = await publishDiscordUpdate(params.arguments?.message, params.arguments?.salle);
         result = { content: [{ type: 'text', text: `Compte rendu publié : ${posted.lien}` }] };
       } else {
         return reply(res, 200, { jsonrpc: '2.0', id, error: { code: -32602, message: 'Outil inconnu.' } });
