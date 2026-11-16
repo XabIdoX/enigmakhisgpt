@@ -118,12 +118,24 @@ async function discordApi(path, options = {}) {
   return payload;
 }
 
+function discordSummaryText(message, botId) {
+  if (message.author?.id !== botId) return null;
+  const embed = message.embeds?.find((item) => item.title === 'Idées validées');
+  if (embed && message.message_reference?.message_id) {
+    return [embed.title, embed.description, ...(embed.fields || []).map((item) => item.name + '\n' + item.value)]
+      .filter(Boolean).join('\n\n');
+  }
+  if (!message.content?.startsWith('📌 SYNTHÈSE DES IDÉES VALIDÉES')) return null;
+  return message.content.replace(/\|\|ENIGMAKHI_CURSOR:\d{17,20}\|\|/g, '').trim();
+}
+
 async function readDiscordIdeas() {
   const channelId = process.env.DISCORD_IDEAS_CHANNEL_ID;
   if (!channelId) throw new Error('L’identifiant du salon idées n’est pas encore configuré sur Render.');
-  const [channel, messages] = await Promise.all([
+  const [channel, messages, bot] = await Promise.all([
     discordApi('/channels/' + encodeURIComponent(channelId)),
     discordApi('/channels/' + encodeURIComponent(channelId) + '/messages?limit=100'),
+    discordApi('/users/@me'),
   ]);
   const proposals = messages.filter((message) => !message.author?.bot).map((message) => ({
     id: message.id,
@@ -134,10 +146,10 @@ async function readDiscordIdeas() {
     pieces_jointes: (message.attachments || []).map(({ filename, url }) => ({ nom: filename, url })),
     lien: 'https://discord.com/channels/' + (channel.guild_id || '@me') + '/' + channelId + '/' + message.id,
   }));
-  const syntheses = messages.filter((message) => message.author?.bot && message.content?.startsWith('📌 SYNTHÈSE DES IDÉES VALIDÉES')).map((message) => ({
+  const syntheses = messages.filter((message) => discordSummaryText(message, bot.id)).map((message) => ({
     id: message.id,
     date: message.timestamp,
-    texte: message.content.replace(/\|\|ENIGMAKHI_CURSOR:\d{17,20}\|\|/g, '').trim(),
+    texte: discordSummaryText(message, bot.id),
     lien: 'https://discord.com/channels/' + (channel.guild_id || '@me') + '/' + channelId + '/' + message.id,
   })).reverse();
   return { nombre: proposals.length, propositions: proposals, nombre_syntheses: syntheses.length, syntheses };
@@ -145,16 +157,17 @@ async function readDiscordIdeas() {
 async function readApprovedIdeaSummaries() {
   const channelId = process.env.DISCORD_IDEAS_CHANNEL_ID;
   if (!channelId) throw new Error('L’identifiant du salon idées n’est pas encore configuré sur Render.');
-  const [channel, messages] = await Promise.all([
+  const [channel, messages, bot] = await Promise.all([
     discordApi(`/channels/${encodeURIComponent(channelId)}`),
     discordApi(`/channels/${encodeURIComponent(channelId)}/messages?limit=100`),
+    discordApi('/users/@me'),
   ]);
   const summaries = messages
-    .filter((message) => message.author?.bot && message.content?.startsWith('📌 SYNTHÈSE DES IDÉES VALIDÉES'))
+    .filter((message) => discordSummaryText(message, bot.id))
     .map((message) => ({
       id: message.id,
       date: message.timestamp,
-    texte: message.content.replace(/\|\|ENIGMAKHI_CURSOR:\d{17,20}\|\|/g, '').trim(),
+    texte: discordSummaryText(message, bot.id),
       lien: `https://discord.com/channels/${channel.guild_id || '@me'}/${channelId}/${message.id}`,
     }))
     .reverse();
