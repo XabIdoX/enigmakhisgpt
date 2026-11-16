@@ -174,6 +174,19 @@ test('a member can remove pending and approved ideas without renumbering or eras
   assert.deepEqual(journal.commands.at(-1).ideas.map((i) => i.number), [2]);
 });
 
+test('a member can clear approved and pending ideas while keeping future ideas and their numbering', async () => {
+  const f = channelFixture([message(1, 'A'), message(2, '!valider'), message(3, 'B'),
+    message(4, '!clear', '123'), message(5, '!liste'), message(6, 'C'), message(7, '!valider')]);
+  await processIdeaCommands(f.channel, ids);
+  const count = f.sent.length;
+  const journal = await processIdeaCommands(f.channel, ids);
+  assert.equal(f.sent.length, count);
+  assert.deepEqual(journal.commands.find((c) => c.name === 'liste').ideas, []);
+  assert.deepEqual(journal.commands.find((c) => c.name === 'clear').removedCount, 2);
+  assert.deepEqual(journal.ideas.map((i) => i.number), [3]);
+  assert.deepEqual(relay(journal).syntheses.map((b) => b.propositions[0].texte), ['C']);
+});
+
 test('a recorded correction cannot move to another idea if an earlier original is deleted', async () => {
   const f = channelFixture([message(1, 'A'), message(2, 'B'), message(3, '!modifier 2 B corrigée')]);
   await processIdeaCommands(f.channel, ids);

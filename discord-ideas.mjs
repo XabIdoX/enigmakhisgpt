@@ -7,6 +7,7 @@ export const HELP = [
   '`!liste` — afficher toutes les idées et leur statut.',
   '`!modifier 3 Nouveau texte` — remplacer le texte de l’idée n° 3.',
   '`!supprimer 3` — retirer l’idée n° 3 de la liste.',
+  '`!clear` — vider toute la liste des idées.',
   'Tu peux aussi utiliser son identifiant ou son lien, ou répondre au message original avec `!modifier Nouveau texte`.',
   '`!aide` — revoir ces commandes. Seules `!valider` et `!annuler` sont réservées à DoX.',
 ].join('\n');
@@ -137,6 +138,10 @@ export function buildIdeaJournal(messages, { approverId, botId }) {
         }
         result.idea = idea;
       }
+    } else if (command.name === 'clear') {
+      const visible = ideas.filter((idea) => !idea.removed);
+      for (const idea of visible) idea.removed = true;
+      result.removedCount = visible.length;
     } else if (command.name === 'liste') {
       result.ideas = ideas.filter((i) => !i.removed).map((i) => ({ ...i, status: ideaStatus(i) }));
     } else if (command.name !== 'aide') result.error = 'Commande inconnue. Consulte `!aide`.';

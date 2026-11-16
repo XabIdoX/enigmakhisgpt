@@ -36,6 +36,7 @@ Les commandes commencent par un point d’exclamation et leur casse est indiffé
 | `!liste` | Affiche toutes les idées numérotées, par pages, avec leur statut et leur lien. |
 | `!modifier 3 Nouveau texte` | Remplace le texte de l’idée n° 3, même après validation. |
 | `!supprimer 3` | Retire l’idée n° 3 de la liste et de son lot, en gardant le message original. |
+| `!clear` | Retire toutes les idées de la liste et de leurs lots, en gardant les messages d’origine. |
 | `!aide` | Rappelle les commandes. |
 
 Pour corriger une idée, tu peux aussi donner son identifiant Discord ou son lien, ou répondre **au message original** avec `!modifier Nouveau texte`. Les pièces jointes d’origine sont conservées. Le message du créateur reste intact ; la correction apparaît dans les listes, la synthèse et le relais Codex. Une idée annulée reste annulée après correction. Les changements ne modifient pas automatiquement un travail déjà engagé ou livré.

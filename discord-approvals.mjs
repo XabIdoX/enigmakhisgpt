@@ -36,6 +36,10 @@ function summaryEmbed(batch) {
 function responseEmbeds(command) {
   if (command.error) return [{ title: 'Commande non appliquée', description: command.error }];
   if (command.name === 'aide') return [{ title: 'Commandes du bot', description: HELP }];
+  if (command.name === 'clear') return [{
+    title: 'Liste vidée',
+    description: `${command.removedCount} idée(s) retirée(s). Les messages d’origine restent dans Discord.`,
+  }];
   if (command.name === 'supprimer') return [{
     title: 'Idée retirée', description: `L’idée #${command.idea.number} a été retirée de la liste et de son lot. Le message original reste dans Discord.`,
   }];
