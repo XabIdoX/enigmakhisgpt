@@ -2,13 +2,13 @@
 export const APPROVED_TITLE = 'Idées validées';
 export const CANCELLED_TITLE = 'Validation annulée';
 export const HELP = [
-  '`:valider` — valider les nouvelles idées.',
-  '`:annuler` — annuler la dernière validation.',
-  '`:liste` — afficher toutes les idées et leur statut.',
-  '`:modifier 3 Nouveau texte` — remplacer le texte de l’idée n° 3.',
-  '`:supprimer 3` — retirer l’idée n° 3 de la liste.',
-  'Tu peux aussi utiliser son identifiant ou son lien, ou répondre au message original avec `:modifier Nouveau texte`.',
-  '`:aide` — revoir ces commandes. Seules `:valider` et `:annuler` sont réservées à DoX.',
+  '`!valider` — valider les nouvelles idées.',
+  '`!annuler` — annuler la dernière validation.',
+  '`!liste` — afficher toutes les idées et leur statut.',
+  '`!modifier 3 Nouveau texte` — remplacer le texte de l’idée n° 3.',
+  '`!supprimer 3` — retirer l’idée n° 3 de la liste.',
+  'Tu peux aussi utiliser son identifiant ou son lien, ou répondre au message original avec `!modifier Nouveau texte`.',
+  '`!aide` — revoir ces commandes. Seules `!valider` et `!annuler` sont réservées à DoX.',
 ].join('\n');
 
 export const compareIds = (a, b) => BigInt(a) < BigInt(b) ? -1 : BigInt(a) > BigInt(b) ? 1 : 0;
@@ -28,8 +28,8 @@ export function summaryApprovalId(message, botId) {
 
 export function parseCommand(content) {
   const text = String(content || '').trim();
-  if (!text.startsWith(':')) return null;
-  const match = text.match(/^:([^\s]+)(?:\s+([\s\S]*))?$/u);
+  if (!text.startsWith('!')) return null;
+  const match = text.match(/^!([^\s]+)(?:\s+([\s\S]*))?$/u);
   return { name: match?.[1].toLowerCase() || '', args: match?.[2]?.trim() || '' };
 }
 
@@ -72,11 +72,14 @@ export function buildIdeaJournal(messages, { approverId, botId }) {
     if (message.author?.bot || message.author?.id === botId) continue;
     const text = String(message.content || '').trim();
     let command = parseCommand(text);
-    // Only migrate bare commands already acknowledged by the previous bot.
+    // Replay old commands only when the bot already recorded their outcome.
+    if (text.startsWith(':') && (summaries.has(message.id) || receipts.has(message.id))) {
+      command = { ...parseCommand('!' + text.slice(1)), legacyPrefix: true };
+    }
     if (/^:?ok$/i.test(text) && summaries.has(message.id)) command = { name: 'valider', args: '', legacy: true };
     if (/^annuler$/i.test(text) && receipts.has(message.id)) command = { name: 'annuler', args: '', legacy: true };
     if (!command) {
-      if (/^(ok|annuler)$/i.test(text)) continue;
+      if (text.startsWith(':') || /^(ok|annuler)$/i.test(text)) continue;
       if (!text && !attachments(message).length) continue;
       const idea = { id: message.id, number: ideas.length + 1, message, text, batch: null };
       ideas.push(idea);
@@ -87,7 +90,7 @@ export function buildIdeaJournal(messages, { approverId, botId }) {
     const result = { ...command, message, receipt: receipts.get(message.id) };
     commands.push(result);
     if (!['modifier', 'supprimer'].includes(command.name) && command.args) {
-      result.error = 'Cette commande ne prend pas de texte après son nom. Consulte `:aide`.';
+      result.error = 'Cette commande ne prend pas de texte après son nom. Consulte `!aide`.';
     } else if (command.name === 'valider') {
       const old = summaries.get(message.id);
       const cancelled = command.legacy && (old?.embeds?.some((e) => e.title === CANCELLED_TITLE)
@@ -122,9 +125,9 @@ export function buildIdeaJournal(messages, { approverId, botId }) {
       const idea = ideas.find((i) => i.id === key)
         || (!pinnedTarget && /^\d{1,9}$/.test(key || '') ? ideas.find((i) => i.number === Number(key)) : null);
       if (deleting && !(referenceId(message) ? !command.args : /^\S+$/.test(command.args))) {
-        result.error = 'Utilise `:supprimer <numéro, identifiant ou lien>`, ou réponds au message original avec `:supprimer`.';
-      } else if (!deleting && !replacement) result.error = 'Utilise `:modifier <numéro, identifiant ou lien> <nouveau texte>`, ou réponds au message original avec `:modifier <nouveau texte>`.';
-      else if (!idea) result.error = 'Idée introuvable. Consulte `:liste` ou réponds au message original de l’idée.';
+        result.error = 'Utilise `!supprimer <numéro, identifiant ou lien>`, ou réponds au message original avec `!supprimer`.';
+      } else if (!deleting && !replacement) result.error = 'Utilise `!modifier <numéro, identifiant ou lien> <nouveau texte>`, ou réponds au message original avec `!modifier <nouveau texte>`.';
+      else if (!idea) result.error = 'Idée introuvable. Consulte `!liste` ou réponds au message original de l’idée.';
       else if (idea.removed) result.error = 'Cette idée a déjà été supprimée.';
       else {
         if (deleting) idea.removed = true;
@@ -136,7 +139,7 @@ export function buildIdeaJournal(messages, { approverId, botId }) {
       }
     } else if (command.name === 'liste') {
       result.ideas = ideas.filter((i) => !i.removed).map((i) => ({ ...i, status: ideaStatus(i) }));
-    } else if (command.name !== 'aide') result.error = 'Commande inconnue. Consulte `:aide`.';
+    } else if (command.name !== 'aide') result.error = 'Commande inconnue. Consulte `!aide`.';
   }
   for (const batch of batches) batch.ideas = batch.ideas.filter((i) => !i.removed);
   return { ideas: ideas.filter((i) => !i.removed), batches, commands };

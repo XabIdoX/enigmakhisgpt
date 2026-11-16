@@ -27,20 +27,20 @@ Le serveur expose un endpoint MCP sur `/mcp/<MCP_ACCESS_PATH>`. Il propose trois
 
 ### Commandes dans le salon des idées
 
-Les commandes commencent par deux-points et leur casse est indifférente. Seules `:valider` et `:annuler` sont réservées à DoX. Tous les membres du salon peuvent lister et corriger les idées et consulter l’aide.
+Les commandes commencent par un point d’exclamation et leur casse est indifférente. Seules `!valider` et `!annuler` sont réservées à DoX. Tous les membres du salon peuvent lister et corriger les idées et consulter l’aide.
 
 | Commande | Effet |
 | --- | --- |
-| `:valider` | Valide les nouvelles idées depuis la dernière validation. |
-| `:annuler` | Annule la dernière validation, sans effacer ses idées. |
-| `:liste` | Affiche toutes les idées numérotées, par pages, avec leur statut et leur lien. |
-| `:modifier 3 Nouveau texte` | Remplace le texte de l’idée n° 3, même après validation. |
-| `:supprimer 3` | Retire l’idée n° 3 de la liste et de son lot, en gardant le message original. |
-| `:aide` | Rappelle les commandes. |
+| `!valider` | Valide les nouvelles idées depuis la dernière validation. |
+| `!annuler` | Annule la dernière validation, sans effacer ses idées. |
+| `!liste` | Affiche toutes les idées numérotées, par pages, avec leur statut et leur lien. |
+| `!modifier 3 Nouveau texte` | Remplace le texte de l’idée n° 3, même après validation. |
+| `!supprimer 3` | Retire l’idée n° 3 de la liste et de son lot, en gardant le message original. |
+| `!aide` | Rappelle les commandes. |
 
-Pour corriger une idée, tu peux aussi donner son identifiant Discord ou son lien, ou répondre **au message original** avec `:modifier Nouveau texte`. Les pièces jointes d’origine sont conservées. Le message du créateur reste intact ; la correction apparaît dans les listes, la synthèse et le relais Codex. Une idée annulée reste annulée après correction. Les changements ne modifient pas automatiquement un travail déjà engagé ou livré.
+Pour corriger une idée, tu peux aussi donner son identifiant Discord ou son lien, ou répondre **au message original** avec `!modifier Nouveau texte`. Les pièces jointes d’origine sont conservées. Le message du créateur reste intact ; la correction apparaît dans les listes, la synthèse et le relais Codex. Une idée annulée reste annulée après correction. Les changements ne modifient pas automatiquement un travail déjà engagé ou livré.
 
-Les commandes sans `:` ne déclenchent plus d’action. Les anciennes validations déjà confirmées par le bot sont conservées. Voir [la documentation du bot](docs/bot-discord.md) pour la reprise après veille et les limites.
+Les commandes sans `!` ne déclenchent plus d’action. Les anciennes validations déjà confirmées par le bot sont conservées. Voir [la documentation du bot](docs/bot-discord.md) pour la reprise après veille et les limites.
 
 ### Variables Render à configurer
 

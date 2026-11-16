@@ -79,12 +79,12 @@ async function bodyJson(req) {
 const mcpTools = [
   {
     name: 'lire_idees_discord',
-    description: 'Lit toutes les idées, leurs corrections et statuts, et les lots validés par :valider de DoX. Les lots annulés sont exclus des synthèses. Utiliser cette file lorsque DoX dit « lance ».',
+    description: 'Lit toutes les idées, leurs corrections et statuts, et les lots validés par !valider de DoX. Les lots annulés sont exclus des synthèses. Utiliser cette file lorsque DoX dit « lance ».',
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
   },
   {
     name: 'lire_idees_validees_discord',
-    description: 'Lit les lots validés par :valider de DoX avec le texte complet corrigé et les pièces jointes. Exclut les validations annulées. Utiliser cette file lorsque DoX dit « lance ».',
+    description: 'Lit les lots validés par !valider de DoX avec le texte complet corrigé et les pièces jointes. Exclut les validations annulées. Utiliser cette file lorsque DoX dit « lance ».',
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
   },
   {
