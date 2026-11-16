@@ -6,6 +6,7 @@ export const HELP = [
   '`:annuler` — annuler la dernière validation.',
   '`:liste` — afficher toutes les idées et leur statut.',
   '`:modifier 3 Nouveau texte` — remplacer le texte de l’idée n° 3.',
+  '`:supprimer 3` — retirer l’idée n° 3 de la liste.',
   'Tu peux aussi utiliser son identifiant ou son lien, ou répondre au message original avec `:modifier Nouveau texte`.',
   '`:aide` — revoir ces commandes. Seules `:valider` et `:annuler` sont réservées à DoX.',
 ].join('\n');
@@ -85,7 +86,7 @@ export function buildIdeaJournal(messages, { approverId, botId }) {
     if (['valider', 'annuler'].includes(command.name) && (!approverId || message.author?.id !== approverId)) continue;
     const result = { ...command, message, receipt: receipts.get(message.id) };
     commands.push(result);
-    if (command.name !== 'modifier' && command.args) {
+    if (!['modifier', 'supprimer'].includes(command.name) && command.args) {
       result.error = 'Cette commande ne prend pas de texte après son nom. Consulte `:aide`.';
     } else if (command.name === 'valider') {
       const old = summaries.get(message.id);
@@ -101,12 +102,15 @@ export function buildIdeaJournal(messages, { approverId, botId }) {
       if (!batch) result.error = 'Aucune validation à annuler.';
       else if (batch.cancelled && !command.legacy) result.error = 'Ta dernière validation est déjà annulée.';
       else { batch.cancelled = true; result.batch = batch; }
-    } else if (command.name === 'modifier') {
+    } else if (['modifier', 'supprimer'].includes(command.name)) {
+      const deleting = command.name === 'supprimer';
       let target;
       let replacement;
       if (referenceId(message)) {
         target = referenceId(message);
         replacement = command.args;
+      } else if (deleting) {
+        target = command.args;
       } else {
         const match = command.args.match(/^(\S+)\s+([\s\S]+)$/u);
         target = match?.[1];
@@ -117,18 +121,25 @@ export function buildIdeaJournal(messages, { approverId, botId }) {
       const key = pinnedTarget || linkedId || target?.replace(/^#/, '');
       const idea = ideas.find((i) => i.id === key)
         || (!pinnedTarget && /^\d{1,9}$/.test(key || '') ? ideas.find((i) => i.number === Number(key)) : null);
-      if (!replacement) result.error = 'Utilise `:modifier <numéro, identifiant ou lien> <nouveau texte>`, ou réponds au message original avec `:modifier <nouveau texte>`.';
+      if (deleting && !(referenceId(message) ? !command.args : /^\S+$/.test(command.args))) {
+        result.error = 'Utilise `:supprimer <numéro, identifiant ou lien>`, ou réponds au message original avec `:supprimer`.';
+      } else if (!deleting && !replacement) result.error = 'Utilise `:modifier <numéro, identifiant ou lien> <nouveau texte>`, ou réponds au message original avec `:modifier <nouveau texte>`.';
       else if (!idea) result.error = 'Idée introuvable. Consulte `:liste` ou réponds au message original de l’idée.';
+      else if (idea.removed) result.error = 'Cette idée a déjà été supprimée.';
       else {
-        idea.text = replacement;
-        idea.modifiedBy = message;
+        if (deleting) idea.removed = true;
+        else {
+          idea.text = replacement;
+          idea.modifiedBy = message;
+        }
         result.idea = idea;
       }
     } else if (command.name === 'liste') {
-      result.ideas = ideas.map((i) => ({ ...i, status: ideaStatus(i) }));
+      result.ideas = ideas.filter((i) => !i.removed).map((i) => ({ ...i, status: ideaStatus(i) }));
     } else if (command.name !== 'aide') result.error = 'Commande inconnue. Consulte `:aide`.';
   }
-  return { ideas, batches, commands };
+  for (const batch of batches) batch.ideas = batch.ideas.filter((i) => !i.removed);
+  return { ideas: ideas.filter((i) => !i.removed), batches, commands };
 }
 
 export function journalForRelay(journal, { guildId, channelId }) {
@@ -141,7 +152,7 @@ export function journalForRelay(journal, { guildId, channelId }) {
     ...(idea.modifiedBy ? { modification: url(idea.modifiedBy.id) } : {}),
   });
   const propositions = journal.ideas.map(proposal);
-  const syntheses = journal.batches.filter((b) => !b.cancelled).map((b) => ({
+  const syntheses = journal.batches.filter((b) => !b.cancelled && b.ideas.length).map((b) => ({
     id: b.summary?.id || b.id, validation_id: b.id,
     date: b.message.timestamp || b.message.createdAt?.toISOString(),
     texte: [APPROVED_TITLE, ...b.ideas.map((i) => `#${i.number} · ${authorName(i.message)}\n${i.text}\n${url(i.id)}`)].join('\n\n'),

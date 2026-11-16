@@ -26,7 +26,7 @@ function summaryEmbed(batch) {
     title: batch.cancelled ? CANCELLED_TITLE : APPROVED_TITLE,
     color: batch.cancelled ? 0x747f8d : 0xb9874e,
     description: batch.cancelled ? 'Ce lot a été annulé par DoX.'
-      : batch.ideas.length ? `✅ **${batch.ideas.length} proposition(s)** dans ce lot.` : 'Aucune nouvelle idée depuis le dernier :valider.',
+      : batch.ideas.length ? `✅ **${batch.ideas.length} proposition(s)** dans ce lot.` : 'Ce lot ne contient aucune idée.',
     fields,
     footer: { text: 'EnigmAkhi · Validation par ' + authorName(batch.message) },
     timestamp: batch.message.createdAt.toISOString(),
@@ -36,6 +36,9 @@ function summaryEmbed(batch) {
 function responseEmbeds(command) {
   if (command.error) return [{ title: 'Commande non appliquée', description: command.error }];
   if (command.name === 'aide') return [{ title: 'Commandes du bot', description: HELP }];
+  if (command.name === 'supprimer') return [{
+    title: 'Idée retirée', description: `L’idée #${command.idea.number} a été retirée de la liste et de son lot. Le message original reste dans Discord.`,
+  }];
   if (command.name === 'modifier') return [{
     title: 'Idée modifiée', description: `L’idée #${command.idea.number} est corrigée, y compris dans son lot si elle était validée. Son statut est conservé.\n[Voir l’original](${command.idea.message.url})\nUn travail déjà engagé ou livré n’est pas modifié automatiquement.`,
   }];

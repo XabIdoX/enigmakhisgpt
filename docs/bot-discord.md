@@ -18,6 +18,8 @@ Dans le salon des idées, seules `:valider` et `:annuler` sont réservées à Do
 
 `:annuler` annule le dernier lot, sans revenir automatiquement au lot précédent en cas de répétition. Ce lot reste visible dans `:liste` et conserve sa place de borne chronologique. Modifier une idée annulée ne la revalide pas. Un travail déjà engagé ou livré n’est pas annulé ou modifié automatiquement.
 
+`:supprimer 3` est accessible aux membres du salon et retire l’idée n° 3 de la liste, des synthèses et du prochain « lance ». Un lien, un identifiant ou une réponse au message original fonctionne aussi. Le retrait conserve le message original et le numéro des autres idées.
+
 ## Persistance et reprise
 
 Discord sert de journal durable : le bot et le relais lisent toutes les pages d’historique et reconstruisent les mêmes idées, corrections et lots. Aucun fichier local persistant n’est nécessaire sur Render Free. Les commandes en attente sont rattrapées au démarrage, dans l’ordre chronologique. Les réponses du bot portent un repère par commande/page ; les reprises ne republient pas les réponses déjà présentes et complètent une liste interrompue. Les envois utilisent aussi les nonces Discord pour limiter les doublons lors des reprises immédiates.

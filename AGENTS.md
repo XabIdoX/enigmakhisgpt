@@ -17,7 +17,7 @@ Lire ce fichier et consulter le code actuel du dépôt avant de reprendre un cha
 
 ## Circuit Discord
 
-Seules les commandes `:valider` et `:annuler` sont réservées à DoX. Tous les membres ayant accès au salon peuvent utiliser `:liste`, `:modifier` et `:aide`. `:modifier <numéro, ID ou lien> <texte>` corrige une idée même validée ; en réponse au message original, `:modifier <texte>` suffit. Le statut est conservé, la synthèse et la lecture Codex sont actualisées. Les anciennes validations déjà confirmées sont conservées. Voir `docs/bot-discord.md`.
+Seules les commandes `:valider` et `:annuler` sont réservées à DoX. Tous les membres ayant accès au salon peuvent utiliser `:liste`, `:modifier`, `:supprimer` et `:aide`. `:supprimer <numéro>` retire l’idée de la liste et de son lot sans effacer le message original. `:modifier <numéro, ID ou lien> <texte>` corrige une idée même validée ; en réponse au message original, `:modifier <texte>` suffit. Le statut est conservé, la synthèse et la lecture Codex sont actualisées. Les anciennes validations déjà confirmées sont conservées. Voir `docs/bot-discord.md`.
 
 `:annuler` annule la dernière validation, sans effacer le lot ni déplacer la borne entre lots. Les lots annulés restent dans `:liste` mais sont exclus du prochain « lance ». Un travail déjà engagé ou livré n’est pas annulé ou modifié automatiquement.
 

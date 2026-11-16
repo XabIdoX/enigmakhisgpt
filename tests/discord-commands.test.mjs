@@ -144,6 +144,19 @@ test('a partial list delivery resumes without duplicate pages', async () => {
   assert.equal(f.sent.length, 3);
 });
 
+test('a member can remove pending and approved ideas without renumbering or erasing their messages', async () => {
+  const f = channelFixture([message(1, 'A'), message(2, 'B'), message(3, ':valider'),
+    message(4, 'C'), message(5, ':supprimer 1', '123'), message(6, ':supprimer 3', '123'), message(7, ':liste')]);
+  await processIdeaCommands(f.channel, ids);
+  const count = f.sent.length;
+  const journal = await processIdeaCommands(f.channel, ids);
+  assert.equal(f.sent.length, count);
+  assert.ok(f.all.some((m) => m.id === id(1)));
+  assert.deepEqual(journal.ideas.map((i) => i.number), [2]);
+  assert.deepEqual(relay(journal).syntheses[0].propositions.map((i) => i.texte), ['B']);
+  assert.deepEqual(journal.commands.at(-1).ideas.map((i) => i.number), [2]);
+});
+
 test('a recorded correction cannot move to another idea if an earlier original is deleted', async () => {
   const f = channelFixture([message(1, 'A'), message(2, 'B'), message(3, ':modifier 2 B corrigée')]);
   await processIdeaCommands(f.channel, ids);
