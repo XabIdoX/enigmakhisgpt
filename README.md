@@ -27,11 +27,11 @@ Le serveur expose un endpoint MCP sur `/mcp/<MCP_ACCESS_PATH>`. Il propose trois
 
 ### Commandes dans le salon des idées
 
-Toutes les commandes commencent par `:` et sont réservées au compte `DISCORD_APPROVER_USER_ID` (DoX), sans distinction de casse. Les autres membres peuvent proposer des idées en messages ordinaires.
+Les commandes commencent par deux-points et leur casse est indifférente. Seules `:valider` et `:annuler` sont réservées à DoX. Tous les membres du salon peuvent lister et corriger les idées et consulter l’aide.
 
 | Commande | Effet |
 | --- | --- |
-| `:OK` | Valide les nouvelles idées depuis la dernière validation. |
+| `:valider` | Valide les nouvelles idées depuis la dernière validation. |
 | `:annuler` | Annule la dernière validation, sans effacer ses idées. |
 | `:liste` | Affiche toutes les idées numérotées, par pages, avec leur statut et leur lien. |
 | `:modifier 3 Nouveau texte` | Remplace le texte de l’idée n° 3, même après validation. |

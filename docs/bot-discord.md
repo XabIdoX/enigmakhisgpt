@@ -12,7 +12,7 @@
 
 ## Périmètre
 
-Commandes `:OK`, `:annuler`, `:liste`, `:modifier` et `:aide`, uniquement dans le salon des idées et uniquement pour l’identifiant `DISCORD_APPROVER_USER_ID`. Les majuscules/minuscules sont indifférentes. Les commandes des autres comptes sont ignorées, sans devenir des propositions. Les messages ordinaires des créateurs continuent à constituer les idées.
+Dans le salon des idées, seules `:valider` et `:annuler` sont réservées à DoX. Tous les membres du salon peuvent lister et corriger les idées et consulter l’aide.
 
 `:modifier 3 Nouveau texte` remplace le texte courant de l’idée n° 3. Un identifiant Discord, un lien de message ou une réponse au message original sont également acceptés. La correction conserve l’auteur, les pièces jointes, le lot et son statut. Les synthèses existantes sont actualisées et le relais fournit le texte complet corrigé, même au-delà des six extraits affichés dans une synthèse Discord.
 

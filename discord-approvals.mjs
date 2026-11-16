@@ -26,7 +26,7 @@ function summaryEmbed(batch) {
     title: batch.cancelled ? CANCELLED_TITLE : APPROVED_TITLE,
     color: batch.cancelled ? 0x747f8d : 0xb9874e,
     description: batch.cancelled ? 'Ce lot a été annulé par DoX.'
-      : batch.ideas.length ? `✅ **${batch.ideas.length} proposition(s)** dans ce lot.` : 'Aucune nouvelle idée depuis le dernier :OK.',
+      : batch.ideas.length ? `✅ **${batch.ideas.length} proposition(s)** dans ce lot.` : 'Aucune nouvelle idée depuis le dernier :valider.',
     fields,
     footer: { text: 'EnigmAkhi · Validation par ' + authorName(batch.message) },
     timestamp: batch.message.createdAt.toISOString(),
@@ -66,7 +66,7 @@ export async function processIdeaCommands(channel, { botId, approverId }) {
     }
   }
   for (const command of journal.commands) {
-    if (command.legacy || (command.name === 'ok' && !command.error)) continue;
+    if (command.legacy || (command.name === 'valider' && !command.error)) continue;
     const embeds = responseEmbeds(command);
     for (const [page, embed] of embeds.entries()) {
       const marker = `EnigmAkhi · commande ${command.message.id} · page ${page + 1}`;
@@ -98,11 +98,11 @@ export function startApprovalBot({ token, channelId, approverId }) {
     return queue;
   }
   client.once('ready', () => {
-    console.log(`[discbot] ${client.user.tag} connecté ; commandes :OK, :annuler, :liste, :modifier, :aide réservées à DoX.`);
+    console.log(`[discbot] ${client.user.tag} connecté ; commandes chargées ; :valider et :annuler réservées à DoX.`);
     void scheduleProcessing();
   });
   client.on('messageCreate', (message) => {
-    if (message.channelId === channelId && message.author.id === approverId && parseCommand(message.content)) void scheduleProcessing();
+    if (message.channelId === channelId && !message.author.bot && parseCommand(message.content)) void scheduleProcessing();
   });
   client.on('error', (error) => console.error('[discbot] Erreur Discord :', error));
   void client.login(token).catch((error) => console.error('[discbot] Connexion Discord impossible :', error));

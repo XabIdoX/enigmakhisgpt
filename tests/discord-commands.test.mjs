@@ -21,18 +21,18 @@ function message(n, content, author = '777', extra = {}) {
 }
 const relay = (journal) => journalForRelay(journal, { guildId: '1', channelId: '2' });
 
-test('only the configured Discord ID can execute any colon command', () => {
+test('only DoX can validate or cancel, members can list, correct and get help', () => {
   const input = [message(1, 'Idée A', '123'), message(2, 'OK'), message(3, 'annuler')];
-  for (const [n, command] of [':OK', ':annuler', ':liste', ':modifier 1 Piratée', ':aide'].entries()) input.push(message(n + 4, command, '123'));
+  for (const [n, command] of [':valider', ':annuler', ':liste', ':modifier 1 Corrigée', ':aide'].entries()) input.push(message(n + 4, command, '123'));
   const journal = buildIdeaJournal(input, ids);
-  assert.equal(journal.commands.length, 0);
+  assert.equal(journal.commands.length, 3);
   assert.equal(journal.batches.length, 0);
-  assert.deepEqual(journal.ideas.map((i) => i.text), ['Idée A']);
-  assert.equal(buildIdeaJournal([...input, message(20, ':OK')], { ...ids, approverId: '' }).batches.length, 0);
+  assert.deepEqual(journal.ideas.map((i) => i.text), ['Corrigée']);
+  assert.equal(buildIdeaJournal([...input, message(20, ':valider')], { ...ids, approverId: '' }).batches.length, 0);
 });
 
 test('pending and approved ideas can be corrected by number, ID, link or reply', () => {
-  const input = [message(1, 'Initiale'), message(2, ':modifier 1 Avant validation'), message(3, ' :Ok '),
+  const input = [message(1, 'Initiale'), message(2, ':modifier 1 Avant validation'), message(3, ' :valider '),
     message(4, `:modifier ${id(1)} Après validation`), message(5, `:modifier https://discord.com/channels/1/2/${id(1)} Via lien`),
     message(6, ':modifier Via réponse\nDeuxième ligne', '777', { reference: { messageId: id(1) } }), message(7, ':liste')];
   const journal = buildIdeaJournal(input, ids);
@@ -45,8 +45,8 @@ test('pending and approved ideas can be corrected by number, ID, link or reply',
 
 test('cancelled lots remain visible and corrections do not revalidate them', () => {
   const journal = buildIdeaJournal([
-    message(1, 'A'), message(2, ':OK'), message(3, ':annuler'), message(4, ':modifier 1 A corrigée'),
-    message(5, 'B'), message(6, ':OK'), message(7, ':liste'),
+    message(1, 'A'), message(2, ':valider'), message(3, ':annuler'), message(4, ':modifier 1 A corrigée'),
+    message(5, 'B'), message(6, ':valider'), message(7, ':liste'),
   ], ids);
   assert.deepEqual(relay(journal).propositions.map((i) => i.statut), ['Validation annulée', 'Validée']);
   assert.equal(relay(journal).syntheses.length, 1);
@@ -56,7 +56,7 @@ test('cancelled lots remain visible and corrections do not revalidate them', () 
 test('invalid commands give useful errors without changing ideas', () => {
   const journal = buildIdeaJournal([
     message(1, ':annuler'), message(2, 'Idée'), message(3, ':modifier 1'), message(4, ':modifier 88 Texte'),
-    message(5, ':OK du texte'), message(6, ':inconnue'), message(7, ':liste texte'), message(8, ':aide'),
+    message(5, ':valider du texte'), message(6, ':inconnue'), message(7, ':liste texte'), message(8, ':aide'),
   ], ids);
   assert.equal(journal.commands.filter((c) => c.error).length, 6);
   assert.equal(journal.batches.length, 0);
@@ -64,10 +64,10 @@ test('invalid commands give useful errors without changing ideas', () => {
 });
 
 test('migration keeps acknowledged old lots and cancellations, without executing new bare OKs', () => {
-  const input = [message(1, 'Ancienne idée'), message(2, 'OK'),
+  const input = [message(1, 'Ancienne idée'), message(2, ':OK'),
     message(3, '', '999', { reference: { messageId: id(2) }, embeds: [{ title: 'Validation annulée' }] }),
     message(4, 'annuler'), message(5, '', '999', { reference: { messageId: id(4) }, embeds: [{ title: 'Annulation confirmée' }] }),
-    message(6, 'Nouvelle idée'), message(7, 'OK'), message(8, ':OK')];
+    message(6, 'Nouvelle idée'), message(7, 'OK'), message(8, ':OK'), message(9, ':valider')];
   const journal = buildIdeaJournal(input, ids);
   assert.equal(journal.batches.length, 2);
   assert.equal(journal.batches[0].cancelled, true);
@@ -105,7 +105,7 @@ function channelFixture(input) {
 test('full pagination, list pages, attachments and relay cover more than 100 messages', async () => {
   const messages = Array.from({ length: 125 }, (_, n) => message(n + 1, 'X'.repeat(2000), '123'));
   messages[124].attachments = [{ filename: 'plan.png', url: 'https://example.test/plan.png' }];
-  const f = channelFixture([...messages, message(126, ':OK'), message(127, ':liste')]);
+  const f = channelFixture([...messages, message(126, ':valider'), message(127, ':liste')]);
   assert.equal((await fetchHistory((options) => f.channel.messages.fetch(options))).length, 127);
   const journal = await processIdeaCommands(f.channel, ids);
   assert.equal(f.sent.filter((s) => s.embeds[0].title === 'Liste des idées').length, 21);
@@ -118,7 +118,7 @@ test('full pagination, list pages, attachments and relay cover more than 100 mes
 });
 
 test('summary is updated after correction and stays cancelled on restart', async () => {
-  const f = channelFixture([message(1, 'Ancien texte'), message(2, ':OK')]);
+  const f = channelFixture([message(1, 'Ancien texte'), message(2, ':valider')]);
   await processIdeaCommands(f.channel, ids);
   f.all.push(message(3, ':modifier 1 Texte corrigé'));
   await processIdeaCommands(f.channel, ids);
@@ -153,8 +153,8 @@ test('a recorded correction cannot move to another idea if an earlier original i
 });
 
 test('MCP tools return corrected complete lots and exclude cancelled ones', { timeout: 15000 }, async (t) => {
-  const history = [message(1, 'Annulée'), message(2, ':OK'), message(3, ':annuler'),
-    message(4, 'À corriger'), message(5, ':OK'), message(6, ':modifier 2 Correction complète'),
+  const history = [message(1, 'Annulée'), message(2, ':valider'), message(3, ':annuler'),
+    message(4, 'À corriger'), message(5, ':valider'), message(6, ':modifier 2 Correction complète'),
     ...Array.from({ length: 105 }, (_, n) => message(n + 7, `En attente ${n}`)),
   ].map((m) => ({ ...m, timestamp: m.createdAt.toISOString() }));
   const bootstrap = `import { registerHooks } from 'node:module';

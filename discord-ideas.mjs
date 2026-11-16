@@ -2,12 +2,12 @@
 export const APPROVED_TITLE = 'Idées validées';
 export const CANCELLED_TITLE = 'Validation annulée';
 export const HELP = [
-  '`:OK` — valider les nouvelles idées.',
+  '`:valider` — valider les nouvelles idées.',
   '`:annuler` — annuler la dernière validation.',
   '`:liste` — afficher toutes les idées et leur statut.',
   '`:modifier 3 Nouveau texte` — remplacer le texte de l’idée n° 3.',
   'Tu peux aussi utiliser son identifiant ou son lien, ou répondre au message original avec `:modifier Nouveau texte`.',
-  '`:aide` — revoir ces commandes. Elles sont réservées à DoX.',
+  '`:aide` — revoir ces commandes. Seules `:valider` et `:annuler` sont réservées à DoX.',
 ].join('\n');
 
 export const compareIds = (a, b) => BigInt(a) < BigInt(b) ? -1 : BigInt(a) > BigInt(b) ? 1 : 0;
@@ -72,7 +72,7 @@ export function buildIdeaJournal(messages, { approverId, botId }) {
     const text = String(message.content || '').trim();
     let command = parseCommand(text);
     // Only migrate bare commands already acknowledged by the previous bot.
-    if (/^ok$/i.test(text) && summaries.has(message.id)) command = { name: 'ok', args: '', legacy: true };
+    if (/^:?ok$/i.test(text) && summaries.has(message.id)) command = { name: 'valider', args: '', legacy: true };
     if (/^annuler$/i.test(text) && receipts.has(message.id)) command = { name: 'annuler', args: '', legacy: true };
     if (!command) {
       if (/^(ok|annuler)$/i.test(text)) continue;
@@ -82,13 +82,12 @@ export function buildIdeaJournal(messages, { approverId, botId }) {
       pending.push(idea);
       continue;
     }
-    // Commands from all other accounts never execute or become proposals.
-    if (!approverId || message.author?.id !== approverId) continue;
+    if (['valider', 'annuler'].includes(command.name) && (!approverId || message.author?.id !== approverId)) continue;
     const result = { ...command, message, receipt: receipts.get(message.id) };
     commands.push(result);
     if (command.name !== 'modifier' && command.args) {
       result.error = 'Cette commande ne prend pas de texte après son nom. Consulte `:aide`.';
-    } else if (command.name === 'ok') {
+    } else if (command.name === 'valider') {
       const old = summaries.get(message.id);
       const cancelled = command.legacy && (old?.embeds?.some((e) => e.title === CANCELLED_TITLE)
         || old?.content?.startsWith('🚫 SYNTHÈSE ANNULÉE'));

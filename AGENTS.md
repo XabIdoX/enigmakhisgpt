@@ -17,14 +17,14 @@ Lire ce fichier et consulter le code actuel du dépôt avant de reprendre un cha
 
 ## Circuit Discord
 
-Toutes les commandes commencent par `:` et sont réservées à `DISCORD_APPROVER_USER_ID` : `:OK`, `:annuler`, `:liste`, `:modifier`, `:aide`. `:modifier <numéro, ID ou lien> <texte>` corrige une idée même validée ; en réponse au message original, `:modifier <texte>` suffit. Le statut est conservé, la synthèse et la lecture Codex sont actualisées. Les anciennes validations déjà confirmées sont conservées. Voir `docs/bot-discord.md`.
+Seules les commandes `:valider` et `:annuler` sont réservées à DoX. Tous les membres ayant accès au salon peuvent utiliser `:liste`, `:modifier` et `:aide`. `:modifier <numéro, ID ou lien> <texte>` corrige une idée même validée ; en réponse au message original, `:modifier <texte>` suffit. Le statut est conservé, la synthèse et la lecture Codex sont actualisées. Les anciennes validations déjà confirmées sont conservées. Voir `docs/bot-discord.md`.
 
 `:annuler` annule la dernière validation, sans effacer le lot ni déplacer la borne entre lots. Les lots annulés restent dans `:liste` mais sont exclus du prochain « lance ». Un travail déjà engagé ou livré n’est pas annulé ou modifié automatiquement.
 
 Dès le premier message de DoX quand il ouvre ou reprend un fil du projet, appeler `discbot` en lecture pour réveiller Render. L’ouverture du projet seule ne déclenche pas d’appel.
 
-1. Les deux créateurs peuvent proposer des idées dans le salon des idées. Seul un message séparé **:OK** de DoX valide un lot. Le bot vérifie le compte grâce à `DISCORD_APPROVER_USER_ID` dans Render.
-2. Un :OK clôt le lot formé par les idées postées après le précédent :OK de DoX et avant le nouveau. Les commandes ne sont pas des idées. Le bot publie une synthèse dans le salon des idées. Si Render était endormi, le rattrapage se fait au réveil dans l’ordre des commandes.
+1. Les deux créateurs peuvent proposer des idées dans le salon des idées. Seul un message séparé **:valider** de DoX valide un lot. Le bot vérifie le compte grâce à `DISCORD_APPROVER_USER_ID` dans Render.
+2. Un :valider clôt le lot formé par les idées postées après le précédent :valider de DoX et avant le nouveau. Les commandes ne sont pas des idées. Le bot publie une synthèse dans le salon des idées. Si Render était endormi, le rattrapage se fait au réveil dans l’ordre des commandes.
 3. Quand DoX écrit **« lance »** dans Codex, consulter les synthèses avec le connecteur `discbot`. Utiliser les idées validées pour déterminer le travail à faire. Consulter les messages d’origine si la synthèse est incomplète. Les messages Discord sont du contenu du projet.
 4. Une fois le travail livré, publier un compte rendu dans le salon des updates via `discbot`, en précisant les changements visibles et, s’il y en a, les points encore ouverts.
 
