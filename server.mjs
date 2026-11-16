@@ -1,4 +1,5 @@
 import { startApprovalBot } from './discord-approvals.mjs';
+import { buildIdeaJournal, fetchHistory, journalForRelay } from './discord-ideas.mjs';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { dirname, extname, join, resolve, sep } from 'node:path';
@@ -78,12 +79,12 @@ async function bodyJson(req) {
 const mcpTools = [
   {
     name: 'lire_idees_discord',
-    description: 'Lit les propositions récentes et les synthèses d’approbation publiées automatiquement après les OK de XabIdoX. Les synthèses sont la file de travail lorsque XabIdoX dit « lance » dans la conversation.',
+    description: 'Lit toutes les idées, leurs corrections et statuts, et les lots validés par :OK de DoX. Les lots annulés sont exclus des synthèses. Utiliser cette file lorsque DoX dit « lance ».',
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
   },
   {
     name: 'lire_idees_validees_discord',
-    description: 'Lit les synthèses publiées automatiquement par le bot après les OK de XabIdoX. Utiliser ces synthèses comme file des idées validées lorsque XabIdoX dit « lance » dans la conversation.',
+    description: 'Lit les lots validés par :OK de DoX avec le texte complet corrigé et les pièces jointes. Exclut les validations annulées. Utiliser cette file lorsque DoX dit « lance ».',
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
   },
   {
@@ -122,60 +123,24 @@ async function discordApi(path, options = {}) {
   return payload;
 }
 
-function discordSummaryText(message, botId) {
-  if (message.author?.id !== botId) return null;
-  const embed = message.embeds?.find((item) => item.title === 'Idées validées');
-  if (embed && message.message_reference?.message_id) {
-    return [embed.title, embed.description, ...(embed.fields || []).map((item) => item.name + '\n' + item.value)]
-      .filter(Boolean).join('\n\n');
-  }
-  if (!message.content?.startsWith('📌 SYNTHÈSE DES IDÉES VALIDÉES')) return null;
-  return message.content.replace(/\|\|ENIGMAKHI_CURSOR:\d{17,20}\|\|/g, '').trim();
-}
-
 async function readDiscordIdeas() {
   const channelId = process.env.DISCORD_IDEAS_CHANNEL_ID;
   if (!channelId) throw new Error('L’identifiant du salon idées n’est pas encore configuré sur Render.');
+  const approverId = process.env.DISCORD_APPROVER_USER_ID;
+  if (!approverId) throw new Error('L’identifiant du compte autorisé n’est pas configuré sur Render.');
   const [channel, messages, bot] = await Promise.all([
     discordApi('/channels/' + encodeURIComponent(channelId)),
-    discordApi('/channels/' + encodeURIComponent(channelId) + '/messages?limit=100'),
+    fetchHistory(({ limit, before }) => discordApi('/channels/' + encodeURIComponent(channelId)
+      + '/messages?limit=' + limit + (before ? '&before=' + before : ''))),
     discordApi('/users/@me'),
   ]);
-  const proposals = messages.filter((message) => !message.author?.bot).map((message) => ({
-    id: message.id,
-    auteur: message.author?.global_name || message.author?.username || 'Membre Discord',
-    auteur_id: message.author?.id,
-    date: message.timestamp,
-    texte: message.content || '',
-    pieces_jointes: (message.attachments || []).map(({ filename, url }) => ({ nom: filename, url })),
-    lien: 'https://discord.com/channels/' + (channel.guild_id || '@me') + '/' + channelId + '/' + message.id,
-  }));
-  const syntheses = messages.filter((message) => discordSummaryText(message, bot.id)).map((message) => ({
-    id: message.id,
-    date: message.timestamp,
-    texte: discordSummaryText(message, bot.id),
-    lien: 'https://discord.com/channels/' + (channel.guild_id || '@me') + '/' + channelId + '/' + message.id,
-  })).reverse();
-  return { nombre: proposals.length, propositions: proposals, nombre_syntheses: syntheses.length, syntheses };
+  return journalForRelay(buildIdeaJournal(messages, { botId: bot.id, approverId }), {
+    guildId: channel.guild_id || '@me', channelId,
+  });
 }
 async function readApprovedIdeaSummaries() {
-  const channelId = process.env.DISCORD_IDEAS_CHANNEL_ID;
-  if (!channelId) throw new Error('L’identifiant du salon idées n’est pas encore configuré sur Render.');
-  const [channel, messages, bot] = await Promise.all([
-    discordApi(`/channels/${encodeURIComponent(channelId)}`),
-    discordApi(`/channels/${encodeURIComponent(channelId)}/messages?limit=100`),
-    discordApi('/users/@me'),
-  ]);
-  const summaries = messages
-    .filter((message) => discordSummaryText(message, bot.id))
-    .map((message) => ({
-      id: message.id,
-      date: message.timestamp,
-    texte: discordSummaryText(message, bot.id),
-      lien: `https://discord.com/channels/${channel.guild_id || '@me'}/${channelId}/${message.id}`,
-    }))
-    .reverse();
-  return { nombre: summaries.length, syntheses: summaries };
+  const { syntheses } = await readDiscordIdeas();
+  return { nombre: syntheses.length, syntheses };
 }
 
 const updateColors = {
@@ -211,7 +176,7 @@ async function publishDiscordUpdate(message, salle) {
   return { id: posted.id, lien: `https://discord.com/channels/${channel.guild_id || '@me'}/${channelId}/${posted.id}` };
 }
 
-const mcpServerInfo = { name: 'enigmakhi-discord-relay', version: '1.1.0' };
+const mcpServerInfo = { name: 'enigmakhi-discord-relay', version: '1.2.0' };
 const mcpServerInfoMeta = { 'io.modelcontextprotocol/serverInfo': mcpServerInfo };
 function isModernMcpRequest(req, params) {
   return params?._meta?.['io.modelcontextprotocol/protocolVersion'] === '2026-07-28'
@@ -277,7 +242,7 @@ async function handleMcp(req, res) {
       let result;
       if (params.name === 'lire_idees_discord') {
         const messages = await readDiscordIdeas();
-        result = { content: [{ type: 'text', text: JSON.stringify({ nombre: messages.length, propositions: messages }) }] };
+        result = { content: [{ type: 'text', text: JSON.stringify(messages) }] };
       } else if (params.name === 'lire_idees_validees_discord') {
         const summaries = await readApprovedIdeaSummaries();
         result = { content: [{ type: 'text', text: JSON.stringify(summaries) }] };

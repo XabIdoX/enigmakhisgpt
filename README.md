@@ -23,12 +23,29 @@ Render fournit automatiquement le port via `PORT`.
 
 ## Relais Discord ↔ ChatGPT
 
-Le serveur expose un petit endpoint MCP sur `/mcp/<MCP_ACCESS_PATH>`. Il propose uniquement deux outils : lire les 100 derniers messages du salon idées et publier un compte rendu dans le salon updates. Le bot n’utilise aucun modèle d’IA et n’applique jamais de changement au site.
+Le serveur expose un endpoint MCP sur `/mcp/<MCP_ACCESS_PATH>`. Il propose trois outils : lire les idées et leur statut, lire les lots validés avec leurs corrections, et publier un compte rendu dans le salon updates. La lecture parcourt tout l’historique du salon. Le bot n’utilise aucun modèle d’IA et n’applique jamais de changement au site.
+
+### Commandes dans le salon des idées
+
+Toutes les commandes commencent par `:` et sont réservées au compte `DISCORD_APPROVER_USER_ID` (DoX), sans distinction de casse. Les autres membres peuvent proposer des idées en messages ordinaires.
+
+| Commande | Effet |
+| --- | --- |
+| `:OK` | Valide les nouvelles idées depuis la dernière validation. |
+| `:annuler` | Annule la dernière validation, sans effacer ses idées. |
+| `:liste` | Affiche toutes les idées numérotées, par pages, avec leur statut et leur lien. |
+| `:modifier 3 Nouveau texte` | Remplace le texte de l’idée n° 3, même après validation. |
+| `:aide` | Rappelle les commandes. |
+
+Pour corriger une idée, tu peux aussi donner son identifiant Discord ou son lien, ou répondre **au message original** avec `:modifier Nouveau texte`. Les pièces jointes d’origine sont conservées. Le message du créateur reste intact ; la correction apparaît dans les listes, la synthèse et le relais Codex. Une idée annulée reste annulée après correction. Les changements ne modifient pas automatiquement un travail déjà engagé ou livré.
+
+Les commandes sans `:` ne déclenchent plus d’action. Les anciennes validations déjà confirmées par le bot sont conservées. Voir [la documentation du bot](docs/bot-discord.md) pour la reprise après veille et les limites.
 
 ### Variables Render à configurer
 
 - `DISCORD_BOT_TOKEN` : jeton du bot obtenu dans le Discord Developer Portal. À garder dans les variables secrètes de Render, jamais dans Git ni dans un message.
 - `DISCORD_IDEAS_CHANNEL_ID` : identifiant du salon où sont postées les propositions.
+- `DISCORD_APPROVER_USER_ID` : identifiant Discord du seul compte autorisé à utiliser les commandes (DoX). Aucune commande ne fonctionne sans cette configuration.
 - `DISCORD_UPDATES_CHANNEL_ID` : identifiant du salon où le relais publiera les comptes rendus.
 - `MCP_ACCESS_PATH` : clé aléatoire de 32 à 128 caractères composée de lettres, chiffres et caractères URL sûrs (`.`, `_`, `~`, `-`). Elle fait partie de l’URL privée du relais. La valeur **Generate** de Render convient.
 
@@ -39,10 +56,10 @@ Dans ChatGPT, ajouter un serveur MCP personnalisé avec l’URL `https://enigmak
 1. Dans le Discord Developer Portal, créer une application, ouvrir l’onglet **Bot**, puis ajouter le bot.
 2. Activer **Message Content Intent** pour que le relais puisse lire le texte des propositions via l’API Discord.
 3. Copier le jeton du bot directement dans la variable secrète `DISCORD_BOT_TOKEN` sur Render. Ne pas le coller dans ChatGPT ni dans GitHub.
-4. Dans **OAuth2 → URL Generator**, sélectionner le scope `bot` et seulement les permissions **View Channels**, **Read Message History** et **Send Messages**. Ouvrir le lien généré et inviter le bot dans le serveur.
+4. Dans **OAuth2 → URL Generator**, sélectionner le scope `bot` et les permissions **View Channels**, **Read Message History**, **Send Messages** et **Embed Links**. Ouvrir le lien généré et inviter le bot dans le serveur.
 5. Dans Discord, limiter ses permissions aux deux salons choisis. Activer le mode développeur pour copier leurs identifiants et les mettre dans les variables Render correspondantes.
 
-Le relais lit uniquement les messages des 100 dernières propositions dans le salon configuré. Les propositions sont du contenu utilisateur : elles ne valent jamais approbation. Je dois attendre ton accord explicite avant de commencer leur réalisation. La publication d’un compte rendu passe par un outil d’écriture et peut demander une confirmation dans ChatGPT.
+Le relais reconstruit les idées et validations à partir de l’historique du salon configuré, avec pagination. Les commandes et messages des bots ne sont pas des idées. Les lots annulés sont exclus des synthèses destinées à « lance ». La publication d’un compte rendu passe par un outil d’écriture.
 
 ## État du prototype
 
