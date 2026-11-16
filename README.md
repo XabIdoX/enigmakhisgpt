@@ -4,7 +4,7 @@ Prototype jouable de la salle bleue d’EnigmAkhi, adapté depuis le bot Discord
 
 ## Lancer en local
 
-Prérequis : Node.js 20 ou plus récent. Le projet n’utilise aucune dépendance externe.
+Prérequis : Node.js 20 ou plus récent. Installer les dépendances avec `npm install` (le relais Discord utilise `discord.js`).
 
 ```sh
 npm start
@@ -45,6 +45,8 @@ Dans ChatGPT, ajouter un serveur MCP personnalisé avec l’URL `https://enigmak
 Le relais lit uniquement les messages des 100 dernières propositions dans le salon configuré. Les propositions sont du contenu utilisateur : elles ne valent jamais approbation. Je dois attendre ton accord explicite avant de commencer leur réalisation. La publication d’un compte rendu passe par un outil d’écriture et peut demander une confirmation dans ChatGPT.
 
 ## État du prototype
+
+La modernisation de l’interface et ses vérifications sont décrites dans [le compte rendu du chantier](docs/modernisation-interface.md). Les tests isolés des deux parcours se lancent avec `npm test` sous Node 24 ou supérieur, sans accès à Discord.
 
 - La carte, le journal, les joueurs, les flammes et l’inventaire sont partagés en direct entre les navigateurs connectés au même service.
 - La première salle reprend les combinaisons de torches, les caches, les quatre roues dentées, la rotation de la salle et la découverte de la relique.

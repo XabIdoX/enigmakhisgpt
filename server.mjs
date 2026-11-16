@@ -474,7 +474,7 @@ function act(data) {
   return 'Action inconnue.';
 }
 
-const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.svg': 'image/svg+xml' };
+const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml' };
 const server = createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   if (url.pathname.startsWith('/mcp/')) return handleMcp(req, res);
@@ -528,7 +528,7 @@ const server = createServer(async (req, res) => {
   } catch { reply(res, 404, { error: 'Not found' }); }
 });
 
-server.listen(port, '0.0.0.0', () => console.log(`EnigmAkhi prêt sur le port ${port}`));
+server.listen(port, '0.0.0.0', () => console.log(`EnigmAkhi prêt sur le port ${server.address().port}`));
 
 startApprovalBot({
   token: process.env.DISCORD_BOT_TOKEN,

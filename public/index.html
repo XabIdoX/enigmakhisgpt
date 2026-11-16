@@ -3,66 +3,91 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#11120f">
+  <meta name="theme-color" content="#101b1c">
   <meta name="description" content="Une aventure archéologique coopérative à travers cinq expéditions et un secret enfoui depuis des siècles.">
   <title>EnigmAkhi — Le secret des huit pièces</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Marcellus&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/expedition.css">
+  <link rel="icon" href="/assets/compass.svg" type="image/svg+xml">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Aller au contenu</a>
   <div class="grain" aria-hidden="true"></div>
   <header class="topbar">
-    <a class="brand" href="#accueil" id="home-link" aria-label="EnigmAkhi, accueil"><span class="brand-mark">E</span><span>ENIGMAKHI<small>UNE EXPÉDITION COOPÉRATIVE</small></span></a>
+    <a class="brand" href="#accueil" id="home-link" aria-label="EnigmAkhi, accueil"><span class="brand-mark">E</span><span>ENIGMAKHI<small>LE SECRET DES HUIT PIÈCES</small></span></a>
+    <nav class="main-nav" aria-label="Navigation principale"><a href="#atlas" data-home-anchor="atlas">Les expéditions</a><button type="button" data-open-prologue>Le prologue</button></nav>
     <div class="top-meta"><span class="live-dot"></span><span id="connection-label">Chargement de l’expédition</span><span class="top-divider"></span><span id="header-player-count">0 AKHI</span></div>
     <button id="share-button" class="share-button"><span>↗</span> Inviter l’équipe</button>
   </header>
 
-  <main>
+  <main id="main-content">
     <section id="welcome-screen" class="welcome-screen">
-      <div class="welcome-hero" id="accueil">
-        <div class="welcome-copy">
-          <div class="eyebrow"><span class="eyebrow-line"></span> LE MYSTÈRE DES HUIT PIÈCES <span class="eyebrow-slash">/</span> LYON, 2020</div>
-          <h1>Une boîte.<br>Huit pièces.<br><em>Un secret sans âge.</em></h1>
-          <p class="lead">Le 14 avril 2020, à une brocante de Lyon, les Akhis achètent pour cinq euros une boîte héritée d’une grand-mère égyptienne. À l’intérieur : huit pièces de bronze numérotées et une consigne, « Chacun choisit sa pièce ».</p>
-          <div class="hero-actions"><a class="primary-cta" href="#rejoindre">Rejoindre l’expédition <span>↓</span></a><span class="players-online"><i class="live-dot"></i><b id="welcome-player-count">0</b> dans l’équipe</span></div>
-          <p class="fiction-note">Une fiction d’aventure inspirée de lieux historiques et de légendes.</p>
+      <section class="arrival-hero" id="accueil" aria-labelledby="hero-title">
+        <img class="hero-art" src="/assets/expedition-box.jpg" alt="Une boîte ancienne ouverte et ses huit pièces de bronze sur une table d’archéologue" fetchpriority="high" width="1536" height="1024">
+        <div class="hero-shade" aria-hidden="true"></div>
+        <div class="hero-edition"><span>UNE AVENTURE À VIVRE ENSEMBLE</span><span>VOL. 01 — LES ORIGINES</span></div>
+        <div class="arrival-copy">
+          <p class="eyebrow"><span class="eyebrow-line"></span> LYON, 14 AVRIL 2020</p>
+          <h1 id="hero-title">Certains secrets<br>ne se déterrent<br><em>qu’ensemble.</em></h1>
+          <p>Une boîte dénichée pour cinq euros.<br>Huit pièces de bronze. Et une histoire<br>qui n’attendait que vous.</p>
+          <div class="hero-actions"><a class="primary-cta" href="#rejoindre">Choisir ma pièce <span aria-hidden="true">↗</span></a><button class="prologue-link" data-open-prologue><span class="play-icon" aria-hidden="true">▷</span> Découvrir l’histoire</button></div>
+          <div class="hero-team"><span class="stacked-coins" aria-hidden="true">𓆣 <i>𓂀</i> 𓋹</span><span>Une enquête coopérative<br><b id="welcome-player-count">0</b> <span>dans l’équipe</span></span></div>
         </div>
-        <div class="artifact-scene" aria-label="Illustration d’une boîte ancienne et de huit pièces">
-          <div class="scene-orbit orbit-one"></div><div class="scene-orbit orbit-two"></div>
-          <div class="artifact-caption"><span>OBJET N° 01</span><b>La boîte des Akhis</b><small>Origine inconnue · trouvée à Lyon</small></div>
-          <div class="coin constellation coin-a">𓆣</div><div class="coin constellation coin-b">☼</div><div class="coin constellation coin-c">𓂀</div>
-          <div class="relic-box"><div class="box-lid"><span>𓋹</span><i></i></div><div class="box-front"><b>ENIGMAKHI</b><span>ANTIQUAE MEMORIAE</span></div><div class="box-shadow"></div></div>
-          <div class="scene-seal">8 <small>PIÈCES</small></div>
-        </div>
-      </div>
-
-      <section class="omar-thread"><div class="thread-emblem">𓋹</div><div><span class="section-kicker">LE SECRET DERRIÈRE LA BOÎTE</span><h2>Le silence d’Omar</h2></div><p>Des années plus tôt, l’archéologue Omar Zboubi a découvert sous la pyramide de Mykérinos un secret qu’il ne pouvait révéler. Un pacte de sang l’a réduit au silence. Avant sa mort, il a caché son message dans les traces de cinq expéditions. La boîte des Akhis pourrait être la première clé.</p></section>
-      <section class="expedition-section" aria-labelledby="journey-title">
-        <div class="section-heading"><div><span class="section-kicker">CINQ EXPÉDITIONS · UN SEUL FIL ROUGE</span><h2 id="journey-title">La trace d’Omar</h2></div><p>Chaque salle révèle une partie de ce que l’archéologue a découvert — et tenté de transmettre.</p></div>
-        <div class="expedition-track">
-          <article class="expedition-card first-chapter"><div class="expedition-art art-blue"><span class="expedition-number">01</span><span class="art-symbol">≈</span><span class="art-coordinate">ATLANTIQUE · BERMUDES</span></div><div class="expedition-copy"><span class="chapter-state"><i></i> PREMIÈRE EXPÉDITION · À JOUER</span><h3>Le site englouti</h3><p>Une découverte au cœur de l’Atlantique va changer la vie d’Omar.</p><b class="place-tag">Salle bleue <span>→</span></b></div></article>
-          <article class="expedition-card"><div class="expedition-art art-green"><span class="expedition-number">02</span><span class="art-symbol">⌁</span><span class="art-coordinate">JAVA · INDONÉSIE</span></div><div class="expedition-copy"><span class="chapter-state future"><i></i> 2E EXPÉDITION · À VENIR</span><h3>Gunung Padang</h3><p>Des strates anciennes gardent la mémoire d’un passage.</p><b class="place-tag">Salle verte <span>·</span></b></div></article>
-          <article class="expedition-card red-preview-card"><div class="expedition-art art-red"><span class="expedition-number">03</span><span class="art-symbol">✳</span><span class="art-coordinate">ĦAL SAFLIENI · MALTE</span></div><div class="expedition-copy"><span class="chapter-state red-ready"><i></i> 3E EXPÉDITION · ENQUÊTE JOUABLE</span><h3>Le dernier témoin</h3><p>George Herbert est retrouvé mort. Quatre archéologues, un secret.</p><b class="place-tag">Salle rouge <span>↗</span></b></div></article>
-          <article class="expedition-card"><div class="expedition-art art-gold"><span class="expedition-number">04</span><span class="art-symbol">△</span><span class="art-coordinate">GIZEH · ÉGYPTE</span></div><div class="expedition-copy"><span class="chapter-state future"><i></i> 4E EXPÉDITION · À VENIR</span><h3>Les pierres du désert</h3><p>La piste se rapproche de l’origine du pacte d’Omar.</p><b class="place-tag">Salle jaune <span>·</span></b></div></article>
-          <article class="expedition-card final-chapter"><div class="expedition-art art-black"><span class="expedition-number">05</span><span class="art-symbol">◉</span><span class="art-coordinate">PYRAMIDE DE MYKÉRINOS</span></div><div class="expedition-copy"><span class="chapter-state future"><i></i> DERNIÈRE EXPÉDITION · À VENIR</span><h3>La chambre scellée</h3><p>La salle où Omar a découvert ce qu’il ne pouvait révéler.</p><b class="place-tag">Salle noire <span>·</span></b></div></article>
-        </div>
-        <div class="fiction-footnote"><span>✦</span> Les expéditions mêlent des lieux réels et des éléments imaginaires. L’Atlantide et les événements d’Omar relèvent de la fiction.</div>
+        <button class="artifact-label" data-open-prologue><span class="artifact-cross" aria-hidden="true">+</span><span>PIÈCE À CONVICTION N° 001<strong>La boîte des Akhis</strong><small>Découvrir son histoire ↗</small></span></button>
+        <div class="hero-bottom"><span>EXPLORER. OBSERVER. RELIER.</span><a href="#atlas">Suivre la trace <span aria-hidden="true">↓</span></a><span>45°45′ N · 04°50′ E</span></div>
       </section>
+
+      <div class="field-strip"><span><i aria-hidden="true">◎</i> Une aventure coopérative</span><span><i aria-hidden="true">◇</i> Cinq expéditions reliées</span><span><i aria-hidden="true">↗</i> Des découvertes partagées en direct</span></div>
+
+      <section class="atlas-section" id="atlas" aria-labelledby="journey-title">
+        <div class="section-heading"><div><span class="section-kicker">01 / LE CARNET DES EXPÉDITIONS</span><h2 id="journey-title">Un secret. <em>Cinq destinations.</em></h2></div><p>Suivez les traces d’Omar, de l’Atlantique aux profondeurs de Mykérinos. Sélectionnez une étape pour ouvrir son dossier.</p></div>
+        <div class="atlas-layout">
+          <div class="atlas-map" aria-label="Itinéraire des cinq expéditions">
+            <svg viewBox="0 0 800 440" class="atlas-drawing" aria-hidden="true">
+              <defs><pattern id="atlas-grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="currentColor" stroke-opacity=".08"/></pattern></defs>
+              <rect width="800" height="440" fill="url(#atlas-grid)"/>
+              <g class="continents"><path d="M56 96l40-35 54-9 32 18 45 1 19 29-27 30-11 38-31 16-14 29-20-7-13-33-30-12-8-26-22-4zM183 226l38 0 33 22 24 45-22 49-10 37-22 28-16-29-10-53-16-31-17-32zM304 45l48-13 19 25-30 30-27-13zM383 104l28-25 39 0 17-24 50-4 24 17 54-6 44 20 49-4 49 32-11 28-37 14-14 26-35-12-11 25-30 19-13 24-21-10-15-37-33-7-22-19-28 11-14-18-28 4-4 25-27-9-10-25-25-3zM389 169l39-12 33 20 37 22-3 30-25 20-10 44-27 30-20-29-4-37-24-32-14-27zM593 254l28 13 24-5 19 16-33 4-27-12zM665 310l37-18 40 14 13 36-28 10-27-8-27 8-20-18z"/></g>
+              <path class="atlas-route" d="M210 153Q373 365 621 273Q574 91 410 148L446 176L462 194"/>
+              <text x="120" y="320">OCÉAN ATLANTIQUE</text><text x="564" y="374">OCÉAN INDIEN</text><text x="710" y="50">N ↑</text>
+            </svg>
+            <button class="atlas-pin pin-blue selected" data-expedition="0" aria-label="01, Salle bleue, Atlantide" aria-pressed="true"><span>01</span><b>ATLANTIDE</b></button>
+            <button class="atlas-pin pin-green" data-expedition="1" aria-label="02, Salle verte, Gunung Padang" aria-pressed="false"><span>02</span><b>GUNUNG PADANG</b></button>
+            <button class="atlas-pin pin-red" data-expedition="2" aria-label="03, Salle rouge, Ħal Saflieni" aria-pressed="false"><span>03</span><b>ĦAL SAFLIENI</b></button>
+            <button class="atlas-pin pin-gold" data-expedition="3" aria-label="04, Salle jaune, Gizeh" aria-pressed="false"><span>04</span><b>GIZEH</b></button>
+            <button class="atlas-pin pin-black" data-expedition="4" aria-label="05, Salle noire, Mykérinos" aria-pressed="false"><span>05</span><b>MYKÉRINOS</b></button>
+            <span class="atlas-caption">ITINÉRAIRE NARRATIF · POSITIONS INDICATIVES</span>
+          </div>
+          <article class="destination-card" id="destination-card" aria-live="polite"></article>
+        </div>
+        <div class="expedition-tabs" aria-label="Choisir une expédition">
+          <button data-expedition="0" aria-pressed="true" class="selected"><span>01 <i class="chapter-dot blue-dot"></i></span><b>Atlantide</b><small>Salle bleue</small></button>
+          <button data-expedition="1" aria-pressed="false"><span>02 <i class="chapter-dot green-dot"></i></span><b>Gunung Padang</b><small>Salle verte</small></button>
+          <button data-expedition="2" aria-pressed="false"><span>03 <i class="chapter-dot red-dot"></i></span><b>Ħal Saflieni</b><small>Salle rouge</small></button>
+          <button data-expedition="3" aria-pressed="false"><span>04 <i class="chapter-dot gold-dot"></i></span><b>Gizeh</b><small>Salle jaune</small></button>
+          <button data-expedition="4" aria-pressed="false"><span>05 <i class="chapter-dot black-dot"></i></span><b>Mykérinos</b><small>Salle noire</small></button>
+        </div>
+      </section>
+
+      <section class="story-teaser" aria-labelledby="omar-title"><div class="story-date">1895<span>15 FÉVRIER · MYKÉRINOS</span></div><div><span class="section-kicker">TOUT A COMMENCÉ PAR UN SILENCE</span><h2 id="omar-title">Il a trouvé le secret.<br><em>Il ne pouvait pas le raconter.</em></h2><p>Un rocher. Deux jours dans l’obscurité. Un pacte de sang. Avant de mourir, Omar Zboubi a trouvé une autre façon de transmettre ce qu’il savait.</p><button class="text-link" data-open-prologue>Ouvrir les premières pages <span aria-hidden="true">↗</span></button></div><div class="story-symbol" aria-hidden="true">𓂀</div></section>
 
       <section id="rejoindre" class="join-section">
-        <div class="join-intro"><span class="section-kicker">AVANT DE DESCENDRE</span><h2>Choisis ta pièce.</h2><p>Chaque personne choisit une pièce de la boîte. Pour cette première version, elle te représente dans l’équipe ; son pouvoir pourra être défini avec les règles du jeu.</p>
-          <div class="team-preview"><div class="team-avatars" id="welcome-players"></div><span><b id="team-preview-count">Personne n’a rejoint pour l’instant</b><small>Tout le monde partage les découvertes et l’inventaire.</small></span></div>
+        <div class="join-intro"><span class="section-kicker">02 / VOTRE PLACE DANS L’HISTOIRE</span><h2>Huit pièces.<br><em>Laquelle sera la vôtre ?</em></h2><p>Dans la boîte, un message en arabe : « Chacun choisi sa pièce ». Choisissez votre symbole, rassemblez les Akhis et entrez dans l’enquête.</p>
+          <ol class="join-steps"><li><span>01</span><div><b>Prenez votre pièce</b><p>Un nom et un symbole pour rejoindre l’équipe.</p></div></li><li><span>02</span><div><b>Explorez ensemble</b><p>Chaque objet et chaque découverte sont partagés.</p></div></li><li><span>03</span><div><b>Reliez les indices</b><p>Parlez-vous. La solution se construit à plusieurs.</p></div></li></ol>
+          <div class="team-preview"><div class="team-avatars" id="welcome-players"></div><span><b id="team-preview-count">L’expédition vous attend</b><small>Une même partie pour toute l’équipe.</small></span></div>
         </div>
-        <div class="join-card">
-          <label for="player-name">TON NOM D’AKHI</label><input id="player-name" maxlength="22" placeholder="Ex. Akhi Zino" autocomplete="nickname">
-          <div class="coin-heading"><span>TA PIÈCE</span><small>choisis parmi les huit</small></div><div class="coin-picker" id="coin-picker" role="radiogroup" aria-label="Choisis ta pièce"></div>
-          <div id="welcome-join-controls"><button id="join-button" class="join-submit">Rejoindre la partie <span>→</span></button></div>
-          <div class="join-footnote"><span>◎</span> En équipe, vos indices et objets sont mis en commun.</div>
+        <div class="join-card"><div class="join-card-top"><span>VOTRE PASSEPORT D’EXPÉDITION</span><span aria-hidden="true">✧</span></div>
+          <label for="player-name">Votre nom d’Akhi</label><input id="player-name" maxlength="22" placeholder="Ex. Akhi Zino" autocomplete="nickname" aria-describedby="join-error"><p id="join-error" class="field-error" role="alert"></p>
+          <div class="coin-heading"><span>Choisissez votre pièce</span><small>01 — 08</small></div><div class="coin-picker" id="coin-picker" role="radiogroup" aria-label="Choisissez votre pièce"></div>
+          <div class="coin-description" id="coin-description" aria-live="polite"></div>
+          <div id="welcome-join-controls"><button id="join-button" class="join-submit">Rejoindre l’équipe <span>→</span></button></div>
+          <div class="join-footnote">Votre pièce vous représente dans l’équipe. Tous les Akhis partagent les mêmes capacités.</div>
+          <p class="session-note">Partie commune en direct. La progression repart de zéro lorsque le serveur redémarre.</p>
         </div>
       </section>
-      <footer class="site-footer"><span>ENIGMAKHI</span><span>UNE HISTOIRE À DÉCHIFFRER ENSEMBLE</span><span>LYON · DEPUIS 2020</span></footer>
+      <footer class="site-footer"><a class="footer-brand" href="#accueil">ENIGMAKHI<span>Une histoire à déchiffrer ensemble.</span></a><p>Une fiction d’aventure inspirée de lieux historiques et de légendes.<br>Imaginée par les Akhis. À explorer ensemble.</p><a href="#accueil">Retour en haut ↑</a></footer>
     </section>
 
     <section id="game-screen" class="game-screen hidden">
@@ -70,8 +95,8 @@
       </div>
       <section class="game-grid">
         <div class="primary-column">
-          <div class="room-card panel"><div class="panel-heading"><div><span class="section-label">EXPLORATION</span><h2>Sanctuaire des profondeurs</h2></div><div class="room-status"><span class="live-dot"></span> EN EXPLORATION</div></div><div class="map-wrap sanctuary-map"><img id="room-map" width="1536" height="1024" src="/assets/blue-sanctuary.png" alt="Plan du sanctuaire de la première expédition"><div id="torch-points" class="torch-points"></div></div><div class="map-legend sanctuary-legend"><span><i class="legend-flame"></i> Flamme active</span><span><i class="legend-mural"></i> Fresque</span><a id="room-plan" href="/assets/blue_room_map_1.jpg" target="_blank" rel="noopener">Plan de la salle</a></div><div id="sanctuary-inspector" class="sanctuary-inspector" aria-live="polite">Sélectionnez une fresque.</div></div>
-          <div class="lower-grid"><section class="panel objects-panel"><div class="panel-heading compact"><div><span class="section-label">LIEUX & OBJETS</span><h2>Autour de vous</h2></div><span id="object-count" class="count-pill">0 objets</span></div><div id="object-grid" class="object-grid"></div><div id="action-feedback" class="feedback" aria-live="polite"></div></section>
+          <div class="room-card panel"><div class="panel-heading"><div><span class="section-label">EXPLORATION</span><h2>Sanctuaire des profondeurs</h2></div><div class="room-status"><span class="live-dot"></span> EN EXPLORATION</div></div><div class="map-wrap sanctuary-map"><img id="room-map" width="1536" height="1024" src="/assets/blue-sanctuary.png" alt="Plan du sanctuaire de la première expédition"><div id="torch-points" class="torch-points"></div></div><div class="map-legend sanctuary-legend"><button class="text-link" data-inspect-plan>⤢ Agrandir le plan</button><span><i class="legend-flame"></i> Flamme active</span><span><i class="legend-mural"></i> Fresque</span><a id="room-plan" href="/assets/blue_room_map_1.jpg" target="_blank" rel="noopener">Plan de la salle</a></div><div id="sanctuary-inspector" class="sanctuary-inspector" aria-live="polite">Sélectionnez une fresque.</div></div>
+          <div class="lower-grid"><section class="panel objects-panel"><div class="panel-heading compact"><div><span class="section-label">LIEUX & OBJETS</span><h2>Autour de vous</h2></div><span id="object-count" class="count-pill">0 objets</span></div><div class="object-toolbar" role="group" aria-label="Filtrer les éléments"><button data-object-filter="all" aria-pressed="true">Tout</button><button data-object-filter="items" aria-pressed="false">À ramasser</button><button data-object-filter="statues" aria-pressed="false">Statues</button><button data-object-filter="murals" aria-pressed="false">Fresques</button></div><div id="object-grid" class="object-grid"></div><div id="action-feedback" class="feedback" aria-live="polite"></div></section>
           <section class="panel inventory-panel"><div class="panel-heading compact"><div><span class="section-label">ÉQUIPE</span><h2>Inventaire commun</h2></div><span id="inventory-count" class="count-pill">0</span></div><div id="inventory-list" class="inventory-list"></div><div class="team-box"><div class="team-heading"><span>EXPÉDITION</span><b id="team-count">0 joueur</b></div><div id="player-list" class="player-list"></div><div id="join-box" class="join-box"></div></div></section></div>
         </div>
         <aside class="side-column"><section class="panel story-panel"><span class="section-label">CARNET DE BORD <span class="journal-live"><i></i> LIVE</span></span><h2>Chronologie</h2><div id="journal" class="journal"></div></section><section class="panel clue-panel"><div class="clue-top"><span class="section-label">PISTE DE L’ÉNIGME</span><span class="clue-spark">✦</span></div><h3>Les flammes bleues</h3><p>Chaque flamme suit un circuit de trois statues. Cliquez sur sa position actuelle pour la faire avancer.</p><details><summary>Lire l’indice</summary><p id="blue-hint"></p></details><div class="clue-sequence"><span>STATUE</span><span>FLAMME</span><span>ÉTAT</span></div><div id="flame-sequence" class="flame-sequence"></div></section><section class="objective-panel"><div class="objective-number">01</div><div><span>PROGRESSION</span><strong id="objective-title">Explorer les statues</strong><small id="objective-detail">Observez les flammes et les fresques de la salle.</small></div></section><div class="footer-note"><span>✦</span> Les découvertes sont partagées avec toute l’équipe.</div></aside>
@@ -130,7 +155,10 @@
       <footer class="game-footer">ENIGMAKHI <span>·</span> EXPÉDITION 03 <span>·</span> ĦAL SAFLIENI <span class="footer-right">LE DOSSIER EST PARTAGÉ</span></footer>
     </section>
   </main>
+  <div class="field-tools hidden" id="field-tools" aria-label="Outils d’expédition"><button data-open-notes><span aria-hidden="true">▤</span> Mes notes</button><button data-open-help><span aria-hidden="true">?</span> Comment jouer</button><button id="focus-mode" aria-pressed="false"><span aria-hidden="true">⤢</span> Immersion</button></div>
+  <dialog id="experience-dialog" aria-labelledby="dialog-title"><button class="dialog-close" aria-label="Fermer la fenêtre" autofocus>×</button><div id="dialog-content"></div></dialog>
   <div id="toast" class="toast" role="status"></div>
   <script src="/app.js" defer></script>
+  <script src="/experience.js" defer></script>
 </body>
 </html>

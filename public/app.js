@@ -1,4 +1,8 @@
 const stateUrl = '/api/state';
+const storage = {
+  getItem(key) { try { return localStorage.getItem(key); } catch { return null; } },
+  setItem(key, value) { try { localStorage.setItem(key, value); return true; } catch { return false; } },
+};
 const torchPositions = [
   [71, 22], [78, 32], [83, 45], [81, 56], [75, 66], [64, 73],
   [35, 73], [25, 66], [19, 56], [17, 45], [22, 32], [29, 22],
@@ -7,9 +11,16 @@ const muralPositions = [[88, 28], [94, 49], [89, 70], [75, 88], [25, 88], [11, 7
 const itemOrder = ['stone', 'bucket', 'tape_1', 'tape_2', 'document_1', 'document_2', 'document_3', 'tape_recorder', 'small_gear', 'medium_gear', 'big_gear', 'pickaxe', 'spear', 'old_gear', 'blue_relic'];
 const placeByStatue = { 3: 'stone', 5: 'pickaxe', 10: 'bucket', 8: 'spear' };
 let game = null;
-let playerId = localStorage.getItem('enigmakhi-player-id') || null;
-let draftName = localStorage.getItem('enigmakhi-player-name') || '';
-let selectedCoin = Number(localStorage.getItem('enigmakhi-player-coin') || 1);
+let playerId = storage.getItem('enigmakhi-player-id') || null;
+let draftName = storage.getItem('enigmakhi-player-name') || '';
+let selectedCoin = Number(storage.getItem('enigmakhi-player-coin') || 1);
+if (!Number.isInteger(selectedCoin) || selectedCoin < 1 || selectedCoin > 8) selectedCoin = 1;
+let currentScreen = 'welcome';
+let objectFilter = 'all';
+let inspectableObjects = new Map();
+let joining = false;
+let equusDraft = '';
+const pendingActions = new Set();
 let toastTimer;
 let selectedMural;
 const coins = [
@@ -49,6 +60,10 @@ let activeRedClue = null;
 const $ = (selector) => document.querySelector(selector);
 const esc = (value) => String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 $('#player-name').value = draftName;
+document.body.dataset.screen = currentScreen;
+function setMarkup(node, html) {
+  if (node && node.innerHTML !== html) node.innerHTML = html;
+}
 function toast(message) {
   const node = $('#toast');
   node.textContent = message;
@@ -63,12 +78,21 @@ async function api(path, data) {
   return result;
 }
 async function act(action, extra = {}) {
-  if (!playerId) return toast('Rejoins l’expédition avant d’agir.');
+  if (!game?.players.some((player) => player.id === playerId)) {
+    toast('Rejoins l’expédition avant d’agir.');
+    return false;
+  }
+  const key = JSON.stringify([action, extra]);
+  if (pendingActions.has(key)) return false;
+  pendingActions.add(key);
   try {
-    await api('/api/action', { action, playerId, ...extra });
+    const result = await api('/api/action', { action, playerId, ...extra });
+    if (result.state && (!game || result.state.version >= game.version)) { game = result.state; render(); }
     const hint = action === 'take' ? 'Objet ajouté à l’inventaire commun.' : null;
     if (hint) toast(hint);
-  } catch (error) { toast(error.message); }
+    return true;
+  } catch (error) { toast(error.message); return false; }
+  finally { pendingActions.delete(key); }
 }
 function accessible(item) {
   return item.location === 'room'
@@ -87,8 +111,8 @@ function renderMap() {
     const isActive = active.has(id);
     return `<button class="torch-point ${isActive ? 'is-flame' : ''}" style="left:${x}%;top:${y}%" aria-label="Statue ${id}${isActive ? ', torche allumée' : ''}" title="${isActive ? `Faire avancer la flamme ${id}` : `Statue ${id}`}" ${isActive ? `data-action="cycle-torch" data-torch-id="${id}"` : 'disabled'}>${id}</button>`;
   }).join('');
-  const murals = muralPositions.map(([x, y], index) => `<button class="torch-point is-mural" type="button" data-map-mural="${index + 1}" aria-label="Fresque ${index + 1}" style="left:${x}%;top:${y}%">${index + 1}</button>`).join('');
-  $('#torch-points').innerHTML = torches + murals;
+  const murals = muralPositions.map(([x, y], index) => `<button class="torch-point is-mural" type="button" data-map-mural="${index + 1}" aria-label="Fresque ${index + 1}" aria-pressed="${selectedMural === index + 1}" style="left:${x}%;top:${y}%">${index + 1}</button>`).join('');
+  setMarkup($('#torch-points'), torches + murals);
   const mapSrc = game.rotated ? '/assets/blue_room_map_2.jpg' : '/assets/blue_room_map_1.jpg';
   document.querySelector('#room-plan').href = mapSrc;
   if (selectedMural) renderMuralInspector();
@@ -136,50 +160,65 @@ function renderObjects() {
     ...Array.from({ length: 12 }, (_, i) => ({ id: `statue-${i + 1}`, name: `Statue ${i + 1}`, image: i + 1 === 8 ? 'spear.png' : 'stone.png', location: 'room', pickable: false })),
     ...Array.from({ length: 8 }, (_, i) => ({ id: `mural-${i + 1}`, name: `Fresque ${i + 1}`, image: game.muralBroken && i === 1 ? 'mural_broken.png' : 'mural_text.png', location: 'room', pickable: false })),
   ];
-  const visible = [...roomCards, ...items.filter((item) => !['old_gear','spear'].includes(item.id))];
+  const all = [...roomCards, ...items.filter((item) => !['old_gear','spear'].includes(item.id))];
+  inspectableObjects = new Map([...all, ...Object.values(game.items).filter((item) => game.inventory.includes(item.id))].map((item) => [item.id, item]));
+  const visible = all.filter((item) => objectFilter === 'all' || (objectFilter === 'items' && item.pickable) || (objectFilter === 'statues' && item.id.startsWith('statue-')) || (objectFilter === 'murals' && item.id.startsWith('mural-')));
   $('#object-count').textContent = `${visible.length} éléments`;
-  $('#object-grid').innerHTML = visible.map((item) => `<article class="object-card"><img src="/assets/${esc(item.image)}" alt=""><span class="object-copy"><strong>${esc(item.name)}</strong><small>${esc(item.id === 'center-table' ? `${game.insertedGears.length}/4 roues` : item.id.startsWith('statue-') && game.statueItems[item.id.split('-')[1]] ? 'Objet placé' : item.location === 'room' ? 'Dans la salle' : 'Cache révélée')}</small></span>${objectActions(item)}</article>`).join('');
+  setMarkup($('#object-grid'), visible.map((item) => `<article class="object-card"><button class="object-preview" data-inspect="${esc(item.id)}" aria-label="Examiner : ${esc(item.name)}"><img src="/assets/${esc(item.image)}" alt="" loading="lazy"></button><span class="object-copy"><strong>${esc(item.name)}</strong><small>${esc(item.id === 'center-table' ? `${game.insertedGears.length}/4 roues` : item.id.startsWith('statue-') && game.statueItems[item.id.split('-')[1]] ? 'Objet placé' : item.location === 'room' ? 'Dans la salle' : 'Cache révélée')}</small></span>${objectActions(item)}</article>`).join('') || '<p class="empty-state">Aucun objet à ramasser ici pour le moment. Continuez à explorer la salle.</p>');
 }
 function renderInventory() {
   const selected = itemOrder.filter((id) => game.inventory.includes(id));
   $('#inventory-count').textContent = selected.length;
-  $('#inventory-list').innerHTML = selected.length ? selected.map((id) => {
+  setMarkup($('#inventory-list'), selected.length ? selected.map((id) => {
     const item = game.items[id];
     let action = '';
     if (['small_gear', 'medium_gear', 'big_gear'].includes(id)) action = objectButton('Installer', 'insert-gear', { itemId: id });
     if (id === 'blue_relic') action = objectButton('Utiliser', 'use-relic');
-    return `<div class="inventory-item"><img src="/assets/${esc(item.image)}" alt=""><span>${esc(item.name)}</span>${action}</div>`;
-  }).join('') : '<div class="empty-state">Les objets ramassés par l’équipe apparaîtront ici.</div>';
+    return `<div class="inventory-item"><button class="object-preview" data-inspect="${esc(id)}" aria-label="Examiner : ${esc(item.name)}"><img src="/assets/${esc(item.image)}" alt=""></button><span>${esc(item.name)}</span>${action}</div>`;
+  }).join('') : '<div class="empty-state">Votre sac est encore vide. Examinez les objets de la salle pour commencer la collecte.</div>');
 }
 function renderPlayers() {
   $('#team-count').textContent = `${game.players.length} joueur${game.players.length === 1 ? '' : 's'}`;
   $('#player-list').innerHTML = game.players.map((player) => `<span class="player-chip"><i style="--player-color:${esc(player.color)}"></i>${coins[(Number(player.coin || 1) - 1) % coins.length].icon} ${esc(player.name)}${player.id === playerId ? ' · vous' : ''}</span>`).join('') || '<span class="empty-state">L’expédition vous attend.</span>';
   const isMember = game.players.some((player) => player.id === playerId);
   $('#join-box').classList.toggle('joined', isMember);
-  $('#join-box').innerHTML = isMember ? '<span class="joined-label">✓ Vous faites partie de l’expédition</span>' : `<input id="player-name" maxlength="22" placeholder="Votre nom" autocomplete="nickname" value="${esc(draftName)}"><button id="join-button">Rejoindre <span>→</span></button>`;
+  setMarkup($('#join-box'), isMember ? '<span class="joined-label">✓ Vous faites partie de l’expédition</span>' : '<button class="text-link" data-home-anchor="rejoindre">Choisir ma pièce et rejoindre →</button>');
 }
 function renderLanding() {
+  const member = game.players.find((player) => player.id === playerId);
+  if (member) {
+    selectedCoin = Math.max(1, Math.min(8, Math.floor(Number(member.coin) || 1)));
+    $('#player-name').value = member.name;
+  }
   const count = game.players.length;
   $('#welcome-player-count').textContent = count;
   $('#header-player-count').textContent = `${count} AKHI${count === 1 ? '' : 'S'}`;
   $('#team-preview-count').textContent = count ? `${count} joueur${count === 1 ? '' : 's'} dans l’équipe` : 'Personne n’a rejoint pour l’instant';
   $('#welcome-players').innerHTML = game.players.slice(0, 8).map((player) => `<span class="coin-avatar" title="${esc(player.name)}">${coins[(Number(player.coin || 1) - 1) % coins.length].icon}</span>`).join('');
-  $('#coin-picker').innerHTML = coins.map((coin, index) => `<button type="button" class="coin-choice ${selectedCoin === index + 1 ? 'selected' : ''}" role="radio" aria-checked="${selectedCoin === index + 1}" aria-label="Pièce ${index + 1} : ${coin.name}" title="${coin.name}" data-coin="${index + 1}">${coin.icon}</button>`).join('');
+  setMarkup($('#coin-picker'), coins.map((coin, index) => `<button type="button" class="coin-choice ${selectedCoin === index + 1 ? 'selected' : ''}" role="radio" aria-checked="${selectedCoin === index + 1}" tabindex="${selectedCoin === index + 1 ? '0' : '-1'}" aria-label="Pièce ${index + 1} : ${coin.name}" title="${coin.name}" data-coin="${index + 1}">${coin.icon}<span class="coin-numeral" aria-hidden="true">0${index + 1}</span></button>`).join(''));
+  $('#coin-description').innerHTML = `<span>Pièce 0${selectedCoin} · ${coins[selectedCoin - 1].name}</span><small>Votre symbole d’expédition</small>`;
   const isMember = game.players.some((player) => player.id === playerId);
   const controls = $('#welcome-join-controls');
   if (isMember) {
     const player = game.players.find((entry) => entry.id === playerId);
-    controls.innerHTML = `<div class="joined-panel"><span class="coin-avatar">${coins[(Number(player.coin || 1) - 1) % coins.length].icon}</span><span class="joined-name">Ta pièce est choisie.<br><b>${esc(player.name)}</b></span><div class="room-choice"><button id="start-game-button">Expédition 01 · Salle bleue <span>→</span></button><button id="start-red-button">Enquête 03 · Salle rouge <span>→</span></button></div></div>`;
+    setMarkup(controls, `<div class="joined-panel"><span class="coin-avatar">${coins[(Number(player.coin || 1) - 1) % coins.length].icon}</span><span class="joined-name">Votre pièce est choisie.<br><b>${esc(player.name)}</b></span><div class="room-choice"><button id="start-game-button">${game.finished ? 'Revoir' : 'Explorer'} la salle bleue <span>→</span></button><button id="start-red-button">${game.red.finished ? 'Revoir' : 'Ouvrir'} le dossier de la salle rouge <span>→</span></button></div></div>`);
   } else {
-    controls.innerHTML = '<button id="join-button" class="join-submit">Rejoindre la partie <span>→</span></button>';
+    setMarkup(controls, `<button id="join-button" class="join-submit" ${joining ? 'disabled' : ''}>${joining ? 'Connexion à l’équipe…' : 'Rejoindre l’équipe <span>→</span>'}</button>`);
   }
+  $('#player-name').disabled = isMember;
+  document.querySelectorAll('.coin-choice').forEach((button) => { button.disabled = isMember; });
 }
 function showScreen(screen) {
+  currentScreen = screen;
+  document.body.dataset.screen = screen;
+  document.body.classList.remove('focus-mode');
+  $('#focus-mode').setAttribute('aria-pressed', 'false');
+  $('#field-tools').classList.toggle('hidden', screen === 'welcome');
   const showWelcome = screen === 'welcome';
   $('#welcome-screen').classList.toggle('hidden', !showWelcome);
   $('#game-screen').classList.toggle('hidden', screen !== 'blue');
   $('#red-screen').classList.toggle('hidden', screen !== 'red');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
   if (screen === 'red' && playerId) act('red-enter');
 }
 function renderJournal() {
@@ -201,8 +240,23 @@ function renderClues() {
 }
 function render() {
   if (!game) return;
+  const focused = document.activeElement;
+  const focusId = focused?.id;
+  const focusAttrs = ['data-coin','data-map-mural','data-torch-id','data-action','data-item-id','data-statue-id','data-room','data-slot','data-red-clue','data-inspect'];
+  const focusSelector = focused ? focusAttrs.filter((key) => focused.hasAttribute(key)).map((key) => `[${key}="${CSS.escape(focused.getAttribute(key))}"]`).join('') : '';
+  const selection = focused instanceof HTMLInputElement ? [focused.selectionStart, focused.selectionEnd] : null;
+  const scrolls = ['object-grid','inventory-list','journal','red-journal','red-evidence-list'].map((id) => [id, document.getElementById(id)?.scrollTop]);
   renderMap(); renderObjects(); renderInventory(); renderPlayers(); renderJournal(); renderClues(); renderLanding(); renderRed();
+  const codeInput = $('#equus-code');
+  if (codeInput) codeInput.value = equusDraft;
+  if (focused && !focused.isConnected) {
+    const replacement = focusId ? document.getElementById(focusId) : focusSelector ? document.querySelector(focusSelector) : null;
+    replacement?.focus({ preventScroll:true });
+    if (selection && replacement instanceof HTMLInputElement) replacement.setSelectionRange(...selection);
+  }
+  for (const [id, scrollTop] of scrolls) if (scrollTop !== undefined) document.getElementById(id).scrollTop = scrollTop;
   $('#connection-label').textContent = 'Équipe synchronisée';
+  document.dispatchEvent(new CustomEvent('expedition:updated'));
 }
 const redActionNames = {
   'horse-mark':'Lire la fresque du Cheval','whale-mark':'Lire la fresque de la Baleine','falcon-mark':'Lire la fresque du Faucon','phoenix-mark':'Lire la fresque du Phénix',
@@ -267,35 +321,57 @@ function renderRed() {
   $('#red-inspector-kicker').textContent = clue.kicker;
   $('#red-inspector-title').textContent = clue.title;
   $('#red-inspector-copy').textContent = clue.body;
-  $('#red-inspector-actions').innerHTML = renderRedActions(clue, red);
+  setMarkup($('#red-inspector-actions'), renderRedActions(clue, red));
+  if ($('#equus-code')) $('#equus-code').value = equusDraft;
 }
 async function join() {
+  if (joining) return;
   const input = $('#player-name');
   const name = (input?.value || draftName).trim();
-  if (!name) return toast('Entre ton nom pour rejoindre l’expédition.');
+  $('#join-error').textContent = '';
+  input.removeAttribute('aria-invalid');
+  if (!name) {
+    $('#join-error').textContent = 'Entrez votre nom pour rejoindre l’expédition.';
+    input.setAttribute('aria-invalid', 'true'); input.focus(); return;
+  }
   draftName = name;
+  joining = true;
+  if (game) renderLanding();
   try {
     const result = await api('/api/join', { name, coin: selectedCoin, playerId });
     playerId = result.player.id;
-    localStorage.setItem('enigmakhi-player-id', playerId);
-    localStorage.setItem('enigmakhi-player-name', name);
-    localStorage.setItem('enigmakhi-player-coin', selectedCoin);
+    storage.setItem('enigmakhi-player-id', playerId);
+    storage.setItem('enigmakhi-player-name', name);
+    storage.setItem('enigmakhi-player-coin', selectedCoin);
+    const response = await fetch(stateUrl);
+    if (!response.ok) throw new Error('La synchronisation a échoué. Réessayez.');
+    game = await response.json();
     toast(`Bienvenue dans l’expédition, ${name} !`);
     render();
-  } catch (error) { toast(error.message); }
+    $('#start-game-button')?.focus({ preventScroll:true });
+  } catch (error) { $('#join-error').textContent = error.message; toast(error.message); }
+  finally { joining = false; if (game) renderLanding(); }
 }
-document.addEventListener('input', (event) => { if (event.target.id === 'player-name') draftName = event.target.value; });
+document.addEventListener('input', (event) => {
+  if (event.target.id === 'player-name') { draftName = event.target.value; $('#join-error').textContent = ''; event.target.removeAttribute('aria-invalid'); }
+  if (event.target.id === 'equus-code') equusDraft = event.target.value;
+});
 document.addEventListener('click', (event) => {
   const mural = event.target.closest('[data-map-mural]');
   if (mural) {
     selectedMural = Number(mural.dataset.mapMural);
-    renderMuralInspector();
+    renderMap();
   }
   const redClue = event.target.closest('[data-red-clue]');
   if (redClue) {
-    activeRedClue = redClue.dataset.redClue;
-    $('#red-inspector-title').textContent = 'Examen en cours…';
-    act('red-inspect', { clueId: activeRedClue });
+    const clueId = redClue.dataset.redClue;
+    act('red-inspect', { clueId }).then((success) => {
+      if (!success) return;
+      activeRedClue = clueId;
+      renderRed();
+      document.querySelectorAll('[data-red-clue]').forEach((button) => button.classList.toggle('is-selected', button.dataset.redClue === clueId));
+      if (matchMedia('(max-width: 850px)').matches) $('.red-inspector').scrollIntoView({ behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block:'center' });
+    });
   }
   const target = event.target.closest('[data-action]');
   if (target) {
@@ -311,12 +387,14 @@ document.addEventListener('click', (event) => {
   const coin = event.target.closest('[data-coin]');
   if (coin) {
     selectedCoin = Number(coin.dataset.coin);
-    localStorage.setItem('enigmakhi-player-coin', selectedCoin);
+    storage.setItem('enigmakhi-player-coin', selectedCoin);
     document.querySelectorAll('.coin-choice').forEach((button) => {
       const selected = Number(button.dataset.coin) === selectedCoin;
       button.classList.toggle('selected', selected);
       button.setAttribute('aria-checked', String(selected));
+      button.tabIndex = selected ? 0 : -1;
     });
+    $('#coin-description').innerHTML = `<span>Pièce 0${selectedCoin} · ${coins[selectedCoin - 1].name}</span><small>Votre symbole d’expédition</small>`;
   }
   if (event.target.closest('#join-button')) join();
   if (event.target.closest('#start-game-button')) showScreen('blue');
@@ -327,14 +405,15 @@ document.addEventListener('click', (event) => {
     showScreen('welcome');
   }
   if (event.target.closest('#share-button')) {
-    navigator.clipboard?.writeText(location.href).then(() => toast('Lien de la partie copié.')).catch(() => toast('Copie le lien affiché dans la barre d’adresse.'));
+    shareExpedition();
   }
 });
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Enter' && event.target.id === 'player-name') join();
   if (event.key === 'Enter' && event.target.id === 'equus-code') act('red-open-horse', { code: event.target.value });
 });
-fetch(stateUrl).then((response) => response.json()).then((snapshot) => { game = snapshot; render(); }).catch(() => toast('Impossible de joindre le serveur de la partie.'));
+fetch(stateUrl).then((response) => { if (!response.ok) throw new Error('Serveur indisponible'); return response.json(); }).then((snapshot) => { if (!game || snapshot.version >= game.version) { game = snapshot; render(); } }).catch(() => toast('Le serveur se réveille. La connexion sera rétablie automatiquement.'));
 const events = new EventSource('/api/events');
+events.onopen = () => { document.body.dataset.connection = 'online'; $('#connection-label').textContent = 'Équipe synchronisée'; };
 events.onmessage = (event) => { game = JSON.parse(event.data); render(); };
-events.onerror = () => { $('#connection-label').textContent = 'Reconnexion…'; };
+events.onerror = () => { document.body.dataset.connection = 'offline'; $('#connection-label').textContent = 'Reconnexion…'; };

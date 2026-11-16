@@ -31,3 +31,7 @@ Le bot et le point d’accès MCP tournent avec le site sur Render Free. La dern
 - Simplification possible : relire Discord par son API au démarrage et au « lance », et éventuellement à intervalles réguliers pendant que Render est réveillé. Cela permettrait de retirer la connexion permanente à Discord si le délai convient.
 
 Ces améliorations sont des propositions à reprendre quand elles seront demandées ou validées.
+
+## Interface et expérience d’expédition
+
+La modernisation du 16 novembre 2026 suit une direction carnet d’expédition : bleu profond, bronze et papier clair. L’accueil comporte un prologue, un atlas interactif et un passeport de joueur. Les outils personnels (notes locales, immersion) ne changent pas les règles partagées. Voir `docs/modernisation-interface.md` pour les fichiers, les vérifications et les limites conservées. Garder explicite la différence entre les deux salles jouables et les trois chapitres à venir.
