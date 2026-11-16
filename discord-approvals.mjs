@@ -120,6 +120,10 @@ export function startApprovalBot({ token, channelId, approverId }) {
     let summary = await latestSummary(channel, botId);
     const cursor = summary && approvalId(summary, botId);
     const messages = await messagesAfter(channel, cursor);
+    const confirmedCancellations = new Set(messages
+      .filter((message) => message.author.id === botId
+        && message.embeds.some((embed) => embed.title === 'Annulation confirmée'))
+      .map((message) => message.reference?.messageId));
     let pending = [];
 
     for (const message of messages) {
@@ -129,7 +133,19 @@ export function startApprovalBot({ token, channelId, approverId }) {
         summary = await publishBatch(channel, pending, message);
         pending = [];
       } else if (message.author.id === approverId && command === 'annuler') {
-        if (summary) await cancelSummary(summary);
+        if (!summary || confirmedCancellations.has(message.id)) continue;
+        await cancelSummary(summary);
+        await channel.send({
+          embeds: [{
+            title: 'Annulation confirmée',
+            description: 'Ta dernière validation est annulée. [Voir la synthèse](' + summary.url + ')',
+            color: 0x747f8d,
+          }],
+          reply: { messageReference: message.id },
+          allowedMentions: { parse: [], repliedUser: false },
+          nonce: message.id,
+          enforceNonce: true,
+        });
       } else {
         pending.push(message);
       }
