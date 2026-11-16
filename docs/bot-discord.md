@@ -1,5 +1,15 @@
 # Commandes Discord — 16 novembre 2026
 
+## Livraison vérifiée
+
+- Commit applicatif : `9932768ebc04a5d7b6d96e02a0c2b3abd6d5a704` sur `main`.
+- Déploiement `dep-dbtnbebm8hqs73cvof00` confirmé `live` le 16 novembre 2026 à 22 h 30 (Paris), service `enigmakhi-preview`, espace `My Workspace` confirmé par DoX.
+- Le push n’a pas déclenché de déploiement automatique ; après vérification de l’absence de déploiement en cours, déclenchement explicite de la dernière version.
+- Connexion du bot confirmée dans les journaux avec les cinq nouvelles commandes. Aucune erreur depuis son démarrage lors du contrôle.
+- Lecture réelle via `discbot` : une idée historique « test », statut « Validation annulée », aucun lot actif. La migration a conservé l’annulation.
+- 11 tests réussis, dont intégration HTTP des deux outils de lecture MCP et parcours du jeu. Les commandes depuis le compte DoX ont été simulées en tests isolés ; aucun message de test n’a été envoyé en son nom.
+- [Compte rendu Discord](https://discord.com/channels/1073679166844702772/1571883063997104260/1572001077921058838).
+
 ## Périmètre
 
 Commandes `:OK`, `:annuler`, `:liste`, `:modifier` et `:aide`, uniquement dans le salon des idées et uniquement pour l’identifiant `DISCORD_APPROVER_USER_ID`. Les majuscules/minuscules sont indifférentes. Les commandes des autres comptes sont ignorées, sans devenir des propositions. Les messages ordinaires des créateurs continuent à constituer les idées.
