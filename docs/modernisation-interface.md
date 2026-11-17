@@ -147,3 +147,9 @@ Vérifications effectuées : 14 tests existants réussis, vérification du geste
 DoX a validé la proposition de dalle réelle et demandé la mise en ligne de l’ensemble des améliorations. Le son synthétique du test est remplacé par public/assets/stone-slab-slide.mp3, un extrait de 5,51 secondes de « stone_sliding.wav » par Rooms_Boxes, https://freesound.org/people/Rooms_Boxes/sounds/424169/, licence Creative Commons Zero (CC0). La source décrit une dalle déplacée sur un carrelage sablonneux. Extrait issu de l’aperçu MP3 haute qualité, de 7 à 12,5 secondes, sans modification de hauteur.
 
 L’ouverture de la table dure désormais 5,5 secondes pour accompagner cet extrait. La lecture comporte un fondu bref au début et à la fin. En réduction des mouvements, un court extrait de 0,8 seconde est joué. Les mentions du son synthétique dans le compte rendu précédent décrivent uniquement le premier essai, remplacé après son rejet par DoX.
+
+### Publication vérifiée
+
+L’ensemble des améliorations d’Atlantide a été publié le 17 novembre 2026, commit 78ef38c, déploiement Render dep-dbudc2kipgvc738je1p0 confirmé live. La page, app.js, experience.js, sanctuary.css, sanctuary-audio.js, les deux illustrations utilisées et le son MP3 approuvé ont été comparés avec les fichiers locaux et sont identiques après normalisation des fins de ligne des fichiers texte. L’API répond correctement. Aucun log applicatif de niveau erreur n’a été remonté pendant le déploiement. L’extrait validé est servi avec le type audio/mpeg.
+
+La consigne générale de priorité au web sur ordinateur est enregistrée dans les deux fichiers AGENTS.md du projet. Les adaptations et vérifications spécifiques aux mobiles et tablettes sont reportées à la finalisation complète du jeu.
