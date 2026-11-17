@@ -1,0 +1,76 @@
+/* The scene is built from independent elements so server updates preserve animation. */
+.sanctuary-scene {
+  position: relative; isolation: isolate; overflow: clip; aspect-ratio: 1.28;
+  background: #06191f; container-type: inline-size; color: #d9e5db;
+}
+.scene-ocean { overflow:clip; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%,#26626a88,transparent 62%),repeating-conic-gradient(from 20deg at 50% -50%,#6acac50a 0deg 9deg,transparent 12deg 20deg),#071b23; }
+.scene-ocean::after { content:""; position:absolute; inset:-20%; background:repeating-radial-gradient(ellipse at 40% 30%,transparent 0 5%,#6acac516 6%,transparent 7% 14%); animation: water-drift 18s ease-in-out infinite alternate; }
+.scene-chamber { position:absolute; inset:4% 3% 11%; border-radius:50%; border:2.2cqw solid #42555a; box-shadow:0 2cqw 0 #172d35,0 3cqw 2cqw #0009,inset 0 0 0 .5cqw #ac966b66; background:repeating-conic-gradient(#8b987c33 0deg 1deg,transparent 1deg 30deg),#2d4144; }
+.scene-floor { position:absolute; inset:3%; border-radius:50%; border:1px solid #92a08b77; background:radial-gradient(ellipse,#54817c30,transparent 65%),repeating-conic-gradient(from 15deg,#9ab59d0d 0deg 1deg,transparent 1deg 30deg),repeating-radial-gradient(ellipse,transparent 0 11%,#90a58d22 11.3% 11.8%,transparent 12% 15%),#20393e; box-shadow:inset 0 0 4cqw #061b25; }
+.scene-floor::after { content:""; position:absolute; inset:10%; border:1px solid #bbab7255; outline:1px solid #bbab7230; outline-offset:1.5cqw; border-radius:50%; }
+.scene-compass { position:absolute; inset:0; display:grid; place-items:center; color:#b9ac6a22; font-size:48cqw; }
+.scene-entry { position:absolute; left:43%; top:82%; width:14%; height:13%; background:repeating-linear-gradient(#627371 0 15%,#283d42 17% 22%); clip-path:polygon(20% 0,80% 0,100% 100%,0 100%); opacity:.8; }
+.scene-elements { position:absolute; inset:0; }
+.scene-point { position:absolute; left:var(--x); top:var(--y); transform:translate(-50%,-50%); padding:0; background:none; border:0; color:inherit; cursor:pointer; font:inherit; -webkit-tap-highlight-color:transparent; }
+.scene-point[hidden] { display:none; }
+.scene-point:focus-visible { outline:2px solid #f4d398; outline-offset:5px; border-radius:5px; }
+.scene-point:hover { filter:brightness(1.25); }
+.scene-number { position:absolute; left:50%; bottom:-.8cqw; transform:translate(-50%,70%); background:#102930; border:1px solid #82928a88; border-radius:50%; width:3cqw; height:3cqw; min-width:19px; min-height:19px; display:grid; place-items:center; font:600 clamp(9px,1.5cqw,13px) var(--font); color:#cddbd6; z-index:2; }
+.scene-point[aria-pressed="true"] .scene-number { background:#e7c58e; color:#1b2e34; border-color:#ffe4b6; box-shadow:0 0 1.5cqw #f5cd7a55; }
+.scene-statue { width:6%; height:9%; z-index:3; }
+.statue-body { position:absolute; inset:0; filter:drop-shadow(1cqw 1.3cqw .4cqw #0008); }
+.statue-head { position:absolute; width:38%; height:28%; left:31%; top:0; border-radius:45% 45% 35% 35%; background:linear-gradient(110deg,#82978d,#425b60 65%,#20373e); border-top:1px solid #b0b9a0; }
+.statue-robe { position:absolute; left:17%; top:26%; width:66%; height:57%; clip-path:polygon(26% 0,74% 0,100% 100%,0 100%); background:repeating-linear-gradient(100deg,transparent 0 16%,#152d3866 18% 22%),linear-gradient(100deg,#7b8e83,#334e56); }
+.statue-plinth { position:absolute; bottom:0; left:0; width:100%; height:22%; background:linear-gradient(#a1a88b,#596a60 25%,#293e43 26%,#3c5555); border-radius:15%; border-bottom:3px solid #172b32; }
+.statue-offering { display:none; position:absolute; width:28%; height:14%; background:#ddb276; left:36%; top:55%; box-shadow:0 0 .6cqw #d8b570; }
+.has-offering .statue-offering { display:block; }
+.statue-fire { position:absolute; right:0; top:12%; width:23%; height:24%; border-radius:50% 0 50% 50%; transform:rotate(-35deg); background:#26353a; border:1px solid #62766c; }
+.is-lit .statue-fire { border-color:#ffe6ae; background:radial-gradient(at 35% 70%,#fff5bc 10%,#ffcc67 40%,#e88128); box-shadow:0 0 1cqw #ffce74,0 0 3cqw 1cqw #efac4c66,0 0 6cqw 2cqw #edaa4133; animation:scene-flame 2.1s ease-in-out infinite alternate; }
+.scene-mural { width:5%; height:7%; z-index:2; border:1px solid #7e9b92; border-radius:3px; background:linear-gradient(120deg,#546e69,#203e48); box-shadow:.4cqw .6cqw 0 #071f2b; }
+.mural-engraving { font:3.5cqw Georgia,serif; color:#a8c8b7; text-shadow:0 1px #102d3c; }
+.scene-mural .scene-number { width:auto; border-radius:3px; padding:0 3px; height:auto; min-height:15px; min-width:20px; font-size:clamp(8px,1.2cqw,11px); }
+.scene-mural.is-revealed { border-color:#d5b275; box-shadow:0 0 2cqw #dab87766; }
+.scene-mural.is-broken { clip-path:polygon(0 0,100% 0,100% 60%,60% 42%,80% 85%,0 100%); }
+.scene-table { width:23%; aspect-ratio:1; z-index:2; }
+.table-disc { position:absolute; inset:0; border-radius:50%; border:.8cqw solid #8b805b; outline:1px solid #b4a16e; outline-offset:.5cqw; background:repeating-conic-gradient(#b6a36a55 0deg 2deg,transparent 2deg 30deg),radial-gradient(circle,#1a3941 0 50%,#6c7050 51% 53%,#263e40 54%); box-shadow:0 1.2cqw 0 #122a32,0 1.4cqw 2cqw #0008,inset 0 0 2cqw #081e26; transform:rotate(0deg); transition:transform 2.4s cubic-bezier(.3,.1,.2,1),box-shadow 1s; }
+.is-rotated .table-disc { transform:rotate(90deg); }
+.is-ready .table-disc { box-shadow:0 1.2cqw 0 #122a32,0 0 3cqw #8fc9b355,inset 0 0 2cqw #081e26; }
+.table-gear { position:absolute; font-size:6cqw; line-height:1; color:#a19a73; opacity:.13; width:40%; height:40%; display:grid; place-items:center; transition:opacity .6s,color .6s; }
+.gear-0 { left:9%; top:10%; }.gear-1 { right:10%; top:10%; }.gear-2 { left:10%; bottom:10%; }.gear-3 { right:9%; bottom:10%; }
+.table-gear.is-installed { opacity:1; color:#d1b77d; text-shadow:0 2px 2px #061e26; }
+.table-needle { position:absolute; width:9%; height:9%; border-radius:50%; left:45.5%; top:45.5%; background:#dfc080; box-shadow:0 0 1cqw #cda96c99; }
+.landmark-label { position:absolute; top:100%; left:50%; transform:translateX(-50%); white-space:nowrap; color:#dfd6b8; font-size:clamp(9px,1.6cqw,13px); letter-spacing:.04em; margin-top:1.2cqw; text-shadow:0 2px 3px #000; }
+.scene-point[aria-pressed="true"] .landmark-label { color:#ffe2a8; text-decoration:underline; text-underline-offset:4px; }
+.scene-pool { width:16%; height:9%; border-radius:50%; background:#577574; border:.7cqw solid #577574; box-shadow:0 .6cqw 0 #172e35,0 0 1cqw #60bbbb22; z-index:2; }
+.pool-water { display:block; position:absolute; inset:0; border-radius:50%; overflow:hidden; background:radial-gradient(at 30% 30%,#408f93,#164c60 60%,#0a273d); box-shadow:inset 0 .7cqw 1cqw #071c2b; }
+.pool-water i { position:absolute; inset:20%; border:1px solid #9cdbcd77; border-radius:50%; animation:scene-ripple 5s linear infinite; }
+.pool-water i:nth-child(2) { animation-delay:-1.7s; }.pool-water i:nth-child(3) { animation-delay:-3.4s; }
+.scene-hatch { width:9%; height:6%; border:1px solid #8fae99; border-radius:4px; background:linear-gradient(160deg,#071d26,#16454d); box-shadow:inset 0 0 1cqw #000; color:#91d3cf; font-size:3cqw; }
+.scene-hatch .landmark-label { font-size:clamp(8px,1.3cqw,11px); margin-top:.4cqw; }
+.scene-loot { width:5.5%; height:6%; min-width:24px; min-height:24px; border:1px solid #a18f6555; border-radius:4px; background:#152e36dd; z-index:4; box-shadow:0 3px 6px #0006; }
+.scene-loot img { width:100%; height:100%; object-fit:contain; border-radius:3px; }
+.scene-loot[aria-pressed="true"] { outline:2px solid #e3bf86; }
+.scene-phase { position:absolute; left:2.5%; top:2%; font-size:clamp(8px,1.5cqw,12px); color:#9dc4bc; letter-spacing:.1em; pointer-events:none; }
+.is-complete .scene-entry { box-shadow:0 0 4cqw #b4e5be; background:repeating-linear-gradient(#a3bd9e 0 15%,#537967 17% 22%); }
+.sanctuary-inspector { align-items:start; gap:14px; }
+.scene-observation { flex:1 1 210px; }.scene-observation strong { font:20px var(--serif); color:#f0dfb9; }
+.scene-observation p { margin:7px 0 0; font-size:12px; line-height:1.65; color:#b3cbc7; }
+.sanctuary-inspector .scene-actions { display:flex; flex-wrap:wrap; flex:1 1 180px; gap:8px; align-items:center; justify-content:flex-end; }
+.scene-actions small { color:#bfcfc4; font-size:11px; }
+.scene-actions .mini-action { min-height:42px; padding:9px 13px; font-size:12px; border-color:#8b805a; background:#3d514b; color:#f4e3ba; }
+@keyframes scene-flame { from { transform:rotate(-35deg) scale(.9); opacity:.85; } to { transform:rotate(-25deg) scale(1.1); opacity:1; } }
+@keyframes scene-ripple { from { transform:scale(.2); opacity:0; } 25% { opacity:1; } to { transform:scale(2.8); opacity:0; } }
+@keyframes water-drift { to { transform:translate(3%,2%) rotate(5deg); } }
+@media(max-width:600px) {
+  .sanctuary-scene { aspect-ratio:1; }
+  .scene-statue { width:7%; }
+  .scene-mural { width:6%; height:6%; }
+  .scene-number { min-width:20px; min-height:20px; }
+  .sanctuary-inspector .scene-actions { justify-content:flex-start; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .sanctuary-scene *, .sanctuary-scene *::after { animation:none!important; transition:none!important; }
+}
+body[data-screen="welcome"] .sanctuary-scene *,body[data-screen="red"] .sanctuary-scene * { animation-play-state:paused; }
+
+.sanctuary-inspector > .scene-observation { display:block; }

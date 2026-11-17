@@ -3,11 +3,6 @@ const storage = {
   getItem(key) { try { return localStorage.getItem(key); } catch { return null; } },
   setItem(key, value) { try { localStorage.setItem(key, value); return true; } catch { return false; } },
 };
-const torchPositions = [
-  [71, 22], [78, 32], [83, 45], [81, 56], [75, 66], [64, 73],
-  [35, 73], [25, 66], [19, 56], [17, 45], [22, 32], [29, 22],
-];
-const muralPositions = [[88, 28], [94, 49], [89, 70], [75, 88], [25, 88], [11, 70], [6, 49], [12, 28]];
 const itemOrder = ['stone', 'bucket', 'tape_1', 'tape_2', 'document_1', 'document_2', 'document_3', 'tape_recorder', 'small_gear', 'medium_gear', 'big_gear', 'pickaxe', 'spear', 'old_gear', 'blue_relic'];
 const placeByStatue = { 3: 'stone', 5: 'pickaxe', 10: 'bucket', 8: 'spear' };
 let game = null;
@@ -22,7 +17,7 @@ let joining = false;
 let equusDraft = '';
 const pendingActions = new Set();
 let toastTimer;
-let selectedMural;
+let selectedSceneObject = 'center-table';
 const coins = [
   { icon: '𓆣', name: 'Scarabée' }, { icon: '𓂀', name: 'Œil' },
   { icon: '𓋹', name: 'Ankh' }, { icon: '☼', name: 'Soleil' },
@@ -105,24 +100,90 @@ function objectButton(label, action, data = {}) {
   return `<button class="mini-action" data-action="${action}" ${Object.entries(data).map(([key, val]) => `data-${key.replace(/[A-Z]/g, (letter) => '-' + letter.toLowerCase())}="${esc(val)}"`).join(' ')}>${label}</button>`;
 }
 function renderMap() {
-  const active = new Set(game.torches);
-  const torches = torchPositions.map(([x, y], index) => {
-    const id = index + 1;
-    const isActive = active.has(id);
-    return `<button class="torch-point ${isActive ? 'is-flame' : ''}" style="left:${x}%;top:${y}%" aria-label="Statue ${id}${isActive ? ', torche allumée' : ''}" title="${isActive ? `Faire avancer la flamme ${id}` : `Statue ${id}`}" ${isActive ? `data-action="cycle-torch" data-torch-id="${id}"` : 'disabled'}>${id}</button>`;
-  }).join('');
-  const murals = muralPositions.map(([x, y], index) => `<button class="torch-point is-mural" type="button" data-map-mural="${index + 1}" aria-label="Fresque ${index + 1}" aria-pressed="${selectedMural === index + 1}" style="left:${x}%;top:${y}%">${index + 1}</button>`).join('');
-  setMarkup($('#torch-points'), torches + murals);
-  const mapSrc = game.rotated ? '/assets/blue_room_map_2.jpg' : '/assets/blue_room_map_1.jpg';
-  document.querySelector('#room-plan').href = mapSrc;
-  if (selectedMural) renderMuralInspector();
+  const scene = $('#sanctuary-scene');
+  if (!scene.children.length) {
+    const point = (id, label, x, y, content, style) =>
+      `<button type="button" class="scene-point ${style}" data-scene-object="${id}" style="--x:${x}%;--y:${y}%" aria-label="${label}" title="${label}">${content}</button>`;
+    const statues = Array.from({ length: 12 }, (_, i) => {
+      const angle = (i * 30 - 60) * Math.PI / 180;
+      return point(`statue-${i + 1}`, `Statue ${i + 1}`, 50 + 33 * Math.cos(angle), 48 + 32 * Math.sin(angle),
+        `<span class="statue-body" aria-hidden="true"><i class="statue-head"></i><i class="statue-robe"></i><i class="statue-plinth"></i><i class="statue-offering"></i></span><span class="statue-fire" aria-hidden="true"></span><span class="scene-number">${i + 1}</span>`, 'scene-statue');
+    });
+    const murals = Array.from({ length: 8 }, (_, i) => {
+      const angle = (i * 45 - 22.5) * Math.PI / 180;
+      return point(`mural-${i + 1}`, `Fresque ${i + 1}`, 50 + 44 * Math.cos(angle), 48 + 43 * Math.sin(angle),
+        `<span aria-hidden="true" class="mural-engraving">${['≋','⋈','⟡','⋀','⊙','⋔','⫶','⌁'][i]}</span><span class="scene-number">F${i + 1}</span>`, 'scene-mural');
+    });
+    const gears = ['old_gear','small_gear','medium_gear','big_gear'].map((id, i) =>
+      `<span class="table-gear gear-${i}" data-scene-gear="${id}" aria-hidden="true">⚙</span>`).join('');
+    const lootPositions = { small_gear:[89,66], medium_gear:[38,57], pickaxe:[33,58], big_gear:[70,24], blue_relic:[63,57] };
+    const items = itemOrder.filter((id) => !['old_gear','spear'].includes(id)).map((id, i) =>
+      point(id, game.items[id].name, ...(lootPositions[id] || [28 + (i % 7) * 7.3, 94]),
+        `<img src="/assets/${game.items[id].image}" alt="">`, 'scene-loot')).join('');
+    scene.innerHTML = `<div class="scene-ocean" aria-hidden="true"></div><div class="scene-chamber" aria-hidden="true"><div class="scene-floor"></div><div class="scene-compass">✧</div></div><div class="scene-entry" aria-hidden="true"></div>
+      <div class="scene-elements">${statues.join('')}${murals.join('')}
+      ${point('center-table','Table centrale',50,46,`<span class="table-disc" aria-hidden="true">${gears}<i class="table-needle"></i></span><span class="landmark-label">Mécanisme</span>`,'scene-table')}
+      ${point('water','Bassin d’eau',50,70,'<span class="pool-water" aria-hidden="true"><i></i><i></i><i></i></span><span class="landmark-label">Bassin</span>','scene-pool')}
+      ${point('floor-1','Première cache du sol',38,57,'<span aria-hidden="true">◇</span><span class="landmark-label">Cache</span>','scene-hatch')}
+      ${point('floor-2','Seconde cache du sol',63,57,'<span aria-hidden="true">✧</span><span class="landmark-label">Cache</span>','scene-hatch')}
+      ${items}</div><span class="scene-phase"></span>`;
+  }
+  scene.classList.toggle('is-rotated', game.rotated);
+  scene.classList.toggle('is-ready', game.tableActive);
+  scene.classList.toggle('is-complete', game.finished);
+  scene.querySelector('.scene-phase').textContent = game.finished ? 'Porte ouverte' : `Mécanisme · phase ${game.rotated ? 'II' : 'I'}`;
+  scene.querySelectorAll('[data-scene-object]').forEach((node) => {
+    const id = node.dataset.sceneObject;
+    const statue = id.startsWith('statue-');
+    const lit = statue && game.torches.includes(Number(id.split('-')[1]));
+    node.classList.toggle('is-lit', lit);
+    node.classList.toggle('has-offering', statue && !!game.statueItems[id.split('-')[1]]);
+    node.classList.toggle('is-broken', id === 'mural-2' && game.muralBroken);
+    node.classList.toggle('is-revealed', id === 'mural-2' && game.muralSolved);
+    node.setAttribute('aria-pressed', String(id === selectedSceneObject));
+    if (statue) node.setAttribute('aria-label', `Statue ${id.split('-')[1]}, ${lit ? 'flamme allumée' : 'torche éteinte'}`);
+    if (id === 'floor-1' || id === 'floor-2') node.hidden = id === 'floor-1' ? !game.floor1 : !game.floor2;
+    if (node.classList.contains('scene-loot')) {
+      const item = game.items[id];
+      node.hidden = !item.pickable || !accessible(item) || item.location === 'inventory';
+    }
+  });
+  scene.querySelectorAll('[data-scene-gear]').forEach((node) =>
+    node.classList.toggle('is-installed', game.insertedGears.includes(node.dataset.sceneGear)));
+  $('#room-plan').href = game.rotated ? '/assets/blue_room_map_2.jpg' : '/assets/blue_room_map_1.jpg';
+  renderSceneInspector();
 }
 
-function renderMuralInspector() {
-  const inspector = $('#sanctuary-inspector');
-  const details = '<strong>Fresque ' + selectedMural + '</strong>' +
-    objectActions({ id: 'mural-' + selectedMural });
-  if (inspector.innerHTML !== details) inspector.innerHTML = details;
+function renderSceneInspector() {
+  const id = selectedSceneObject;
+  const number = Number(id.split('-')[1]);
+  const names = { 'center-table':'Table centrale', water:'Bassin d’eau', 'floor-1':'Première cache', 'floor-2':'Seconde cache' };
+  const name = names[id] || (id.startsWith('statue-') ? `Statue ${number}` :
+    id.startsWith('mural-') ? `Fresque ${number}` : game.items[id]?.name);
+  let description = 'Observez les marques anciennes et les objets à proximité.';
+  let actions = objectActions(game.items[id] || { id });
+  if (id.startsWith('statue-')) {
+    const lit = game.torches.includes(number);
+    description = lit ? 'La flamme avance sur son circuit de trois statues.' : 'La torche attend une flamme. Guidez une flamme allumée jusqu’ici.';
+    if (lit) actions += objectButton('Déplacer la flamme', 'cycle-torch', { torchId:number });
+    if (number === 1 && game.underStatue && game.items.big_gear.location !== 'inventory' && !game.insertedGears.includes('big_gear'))
+      actions += objectButton('Ramasser la grande roue', 'take', { itemId:'big_gear' });
+  }
+  if (id === 'center-table') {
+    description = game.rotated ? 'Le mécanisme a pivoté. Une nouvelle disposition des flammes vous attend.' : `${game.insertedGears.length}/4 roues installées. Complétez le mécanisme pour le faire pivoter.`;
+    actions += ['small_gear','medium_gear','big_gear'].filter((gear) => game.inventory.includes(gear))
+      .map((gear) => objectButton(`Installer · ${game.items[gear].name}`, 'insert-gear', { itemId:gear })).join('');
+  }
+  if (id === 'water') description = 'Des reflets parcourent l’eau du bassin. Le seau se trouve parmi les objets de la salle.';
+  if (id.startsWith('floor-')) {
+    description = 'Une dalle s’est ouverte. Les objets découverts peuvent être ramassés.';
+    actions = Object.values(game.items).filter((item) => item.location === `hidden-${id}` && accessible(item))
+      .map((item) => objectButton(`Ramasser · ${item.name}`, 'take', { itemId:item.id })).join('') || '<small>La cache est vide.</small>';
+  }
+  if (id === 'mural-2' && game.muralBroken && game.items.small_gear.location === 'hidden-wall')
+    actions += objectButton('Ramasser la petite roue', 'take', { itemId:'small_gear' });
+  if (game.items[id]?.location === 'inventory') actions = '<small>Objet dans l’inventaire commun.</small>';
+  setMarkup($('#sanctuary-inspector'), `<div class="scene-observation"><strong>${esc(name || 'Sanctuaire')}</strong><p>${esc(description)}</p></div><div class="scene-actions">${actions}</div>`);
 }
 function objectActions(item) {
   const inv = game.inventory;
@@ -242,7 +303,7 @@ function render() {
   if (!game) return;
   const focused = document.activeElement;
   const focusId = focused?.id;
-  const focusAttrs = ['data-coin','data-map-mural','data-torch-id','data-action','data-item-id','data-statue-id','data-room','data-slot','data-red-clue','data-inspect'];
+  const focusAttrs = ['data-coin','data-scene-object','data-map-mural','data-torch-id','data-action','data-item-id','data-statue-id','data-room','data-slot','data-red-clue','data-inspect'];
   const focusSelector = focused ? focusAttrs.filter((key) => focused.hasAttribute(key)).map((key) => `[${key}="${CSS.escape(focused.getAttribute(key))}"]`).join('') : '';
   const selection = focused instanceof HTMLInputElement ? [focused.selectionStart, focused.selectionEnd] : null;
   const scrolls = ['object-grid','inventory-list','journal','red-journal','red-evidence-list'].map((id) => [id, document.getElementById(id)?.scrollTop]);
@@ -357,9 +418,9 @@ document.addEventListener('input', (event) => {
   if (event.target.id === 'equus-code') equusDraft = event.target.value;
 });
 document.addEventListener('click', (event) => {
-  const mural = event.target.closest('[data-map-mural]');
-  if (mural) {
-    selectedMural = Number(mural.dataset.mapMural);
+  const scenePoint = event.target.closest('[data-scene-object]');
+  if (scenePoint) {
+    selectedSceneObject = scenePoint.dataset.sceneObject;
     renderMap();
   }
   const redClue = event.target.closest('[data-red-clue]');
