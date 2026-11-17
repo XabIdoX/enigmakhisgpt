@@ -54,7 +54,7 @@
               <path class="atlas-route" d="M210 153Q373 365 621 273Q574 91 410 148L446 176L462 194"/>
               <text x="120" y="320">OCÉAN ATLANTIQUE</text><text x="564" y="374">OCÉAN INDIEN</text><text x="710" y="50">N ↑</text>
             </svg>
-            <button class="atlas-pin pin-blue selected" data-expedition="0" aria-label="01, Salle bleue, Atlantide" aria-pressed="true"><span>01</span><b>ATLANTIDE</b></button>
+            <button class="atlas-pin pin-blue selected" data-expedition="0" aria-label="01, Atlantide, sanctuaire englouti" aria-pressed="true"><span>01</span><b>ATLANTIDE</b></button>
             <button class="atlas-pin pin-green" data-expedition="1" aria-label="02, Salle verte, Gunung Padang" aria-pressed="false"><span>02</span><b>GUNUNG PADANG</b></button>
             <button class="atlas-pin pin-red" data-expedition="2" aria-label="03, Salle rouge, Ħal Saflieni" aria-pressed="false"><span>03</span><b>ĦAL SAFLIENI</b></button>
             <button class="atlas-pin pin-gold" data-expedition="3" aria-label="04, Salle jaune, Gizeh" aria-pressed="false"><span>04</span><b>GIZEH</b></button>
@@ -64,7 +64,7 @@
           <article class="destination-card" id="destination-card" aria-live="polite"></article>
         </div>
         <div class="expedition-tabs" aria-label="Choisir une expédition">
-          <button data-expedition="0" aria-pressed="true" class="selected"><span>01 <i class="chapter-dot blue-dot"></i></span><b>Atlantide</b><small>Salle bleue</small></button>
+          <button data-expedition="0" aria-pressed="true" class="selected"><span>01 <i class="chapter-dot blue-dot"></i></span><b>Atlantide</b><small>Sanctuaire englouti</small></button>
           <button data-expedition="1" aria-pressed="false"><span>02 <i class="chapter-dot green-dot"></i></span><b>Gunung Padang</b><small>Salle verte</small></button>
           <button data-expedition="2" aria-pressed="false"><span>03 <i class="chapter-dot red-dot"></i></span><b>Ħal Saflieni</b><small>Salle rouge</small></button>
           <button data-expedition="3" aria-pressed="false"><span>04 <i class="chapter-dot gold-dot"></i></span><b>Gizeh</b><small>Salle jaune</small></button>
@@ -92,11 +92,11 @@
     </section>
 
     <section id="game-screen" class="game-screen hidden">
-      <div class="game-intro"><button id="back-to-welcome" class="text-button">← Vue d’ensemble</button><div class="chapter-breadcrumb">EXPÉDITION 01 <span>/</span> ATLANTIQUE</div><div class="game-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> PREMIÈRE EXPÉDITION <span class="eyebrow-slash">/</span> SITE ENFOUI</div><h1>La salle <em>bleue</em></h1><p class="hero-copy">Une cité engloutie. Des mécanismes anciens. Vous ne trouverez la sortie qu’ensemble.</p></div><div class="chapter-card"><div class="chapter-icon">⌁</div><div><span>OBJECTIF DE L’EXPÉDITION</span><strong>Réveiller le mécanisme</strong></div><div class="chapter-progress"><i id="progress-fill"></i></div></div></div>
+      <div class="game-intro"><button id="back-to-welcome" class="text-button">← Vue d’ensemble</button><div class="chapter-breadcrumb">EXPÉDITION 01 <span>/</span> ATLANTIQUE</div><div class="game-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> PREMIÈRE EXPÉDITION <span class="eyebrow-slash">/</span> LE SANCTUAIRE ENGLOUTI</div><h1><em>Atlantide</em></h1><p class="hero-copy">Sous les Bermudes, la cité perdue garde son secret. Entre les douze gardiens, les flammes attendent vos gestes.</p></div><div class="chapter-card"><div class="chapter-icon">⌁</div><div><span>OBJECTIF DE L’EXPÉDITION</span><strong>Réveiller le mécanisme</strong></div><div class="chapter-progress"><i id="progress-fill"></i></div></div></div>
       </div>
       <section class="game-grid">
         <div class="primary-column">
-          <div class="room-card panel"><div class="panel-heading"><div><span class="section-label">EXPLORATION</span><h2>Sanctuaire des profondeurs</h2></div><div class="room-status"><span class="live-dot"></span> EN EXPLORATION</div></div><div id="sanctuary-scene" class="sanctuary-scene" role="group" aria-label="Sanctuaire interactif, sélectionnez un élément pour agir"></div><div class="map-legend sanctuary-legend"><button class="text-link" data-inspect-plan>⤢ Agrandir le plan</button><span><i class="legend-flame"></i> Flamme active</span><span><i class="legend-mural"></i> Fresque</span><a id="room-plan" href="/assets/blue_room_map_1.jpg" target="_blank" rel="noopener">Plan de la salle</a></div><div id="sanctuary-inspector" class="sanctuary-inspector" aria-live="polite">Sélectionnez un élément du sanctuaire.</div></div>
+          <div class="room-card panel"><div class="panel-heading"><div><span class="section-label">EXPLORATION</span><h2>Sanctuaire des profondeurs</h2></div><div class="room-status"><span class="live-dot"></span> EN EXPLORATION</div></div><div id="sanctuary-scene" class="sanctuary-scene" role="group" aria-label="Sanctuaire interactif, sélectionnez un élément pour agir"></div><div class="map-legend sanctuary-legend"><button class="text-link" data-inspect-plan>⤢ Explorer le sanctuaire en grand</button><span><i class="legend-flame"></i> Flamme active</span><span><i class="legend-mural"></i> Fresque</span></div><div id="sanctuary-inspector" class="sanctuary-inspector" aria-live="polite">Sélectionnez un élément du sanctuaire.</div></div>
           <div class="lower-grid"><section class="panel objects-panel"><div class="panel-heading compact"><div><span class="section-label">LIEUX & OBJETS</span><h2>Autour de vous</h2></div><span id="object-count" class="count-pill">0 objets</span></div><div class="object-toolbar" role="group" aria-label="Filtrer les éléments"><button data-object-filter="all" aria-pressed="true">Tout</button><button data-object-filter="items" aria-pressed="false">À ramasser</button><button data-object-filter="statues" aria-pressed="false">Statues</button><button data-object-filter="murals" aria-pressed="false">Fresques</button></div><div id="object-grid" class="object-grid"></div><div id="action-feedback" class="feedback" aria-live="polite"></div></section>
           <section class="panel inventory-panel"><div class="panel-heading compact"><div><span class="section-label">ÉQUIPE</span><h2>Inventaire commun</h2></div><span id="inventory-count" class="count-pill">0</span></div><div id="inventory-list" class="inventory-list"></div><div class="team-box"><div class="team-heading"><span>EXPÉDITION</span><b id="team-count">0 joueur</b></div><div id="player-list" class="player-list"></div><div id="join-box" class="join-box"></div></div></section></div>
         </div>
@@ -156,9 +156,10 @@
       <footer class="game-footer">ENIGMAKHI <span>·</span> EXPÉDITION 03 <span>·</span> ĦAL SAFLIENI <span class="footer-right">LE DOSSIER EST PARTAGÉ</span></footer>
     </section>
   </main>
-  <div class="field-tools hidden" id="field-tools" aria-label="Outils d’expédition"><button data-open-notes><span aria-hidden="true">▤</span> Mes notes</button><button data-open-help><span aria-hidden="true">?</span> Comment jouer</button><button id="focus-mode" aria-pressed="false"><span aria-hidden="true">⤢</span> Immersion</button></div>
+  <div class="field-tools hidden" id="field-tools" aria-label="Outils d’expédition"><button data-open-notes><span aria-hidden="true">▤</span> Mes notes</button><button data-open-help><span aria-hidden="true">?</span> Comment jouer</button><button id="sound-toggle" aria-pressed="true" aria-label="Couper les sons"><span aria-hidden="true">♫</span> Sons</button><button id="focus-mode" aria-pressed="false"><span aria-hidden="true">⤢</span> Immersion</button></div>
   <dialog id="experience-dialog" aria-labelledby="dialog-title"><button class="dialog-close" aria-label="Fermer la fenêtre" autofocus>×</button><div id="dialog-content"></div></dialog>
   <div id="toast" class="toast" role="status"></div>
+  <script src="/sanctuary-audio.js" defer></script>
   <script src="/app.js" defer></script>
   <script src="/experience.js" defer></script>
 </body>

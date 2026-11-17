@@ -24,8 +24,6 @@
 .statue-plinth { position:absolute; bottom:0; left:0; width:100%; height:22%; background:linear-gradient(#a1a88b,#596a60 25%,#293e43 26%,#3c5555); border-radius:15%; border-bottom:3px solid #172b32; }
 .statue-offering { display:none; position:absolute; width:28%; height:14%; background:#ddb276; left:36%; top:55%; box-shadow:0 0 .6cqw #d8b570; }
 .has-offering .statue-offering { display:block; }
-.statue-fire { position:absolute; right:0; top:12%; width:23%; height:24%; border-radius:50% 0 50% 50%; transform:rotate(-35deg); background:#26353a; border:1px solid #62766c; }
-.is-lit .statue-fire { border-color:#ffe6ae; background:radial-gradient(at 35% 70%,#fff5bc 10%,#ffcc67 40%,#e88128); box-shadow:0 0 1cqw #ffce74,0 0 3cqw 1cqw #efac4c66,0 0 6cqw 2cqw #edaa4133; animation:scene-flame 2.1s ease-in-out infinite alternate; }
 .scene-mural { width:5%; height:7%; z-index:2; border:1px solid #7e9b92; border-radius:3px; background:linear-gradient(120deg,#546e69,#203e48); box-shadow:.4cqw .6cqw 0 #071f2b; }
 .mural-engraving { font:3.5cqw Georgia,serif; color:#a8c8b7; text-shadow:0 1px #102d3c; }
 .scene-mural .scene-number { width:auto; border-radius:3px; padding:0 3px; height:auto; min-height:15px; min-width:20px; font-size:clamp(8px,1.2cqw,11px); }
@@ -74,3 +72,225 @@
 body[data-screen="welcome"] .sanctuary-scene *,body[data-screen="red"] .sanctuary-scene * { animation-play-state:paused; }
 
 .sanctuary-inspector > .scene-observation { display:block; }
+
+/* Atlantis extends from the arrival view into the playable sanctuary. */
+body[data-screen="blue"] {
+  background-color:#061a25;
+  background-image:linear-gradient(#051624c9,#082632e8),url('/assets/atlantis-sanctuary.png');
+  background-size:cover; background-attachment:fixed;
+}
+#game-screen .game-intro {
+  position:relative; isolation:isolate; overflow:hidden; min-height:340px;
+  padding:28px 32px 30px; margin-bottom:24px; border:1px solid #658e914d;
+  border-radius:8px; background:#09232f; box-shadow:0 20px 70px #0004;
+}
+#game-screen .game-intro::before {
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(90deg,#041b29f2 0%,#062638a6 47%,#072b3833),url('/assets/atlantis-sanctuary.png') center 47%/cover;
+}
+#game-screen .game-heading { align-items:flex-end; gap:22px; margin-top:65px; }
+#game-screen .game-heading h1 { font-size:clamp(52px,7vw,88px); letter-spacing:.015em; line-height:1; margin:16px 0; }
+#game-screen .game-heading h1 em { color:#dcf2ec; text-shadow:0 0 35px #8bdcd147; }
+#game-screen .hero-copy { max-width:440px; line-height:1.9; color:#bfd9dd; }
+#game-screen .chapter-card { background:#082936e0; border-color:#689b9866; backdrop-filter:blur(8px); }
+#game-screen .panel { background:linear-gradient(145deg,#113340ef,#092430f5); border-color:#50777b66; }
+#game-screen .panel-heading h2 { color:#e0e4cd; }
+#game-screen .section-label,#game-screen .section-kicker { color:#8dc9c6; }
+#game-screen .clue-panel { background:linear-gradient(140deg,#1e494b,#102e3b); border-color:#8fa77c66; }
+#game-screen .story-panel { background:#0c2935ed; }
+#game-screen .game-footer { color:#8db5b9; }
+body[data-screen="blue"] .topbar { background:#071d29e8; border-color:#467a8166; }
+.sanctuary-scene { background:#051b27; }
+.scene-ocean { background:linear-gradient(#06263499,#082e3999),url('/assets/atlantis-sanctuary.png') center/cover; }
+.scene-ocean::after { opacity:.65; background:repeating-conic-gradient(from 175deg at 60% -30%,#83eedc17 0deg 3deg,transparent 4deg 13deg); }
+.scene-chamber { border-color:#617d78; background:repeating-conic-gradient(#c0b98e44 0deg 1deg,transparent 1deg 15deg),#3e615f; box-shadow:0 2cqw 0 #173b45,0 3cqw 3cqw #00121bd9,inset 0 0 0 .5cqw #c1b77c88; }
+.scene-floor { background:linear-gradient(145deg,transparent 43%,#081f2e44 43.3% 43.5%,transparent 44%),radial-gradient(ellipse,#396c6722,transparent 65%),repeating-conic-gradient(from 15deg,#9ab59d12 0deg 1deg,transparent 1deg 30deg),repeating-radial-gradient(ellipse,transparent 0 11%,#a6b69133 11.3% 11.8%,transparent 12% 15%),#244c53; box-shadow:inset 0 0 4cqw #041b29; }
+.scene-floor::after { border-color:#d4bc7899; outline-color:#d4bc7844; box-shadow:0 0 2cqw #6ad8cb22; }
+.scene-compass { color:#94c3b924; }
+.statue-head { background:linear-gradient(110deg,#a8b7a0,#6c918b 65%,#214954); }
+.statue-robe { background:repeating-linear-gradient(100deg,transparent 0 16%,#173f4a77 18% 22%),linear-gradient(100deg,#98af99,#476f70); }
+.statue-plinth { background:linear-gradient(#c3c3a4,#7c9279 25%,#274850 26%,#4b7170); border-bottom-color:#173e46; }
+.scene-loot { border:0; background:none; box-shadow:none; transform:translate(-50%,-50%) rotate(-9deg); }
+.scene-loot img { filter:drop-shadow(.3cqw .5cqw .35cqw #021521); }
+.scene-loot:hover,.scene-loot:focus-visible { filter:brightness(1.4); }
+.scene-loot[aria-pressed="true"] { outline:1px solid #b9eedb; border-radius:5px; }
+.scene-phase { color:#c2ede0; background:#08242eb0; border:1px solid #8db5a44d; border-radius:3px; padding:4px 6px; }
+.atlantean-ruins { position:absolute; inset:0; pointer-events:none; }
+.atlantean-ruins i { position:absolute; width:5%; height:14%; border-top:1cqw solid #7b9b8a; border-bottom:1cqw solid #506e6e; background:repeating-linear-gradient(90deg,#4e7e7b 0 20%,#284e58 22% 32%); box-shadow:.4cqw .8cqw .7cqw #001722; transform:rotate(-20deg); }
+.atlantean-ruins i:nth-child(1) { left:3%; top:8%; }
+.atlantean-ruins i:nth-child(2) { right:4%; top:7%; transform:rotate(18deg); height:10%; }
+.atlantean-ruins i:nth-child(3) { left:6%; bottom:5%; transform:rotate(-63deg); height:10%; }
+.atlantean-ruins i:nth-child(4) { right:6%; bottom:4%; transform:rotate(45deg); }
+.sanctuary-dialog { width:min(1080px,96vw); max-width:1080px; background:#082733; border-color:#71989088; }
+.sanctuary-dialog .dialog-inner { padding:38px 22px 22px; }
+.sanctuary-dialog h2 { margin:8px 0 18px; }
+.sanctuary-dialog .sanctuary-scene { aspect-ratio:1.45; border-radius:6px; }
+.sanctuary-dialog .sanctuary-inspector { margin:16px 0 0; }
+body[data-screen="blue"] .legend-flame { background:#8bf2dd; box-shadow:0 0 8px #67e6d3; }
+@media(max-width:600px) {
+  #game-screen .game-intro { min-height:380px; padding:22px 20px; }
+  #game-screen .game-heading { margin-top:45px; }
+  #game-screen .game-heading h1 { font-size:54px; }
+  #game-screen .game-heading .chapter-card { margin-top:22px; }
+  #game-screen .hero-copy { font-size:12px; }
+  .sanctuary-dialog .dialog-inner { padding:40px 10px 15px; }
+  .sanctuary-dialog .sanctuary-scene { aspect-ratio:1; }
+  .scene-loot { width:6.5%; }
+  body[data-screen="blue"] { background-attachment:scroll; }
+}
+.sanctuary-dialog .dialog-inner h2 { color:#dcebe1; }
+
+/* The sanctuary owns the full expedition width. Supporting tools sit below. */
+#game-screen .game-grid { display:block; }
+#game-screen .primary-column { display:contents; }
+#game-screen .room-card { width:100%; }
+#game-screen .lower-grid { display:grid; grid-template-columns:1.2fr 1fr; margin-top:22px; gap:20px; }
+#game-screen .side-column { display:grid; grid-template-columns:1.1fr 1fr .8fr; align-items:start; gap:20px; margin-top:22px; }
+#game-screen .side-column .story-panel { grid-row:span 2; }
+#game-screen .side-column .clue-panel { grid-row:span 2; }
+#game-screen .side-column .footer-note { grid-column:3; }
+#game-screen .game-intro { min-height:250px; padding-bottom:25px; }
+#game-screen .game-heading { margin-top:30px; }
+.sanctuary-scene,.sanctuary-dialog .sanctuary-scene { aspect-ratio:1.5; }
+.scene-statue { width:7.5%; height:13%; }
+.statue-body { inset:0; filter:drop-shadow(.6cqw .8cqw .4cqw #001621aa); }
+.guardian-sculpture { display:block; width:100%; height:100%; object-fit:contain; }
+.scene-statue:nth-child(3n) .guardian-sculpture { filter:brightness(1.08) saturate(.8); }
+.scene-statue .statue-offering { position:absolute; left:33%; top:53%; width:34%; height:22%; object-fit:contain; background:none; box-shadow:none; filter:drop-shadow(0 2px 2px #0008); }
+.scene-statue .statue-offering[hidden] { display:none; }
+.scene-table { width:29%; }
+.table-disc { border:1cqw solid #7b7857; outline:.2cqw solid #d5b47a; outline-offset:.4cqw; background:repeating-conic-gradient(#e3cb9444 0deg 1deg,transparent 1deg 15deg),radial-gradient(circle,#153943 0 58%,#b7a577 59% 60%,#3c5c59 61% 71%,#7a7557 72%); box-shadow:0 1cqw 0 #4a5848,0 1.8cqw 0 #152e33,0 2cqw 2cqw #00141ddd,inset 0 0 2cqw #001c26; }
+.table-disc::before { content:""; position:absolute; inset:14%; border:1px solid #7bb6ac66; border-radius:50%; box-shadow:inset 0 0 0 .6cqw #082731; }
+.table-disc::after { content:""; position:absolute; width:6%; height:6%; left:47%; top:-3%; background:#bff6e5; border-radius:50%; box-shadow:0 0 1cqw #89eada; }
+.table-gear { opacity:1; display:block; height:auto; aspect-ratio:1; font-size:inherit; }
+.gear-0 { width:27%; left:15%; top:44%; right:auto; bottom:auto; --turn:-1turn; }
+.gear-1 { width:21%; left:29%; top:23%; right:auto; bottom:auto; --turn:1turn; }
+.gear-2 { width:29%; left:49%; top:29%; right:auto; bottom:auto; --turn:-1turn; }
+.gear-3 { width:35%; left:40%; top:55%; right:auto; bottom:auto; --turn:1turn; }
+.gear-wheel { position:absolute; inset:0; border-radius:50%; background:repeating-conic-gradient(#91c4b52b 0 10deg,transparent 10deg 20deg); transition:filter .5s,background .5s; }
+.gear-wheel::before { content:""; position:absolute; inset:17%; border-radius:50%; background:repeating-conic-gradient(from 5deg,#92c1ad22 0 12deg,#082a35 12deg 60deg); border:.3cqw solid #8fb2a344; }
+.gear-hub { position:absolute; inset:40%; border-radius:50%; border:.3cqw solid #88a89755; background:#0b2830; }
+.table-gear.is-installed .gear-wheel { background:repeating-conic-gradient(from 2deg,#e0c387 0 10deg,#665e3b 10deg 14deg,transparent 14deg 20deg); filter:drop-shadow(.15cqw .25cqw .1cqw #00131a); }
+.table-gear.is-installed .gear-wheel::before { border-color:#c6aa70; background:repeating-conic-gradient(from 5deg,#b39354 0 12deg,#0b2c35 12deg 60deg); box-shadow:inset 0 0 .4cqw #2e3d2c; }
+.table-gear.is-installed .gear-hub { border-color:#e1c689; background:radial-gradient(#142b2e 0 25%,#a68e54 28% 55%,#d6ba7e 60%); }
+.table-needle { width:6%; height:6%; left:47%; top:47%; z-index:2; background:#8dd7c9; box-shadow:0 0 1cqw #5cbab2; }
+.is-turning .is-installed .gear-wheel { animation:engage-gears 2.4s ease-in-out both; }
+@keyframes engage-gears { to { transform:rotate(var(--turn)); } }
+.scene-pool { top:74%; }
+.sanctuary-inspector { margin-top:0; }
+@media(max-width:760px) {
+  #game-screen .lower-grid { grid-template-columns:1fr; }
+  #game-screen .side-column { grid-template-columns:1fr 1fr; }
+  #game-screen .side-column .footer-note { grid-column:auto; }
+  #game-screen .side-column .story-panel,#game-screen .side-column .clue-panel { grid-row:auto; }
+}
+@media(max-width:600px) {
+  .sanctuary-scene,.sanctuary-dialog .sanctuary-scene { aspect-ratio:1; }
+  .scene-statue { width:9%; height:12%; }
+  #game-screen .side-column { grid-template-columns:1fr; }
+  #game-screen .game-intro { min-height:350px; }
+}
+.scene-statue .statue-offering { left:28%; top:34%; width:44%; height:20%; }
+
+/* Torch and offering share the sculpture's coordinate space, including mirrored poses. */
+.scene-statue .statue-body {
+  inset:auto; top:0; left:50%; width:auto; height:100%; aspect-ratio:2/3;
+  transform:translateX(-50%);
+}
+.scene-statue:nth-child(3n+2) .statue-body {
+  transform:translateX(-50%) scaleX(-1);
+}
+.scene-statue:nth-child(3n+2) .guardian-sculpture { filter:brightness(.88) sepia(.12); }
+.scene-statue .statue-offering { left:23%; top:30%; width:20%; height:10%; }
+.statue-fire {
+  display:none; position:absolute; left:68%; top:6.5%; width:17%; height:11%;
+  border-radius:75% 20% 60% 50%; transform-origin:50% 100%;
+  pointer-events:none;
+}
+.is-lit .statue-fire {
+  display:block; border:0; background:radial-gradient(at 42% 75%,#f4fff2 12%,#a5ffdf 40%,#25bad0 72%,#117ea3);
+  box-shadow:0 0 .5cqw #a1ffe7,0 0 1.4cqw .4cqw #6ce9db88,0 0 3cqw 1cqw #49dbce33;
+  animation:torch-flame 2.1s ease-in-out infinite alternate;
+}
+
+@keyframes torch-flame { from { transform:scale(.9) rotate(-6deg); opacity:.85; } to { transform:scale(1.08) rotate(5deg); opacity:1; } }
+
+/* Discoveries have a short sequence and leave a readable opening behind. */
+.scene-feedback {
+  position:absolute; z-index:8; left:8%; right:8%; bottom:2.5%; pointer-events:none;
+  padding:12px 18px; border:1px solid #9ce0cc88; border-radius:6px;
+  background:#082735ed; color:#e0fff1; text-align:center; line-height:1.5;
+  font-size:clamp(11px,1.6cqw,16px); box-shadow:0 8px 28px #00101999;
+}
+.scene-feedback:empty { display:none; }
+.has-floor1 .scene-table { left:42%; top:37%; transform:translate(-50%,-50%) perspective(800px) rotateX(25deg) scale(.8); }
+.scene-hatch[data-scene-object="floor-1"] {
+  width:18%; height:18%; border-radius:50%; border:.65cqw solid #74988b;
+  background:radial-gradient(ellipse at 60% 100%,#50b7b74d,#020c17 68%);
+  box-shadow:inset 0 1.5cqw 1cqw #000,0 0 1.8cqw #50d4c43b;
+  z-index:1;
+}
+.scene-hatch[data-scene-object="floor-1"] > span:first-child { display:none; }
+.scene-hatch[data-scene-object="floor-1"] .landmark-label { top:100%; }
+.sanctuary-scene[data-discovery="floor1"] .scene-table { animation:unseal-table 5.5s cubic-bezier(.35,.1,.25,1) both; }
+.sanctuary-scene[data-discovery="floor1"] [data-scene-object="floor-1"] { animation:pit-open 2.6s both; }
+.sanctuary-scene[data-discovery="floor1"] [data-scene-object="medium_gear"],
+.sanctuary-scene[data-discovery="floor1"] [data-scene-object="pickaxe"] {
+  animation:treasure-rise 5.5s both;
+}
+.sanctuary-scene[data-discovery="floor1"] [data-scene-object="pickaxe"] { animation-delay:.15s; }
+.scene-mural.is-revealed::after {
+  content:""; position:absolute; width:33%; height:85%; left:33%; top:5%; pointer-events:none;
+  background:#c0f5de; filter:drop-shadow(0 0 3px #91edd4);
+  clip-path:polygon(40% 0,65% 0,42% 29%,80% 40%,36% 61%,60% 72%,10% 100%,31% 70%,9% 59%,57% 39%,20% 30%);
+}
+.sanctuary-scene[data-discovery="muralSolved"] [data-scene-object="mural-2"] {
+  z-index:7; animation:mural-awakens 3.6s both;
+}
+.sanctuary-scene[data-discovery="muralSolved"] .scene-floor::after { animation:floor-signal 3.6s both; }
+.sanctuary-scene[data-discovery="muralBroken"] [data-scene-object="mural-2"] { animation:stone-impact 1.2s both; clip-path:none; }
+.sanctuary-scene[data-discovery="muralBroken"] [data-scene-object="small_gear"],
+.sanctuary-scene[data-discovery="underStatue"] [data-scene-object="big_gear"],
+.sanctuary-scene[data-discovery="floor2"] [data-scene-object="blue_relic"] { animation:treasure-rise 3s both; z-index:6; }
+.sanctuary-scene[data-discovery="underStatue"] [data-scene-object="statue-1"] .statue-body { animation:guardian-lift 3.5s both; }
+.sanctuary-scene[data-discovery="floor2"] [data-scene-object="floor-2"] { animation:pit-open 2.6s both; }
+.sanctuary-scene[data-discovery="muralBroken"] [data-scene-object="mural-2"]::before {
+  content:""; position:absolute; inset:-60%; background:radial-gradient(ellipse,#dec28b99,transparent 65%); animation:stone-dust 2.8s both; pointer-events:none;
+}
+@keyframes unseal-table {
+  0%,12% { left:50%; top:46%; transform:translate(-50%,-50%) perspective(800px) rotateX(0deg) scale(1); }
+  17% { left:50.6%; top:46.3%; }
+  22% { left:49.5%; top:45.5%; }
+  28% { left:50%; top:45%; filter:brightness(1.3); }
+  95%,100% { left:42%; top:37%; transform:translate(-50%,-50%) perspective(800px) rotateX(25deg) scale(.8); filter:brightness(1); }
+}
+@keyframes pit-open {
+  0%,24% { opacity:0; transform:translate(-50%,-50%) scale(.15); }
+  65%,100% { opacity:1; transform:translate(-50%,-50%) scale(1); }
+}
+@keyframes treasure-rise {
+  0%,35% { opacity:0; transform:translate(-50%,-50%) translateY(6cqw) scale(.3); filter:brightness(.25); }
+  75% { opacity:1; transform:translate(-50%,-50%) translateY(-1cqw) scale(1.15); filter:brightness(1.7); }
+  100% { opacity:1; transform:translate(-50%,-50%) rotate(-9deg); filter:brightness(1); }
+}
+@keyframes mural-awakens {
+  0%,12% { transform:translate(-50%,-50%) rotate(0); }
+  18%,30% { transform:translate(-50%,-50%) rotate(-9deg); }
+  24%,36% { transform:translate(-50%,-50%) rotate(9deg); }
+  45%,65% { transform:translate(-50%,-50%) scale(1.45); box-shadow:0 0 2cqw #b8f5d9,0 0 7cqw 3cqw #68cfcf88; filter:brightness(2); }
+  100% { transform:translate(-50%,-50%) scale(1); filter:brightness(1); }
+}
+@keyframes floor-signal { 35%,60% { border-color:#b1ffe2; box-shadow:0 0 3cqw #6bdfd188; } }
+@keyframes stone-impact { 20%,60% { transform:translate(-45%,-50%) rotate(12deg); } 40%,80% { transform:translate(-55%,-50%) rotate(-12deg); } }
+@keyframes guardian-lift { 35%,75% { top:-25%; filter:drop-shadow(0 1cqw 1cqw #80e0d7); } }
+@keyframes stone-dust { 0% { opacity:0; transform:scale(.2); } 25% { opacity:1; } 100% { opacity:0; transform:scale(2); } }
+@media(max-width:600px) {
+  .scene-feedback { left:3%; right:3%; padding:8px 10px; font-size:11px; }
+}
+
+body[data-screen="red"] #sound-toggle { display:none; }
+.field-tools { max-width:calc(100vw - 20px); flex-wrap:wrap; justify-content:center; }
+#sound-toggle[aria-pressed="true"] { color:#b0f1d7; }
+#sound-toggle[aria-pressed="false"] { color:#a5b7b4; }
+#sound-toggle:disabled { opacity:.5; cursor:default; }
+.sanctuary-audio-control { margin:0 0 12px; padding:8px 12px; border:1px solid #769d8c66; border-radius:4px; color:#b0f1d7; }

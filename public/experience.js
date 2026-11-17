@@ -1,6 +1,6 @@
 /* Presentation and personal tools. Shared puzzle state remains server-owned. */
 const expeditions = [
-  { tone:'blue', place:'ATLANTIQUE · BERMUDES', title:'Le site englouti', room:'Salle bleue', state:'Première expédition · jouable', body:'Sous l’Atlantique, un sanctuaire oublié attend. Observez les fresques, guidez les flammes et réveillez un mécanisme ancien.', screen:'blue' },
+  { tone:'blue', place:'ATLANTIQUE · BERMUDES', title:'Le site englouti', room:'Atlantide', state:'Première expédition · jouable', body:'Sous l’Atlantique, un sanctuaire oublié attend. Observez les fresques, guidez les flammes et réveillez un mécanisme ancien.', screen:'blue' },
   { tone:'green', place:'JAVA · INDONÉSIE', title:'Gunung Padang', room:'Salle verte', state:'Deuxième expédition · à venir', body:'Des strates anciennes gardent la mémoire d’un passage. La trace d’Omar se poursuit au cœur de l’Indonésie.' },
   { tone:'red', place:'ĦAL SAFLIENI · MALTE', title:'Le dernier témoin', room:'Salle rouge', state:'Troisième expédition · jouable', body:'George Herbert est retrouvé mort. Quatre archéologues, des alibis à confronter et un secret enfoui sous la pierre.', screen:'red' },
   { tone:'gold', place:'GIZEH · ÉGYPTE', title:'Les pierres du désert', room:'Salle jaune', state:'Quatrième expédition · à venir', body:'La piste se rapproche de l’origine du pacte. À Gizeh, les pierres gardent encore ce qu’Omar ne pouvait révéler.' },
@@ -41,6 +41,12 @@ function openDialog(mode, content) {
 function closeDialog() { dialog.close(); }
 dialog.addEventListener('close', () => {
   document.body.style.overflow = '';
+  if (dialogMode === 'sanctuary') {
+    const home = document.querySelector('#game-screen .room-card');
+    home.insertBefore($('#sanctuary-scene'), home.querySelector('.sanctuary-legend'));
+    home.append($('#sanctuary-inspector'));
+    dialog.classList.remove('sanctuary-dialog');
+  }
   dialogMode = null;
   inspectedItemId = null;
   // Shared updates can replace the opener while a dialog is displayed.
@@ -66,7 +72,15 @@ function goToJoin() {
 }
 function reducedMotion() { return matchMedia('(prefers-reduced-motion: reduce)').matches; }
 
+function openSanctuary() {
+  openDialog('sanctuary', '<div class="dialog-inner"><span class="section-kicker">ATLANTIDE · LE SANCTUAIRE DES PROFONDEURS</span><h2 id="dialog-title">Au cœur de la cité perdue</h2><button type="button" class="text-button sanctuary-audio-control" data-toggle-sound aria-pressed="true">Sons</button><div id="expanded-sanctuary"></div></div>');
+  dialog.classList.add('sanctuary-dialog');
+  sanctuaryAudio.updateButton();
+  $('#expanded-sanctuary').append($('#sanctuary-scene'), $('#sanctuary-inspector'));
+}
+
 function inspectObject(id, refresh = false) {
+  if (id === 'map') { openSanctuary(); return; }
   const item = inspectableObjects.get(id);
   if (!item) {
     if (refresh) $('#object-inspect-actions').innerHTML = '<p>Cet objet a été déplacé par l’équipe.</p>';
@@ -75,7 +89,6 @@ function inspectObject(id, refresh = false) {
   inspectedItemId = id;
   let description = item.location === 'inventory' ? 'Cet objet fait partie de l’inventaire commun. Toute l’équipe peut le consulter.' : 'Observez cet élément de la salle. Les objets ramassés sont partagés avec toute l’équipe.';
   let action = objectActions(item);
-  if (id === 'map') description = 'Le plan d’origine du sanctuaire. Repérez les statues, les fresques et les passages.';
   if (id === 'center-table') description = `${game.insertedGears.length} roues sur 4 sont installées dans le mécanisme central.`;
   if (id.startsWith('document_')) description = 'Un document retrouvé dans le sanctuaire. Son illustration est visible ici ; son texte détaillé n’est pas encore disponible.';
   if (id.startsWith('tape_')) description = 'Une cassette retrouvée dans la salle. Sa lecture audio n’est pas encore disponible.';
@@ -84,7 +97,7 @@ function inspectObject(id, refresh = false) {
   if (item.location === 'inventory') {
     action = ['small_gear','medium_gear','big_gear'].includes(id) ? objectButton('Installer dans le mécanisme', 'insert-gear', { itemId:id }) : id === 'blue_relic' ? objectButton('Utiliser la relique', 'use-relic') : '<span class="inspect-status">✓ Dans l’inventaire de l’équipe</span>';
   }
-  const imageSrc = id === 'map' ? $('#room-plan').getAttribute('href') : `/assets/${item.image}`;
+  const imageSrc = `/assets/${item.image}`;
   if (refresh) {
     setMarkup($('#object-inspect-actions'), action);
     $('#inspect-description').textContent = description;

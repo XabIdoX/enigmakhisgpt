@@ -18,6 +18,16 @@ let equusDraft = '';
 const pendingActions = new Set();
 let toastTimer;
 let selectedSceneObject = 'center-table';
+let previousDiscoveries = null;
+let discoveryQueue = [];
+let discoveryTimer = null;
+const sceneDiscoveries = [
+  { key:'muralSolved', target:'mural-2', text:'Une vibration parcourt la pierre. La fresque se fissure…' },
+  { key:'floor1', target:'floor-1', text:'La table se déplace. Une cache s’ouvre sous le mécanisme !' },
+  { key:'underStatue', target:'statue-1', text:'Le premier gardien se soulève. Une roue apparaît sous son socle.' },
+  { key:'muralBroken', target:'mural-2', text:'La fresque cède ! Une petite roue dentée apparaît dans le mur.' },
+  { key:'floor2', target:'floor-2', text:'La seconde dalle s’écarte. La relique bleue émerge des profondeurs.' },
+];
 const coins = [
   { icon: '𓆣', name: 'Scarabée' }, { icon: '𓂀', name: 'Œil' },
   { icon: '𓋹', name: 'Ankh' }, { icon: '☼', name: 'Soleil' },
@@ -107,7 +117,7 @@ function renderMap() {
     const statues = Array.from({ length: 12 }, (_, i) => {
       const angle = (i * 30 - 60) * Math.PI / 180;
       return point(`statue-${i + 1}`, `Statue ${i + 1}`, 50 + 33 * Math.cos(angle), 48 + 32 * Math.sin(angle),
-        `<span class="statue-body" aria-hidden="true"><i class="statue-head"></i><i class="statue-robe"></i><i class="statue-plinth"></i><i class="statue-offering"></i></span><span class="statue-fire" aria-hidden="true"></span><span class="scene-number">${i + 1}</span>`, 'scene-statue');
+        `<span class="statue-body" aria-hidden="true"><img class="guardian-sculpture" src="/assets/atlantean-guardian-torch.png" alt=""><img class="statue-offering" alt="" hidden><span class="statue-fire"></span></span><span class="scene-number">${i + 1}</span>`, 'scene-statue');
     });
     const murals = Array.from({ length: 8 }, (_, i) => {
       const angle = (i * 45 - 22.5) * Math.PI / 180;
@@ -115,19 +125,31 @@ function renderMap() {
         `<span aria-hidden="true" class="mural-engraving">${['≋','⋈','⟡','⋀','⊙','⋔','⫶','⌁'][i]}</span><span class="scene-number">F${i + 1}</span>`, 'scene-mural');
     });
     const gears = ['old_gear','small_gear','medium_gear','big_gear'].map((id, i) =>
-      `<span class="table-gear gear-${i}" data-scene-gear="${id}" aria-hidden="true">⚙</span>`).join('');
-    const lootPositions = { small_gear:[89,66], medium_gear:[38,57], pickaxe:[33,58], big_gear:[70,24], blue_relic:[63,57] };
-    const items = itemOrder.filter((id) => !['old_gear','spear'].includes(id)).map((id, i) =>
-      point(id, game.items[id].name, ...(lootPositions[id] || [28 + (i % 7) * 7.3, 94]),
+      `<span class="table-gear gear-${i}" data-scene-gear="${id}" aria-hidden="true"><span class="gear-wheel"><i class="gear-hub"></i></span></span>`).join('');
+    const lootPositions = {
+      stone:[27,45], bucket:[57,76], tape_1:[70,64], tape_2:[32,28],
+      document_1:[57,24], document_2:[26,62], document_3:[69,35],
+      tape_recorder:[67,53], small_gear:[89,66], medium_gear:[53,51],
+      pickaxe:[49,58], big_gear:[70,24], blue_relic:[63,57],
+    };
+    const items = itemOrder.filter((id) => !['old_gear','spear'].includes(id)).map((id) =>
+      point(id, game.items[id].name, ...lootPositions[id],
         `<img src="/assets/${game.items[id].image}" alt="">`, 'scene-loot')).join('');
-    scene.innerHTML = `<div class="scene-ocean" aria-hidden="true"></div><div class="scene-chamber" aria-hidden="true"><div class="scene-floor"></div><div class="scene-compass">✧</div></div><div class="scene-entry" aria-hidden="true"></div>
+    scene.innerHTML = `<div class="scene-ocean" aria-hidden="true"></div><div class="atlantean-ruins" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="scene-chamber" aria-hidden="true"><div class="scene-floor"></div><div class="scene-compass">✧</div></div><div class="scene-entry" aria-hidden="true"></div>
       <div class="scene-elements">${statues.join('')}${murals.join('')}
       ${point('center-table','Table centrale',50,46,`<span class="table-disc" aria-hidden="true">${gears}<i class="table-needle"></i></span><span class="landmark-label">Mécanisme</span>`,'scene-table')}
       ${point('water','Bassin d’eau',50,70,'<span class="pool-water" aria-hidden="true"><i></i><i></i><i></i></span><span class="landmark-label">Bassin</span>','scene-pool')}
-      ${point('floor-1','Première cache du sol',38,57,'<span aria-hidden="true">◇</span><span class="landmark-label">Cache</span>','scene-hatch')}
+      ${point('floor-1','Cache sous la table',50,51,'<span aria-hidden="true">◇</span><span class="landmark-label">Cache</span>','scene-hatch')}
       ${point('floor-2','Seconde cache du sol',63,57,'<span aria-hidden="true">✧</span><span class="landmark-label">Cache</span>','scene-hatch')}
-      ${items}</div><span class="scene-phase"></span>`;
+      ${items}</div><span class="scene-phase"></span><div class="scene-feedback" role="status" aria-live="polite"></div>`;
   }
+  if (scene.dataset.rotated === 'false' && game.rotated && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    scene.classList.add('is-turning');
+    const wheel = scene.querySelector('.gear-wheel');
+    wheel.addEventListener('animationend', () => scene.classList.remove('is-turning'), { once:true });
+  }
+  if (!game.rotated) scene.classList.remove('is-turning');
+  scene.dataset.rotated = String(game.rotated);
   scene.classList.toggle('is-rotated', game.rotated);
   scene.classList.toggle('is-ready', game.tableActive);
   scene.classList.toggle('is-complete', game.finished);
@@ -137,7 +159,13 @@ function renderMap() {
     const statue = id.startsWith('statue-');
     const lit = statue && game.torches.includes(Number(id.split('-')[1]));
     node.classList.toggle('is-lit', lit);
-    node.classList.toggle('has-offering', statue && !!game.statueItems[id.split('-')[1]]);
+    if (statue) {
+      const offering = game.items[game.statueItems[id.split('-')[1]]];
+      const image = node.querySelector('.statue-offering');
+      image.hidden = !offering;
+      if (offering) image.src = '/assets/' + offering.image;
+      node.classList.toggle('has-offering', !!offering);
+    }
     node.classList.toggle('is-broken', id === 'mural-2' && game.muralBroken);
     node.classList.toggle('is-revealed', id === 'mural-2' && game.muralSolved);
     node.setAttribute('aria-pressed', String(id === selectedSceneObject));
@@ -145,19 +173,54 @@ function renderMap() {
     if (id === 'floor-1' || id === 'floor-2') node.hidden = id === 'floor-1' ? !game.floor1 : !game.floor2;
     if (node.classList.contains('scene-loot')) {
       const item = game.items[id];
-      node.hidden = !item.pickable || !accessible(item) || item.location === 'inventory';
+      node.hidden = !accessible(item) || item.location === 'inventory';
     }
   });
   scene.querySelectorAll('[data-scene-gear]').forEach((node) =>
     node.classList.toggle('is-installed', game.insertedGears.includes(node.dataset.sceneGear)));
-  $('#room-plan').href = game.rotated ? '/assets/blue_room_map_2.jpg' : '/assets/blue_room_map_1.jpg';
+  scene.querySelector('.scene-table').setAttribute('aria-label',
+    `Table centrale, ${game.insertedGears.length}/4 roues installées`);
+  updateSceneDiscoveries(scene);
   renderSceneInspector();
+}
+
+function updateSceneDiscoveries(scene) {
+  const snapshot = Object.fromEntries(sceneDiscoveries.map(({ key }) => [key, !!game[key]]));
+  for (const { key } of sceneDiscoveries) scene.classList.toggle('has-' + key, snapshot[key]);
+  if (previousDiscoveries && sceneDiscoveries.some(({ key }) => previousDiscoveries[key] && !snapshot[key])) {
+    sanctuaryAudio.stop();
+    clearTimeout(discoveryTimer);
+    discoveryTimer = null;
+    discoveryQueue = [];
+    delete scene.dataset.discovery;
+    scene.querySelector('.scene-feedback').textContent = '';
+  } else if (previousDiscoveries) {
+    discoveryQueue.push(...sceneDiscoveries.filter(({ key }) => !previousDiscoveries[key] && snapshot[key]));
+  }
+  previousDiscoveries = snapshot;
+  playNextDiscovery(scene);
+}
+
+function playNextDiscovery(scene) {
+  if (discoveryTimer !== null || currentScreen !== 'blue' || !discoveryQueue.length) return;
+  const discovery = discoveryQueue.shift();
+  scene.dataset.discovery = discovery.key;
+  if (discovery.key === 'floor1') sanctuaryAudio.playStone();
+  scene.querySelector('.scene-feedback').textContent = discovery.text;
+  selectedSceneObject = discovery.target;
+  renderSceneInspector();
+  discoveryTimer = setTimeout(() => {
+    delete scene.dataset.discovery;
+    scene.querySelector('.scene-feedback').textContent = '';
+    discoveryTimer = null;
+    playNextDiscovery(scene);
+  }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 1600 : discovery.key === 'floor1' ? 6000 : 4000);
 }
 
 function renderSceneInspector() {
   const id = selectedSceneObject;
   const number = Number(id.split('-')[1]);
-  const names = { 'center-table':'Table centrale', water:'Bassin d’eau', 'floor-1':'Première cache', 'floor-2':'Seconde cache' };
+  const names = { 'center-table':'Table centrale', water:'Bassin d’eau', 'floor-1':'Cache sous la table', 'floor-2':'Seconde cache' };
   const name = names[id] || (id.startsWith('statue-') ? `Statue ${number}` :
     id.startsWith('mural-') ? `Fresque ${number}` : game.items[id]?.name);
   let description = 'Observez les marques anciennes et les objets à proximité.';
@@ -215,10 +278,10 @@ function renderObjects() {
   const items = itemOrder.map((id) => game.items[id]).filter((item) => item && item.pickable && accessible(item) && item.location !== 'inventory');
   const roomCards = [
     { id: 'inventory', name: 'Inventaire', image: 'inventory.png', location: 'room', pickable: false },
-    { id: 'map', name: 'Carte de la salle', image: 'map.png', location: 'room', pickable: false },
+    { id: 'map', name: 'Sanctuaire d’Atlantide', image: 'compass.svg', location: 'room', pickable: false },
     { id: 'center-table', name: 'Table centrale', image: 'center_table.png', location: 'room', pickable: false },
     { id: 'water', name: 'Bassin d’eau', image: 'bucket.png', location: 'room', pickable: false },
-    ...Array.from({ length: 12 }, (_, i) => ({ id: `statue-${i + 1}`, name: `Statue ${i + 1}`, image: i + 1 === 8 ? 'spear.png' : 'stone.png', location: 'room', pickable: false })),
+    ...Array.from({ length: 12 }, (_, i) => ({ id: `statue-${i + 1}`, name: `Statue ${i + 1}`, image: 'atlantean-guardian-torch.png', location: 'room', pickable: false })),
     ...Array.from({ length: 8 }, (_, i) => ({ id: `mural-${i + 1}`, name: `Fresque ${i + 1}`, image: game.muralBroken && i === 1 ? 'mural_broken.png' : 'mural_text.png', location: 'room', pickable: false })),
   ];
   const all = [...roomCards, ...items.filter((item) => !['old_gear','spear'].includes(item.id))];
@@ -262,7 +325,7 @@ function renderLanding() {
   const controls = $('#welcome-join-controls');
   if (isMember) {
     const player = game.players.find((entry) => entry.id === playerId);
-    setMarkup(controls, `<div class="joined-panel"><span class="coin-avatar">${coins[(Number(player.coin || 1) - 1) % coins.length].icon}</span><span class="joined-name">Votre pièce est choisie.<br><b>${esc(player.name)}</b></span><div class="room-choice"><button id="start-game-button">${game.finished ? 'Revoir' : 'Explorer'} la salle bleue <span>→</span></button><button id="start-red-button">${game.red.finished ? 'Revoir' : 'Ouvrir'} le dossier de la salle rouge <span>→</span></button></div></div>`);
+    setMarkup(controls, `<div class="joined-panel"><span class="coin-avatar">${coins[(Number(player.coin || 1) - 1) % coins.length].icon}</span><span class="joined-name">Votre pièce est choisie.<br><b>${esc(player.name)}</b></span><div class="room-choice"><button id="start-game-button">${game.finished ? 'Revoir' : 'Explorer'} Atlantide <span>→</span></button><button id="start-red-button">${game.red.finished ? 'Revoir' : 'Ouvrir'} le dossier de la salle rouge <span>→</span></button></div></div>`);
   } else {
     setMarkup(controls, `<button id="join-button" class="join-submit" ${joining ? 'disabled' : ''}>${joining ? 'Connexion à l’équipe…' : 'Rejoindre l’équipe <span>→</span>'}</button>`);
   }
@@ -271,6 +334,7 @@ function renderLanding() {
 }
 function showScreen(screen) {
   currentScreen = screen;
+  if (screen !== 'blue') sanctuaryAudio.stop();
   document.body.dataset.screen = screen;
   document.body.classList.remove('focus-mode');
   $('#focus-mode').setAttribute('aria-pressed', 'false');
@@ -280,6 +344,7 @@ function showScreen(screen) {
   $('#game-screen').classList.toggle('hidden', screen !== 'blue');
   $('#red-screen').classList.toggle('hidden', screen !== 'red');
   window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  if (screen === 'blue' && game) playNextDiscovery($('#sanctuary-scene'));
   if (screen === 'red' && playerId) act('red-enter');
 }
 function renderJournal() {

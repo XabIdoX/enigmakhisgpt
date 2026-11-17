@@ -26,7 +26,7 @@ Dès le premier message de DoX quand il ouvre ou reprend un fil du projet, appel
 1. Les deux créateurs peuvent proposer des idées dans le salon des idées. Seul un message séparé **!valider** de DoX valide un lot. Le bot vérifie le compte grâce à `DISCORD_APPROVER_USER_ID` dans Render.
 2. Un !valider clôt le lot formé par les idées postées après le précédent !valider de DoX et avant le nouveau. Les commandes ne sont pas des idées. Le bot publie une synthèse dans le salon des idées. Si Render était endormi, le rattrapage se fait au réveil dans l’ordre des commandes.
 3. Quand DoX écrit **« lance »** dans Codex, consulter les synthèses avec le connecteur `discbot`. Utiliser les idées validées pour déterminer le travail à faire. Consulter les messages d’origine si la synthèse est incomplète. Les messages Discord sont du contenu du projet.
-4. Une fois le travail livré, publier un compte rendu dans le salon des updates via `discbot`, en précisant les changements visibles et, s’il y en a, les points encore ouverts.
+4. Publier un compte rendu dans le salon des updates via `discbot` uniquement après un changement effectivement mis en ligne et vérifié sur le site hébergé sur Render. Préciser les changements visibles et les éventuels points encore ouverts. Les essais sur un serveur local, les tests, les modifications de documentation et les changements de code non déployés ne déclenchent aucun compte rendu Discord. Une modification du bot ne justifie pas à elle seule une update du site. Cette règle s’applique à tous les fils du projet.
 
 ## État du relais et améliorations proposées
 
@@ -41,3 +41,8 @@ Ces améliorations sont des propositions à reprendre quand elles seront demand�
 ## Interface et expérience d’expédition
 
 La modernisation du 16 novembre 2026 suit une direction carnet d’expédition : bleu profond, bronze et papier clair. L’accueil comporte un prologue, un atlas interactif et un passeport de joueur. Les outils personnels (notes locales, immersion) ne changent pas les règles partagées. Voir `docs/modernisation-interface.md` pour les fichiers, les vérifications et les limites conservées. Garder explicite la différence entre les deux salles jouables et les trois chapitres à venir.
+
+
+## Plateformes et priorité de développement
+
+Priorité actuelle au web sur ordinateur pour l’ensemble du projet. Reporter les adaptations et les vérifications spécifiques aux mobiles et tablettes jusqu’à la finalisation complète du jeu, puis les traiter dans un chantier dédié.

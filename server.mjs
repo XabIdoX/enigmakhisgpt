@@ -33,7 +33,7 @@ function freshState() {
   return {
     version: 1,
     players: [],
-    log: [{ time: now(), text: 'La salle bleue est silencieuse. Une table de pierre occupe son centre.' }],
+    log: [{ time: now(), text: 'Le sanctuaire d’Atlantide est silencieux. Une table de pierre occupe son centre.' }],
     phase: 1,
     torches: [6, 3, 8, 11],
     tableActive: false,
@@ -462,7 +462,7 @@ function act(data) {
   return 'Action inconnue.';
 }
 
-const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml' };
+const mime = { '.mp3': 'audio/mpeg', '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml' };
 const server = createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   if (url.pathname.startsWith('/mcp/')) return handleMcp(req, res);

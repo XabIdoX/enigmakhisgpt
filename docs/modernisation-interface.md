@@ -97,3 +97,53 @@ Le sanctuaire utilise une scène HTML/CSS en vue fixe dans `public/sanctuary.css
 Les ondes de l’eau, flammes et halos sont animés en CSS. Les animations suivent la préférence de réduction des mouvements et sont suspendues lorsque la salle est masquée. Le plan d’origine reste disponible à travers les commandes existantes.
 
 Vérifications locales effectuées avec les 14 tests existants, puis dans le navigateur pour la sélection, le déplacement de flamme, la collecte, le placement sur statue et la rotation. Affichage contrôlé à 390 pixels et à la largeur de bureau du navigateur intégré. La scène utilise `overflow: clip` pour éviter un décalage interne provoqué par la mise au point des éléments. Publication approuvée par DoX et effectuée sur Render le 17 novembre 2026, commit f5e8666, déploiement dep-dbuc9ec9v7es7384hps0 confirmé live. Page publique, JavaScript, CSS et API vérifiés après publication.
+
+## Ambiance Atlantide et exploration agrandie — 17 novembre 2026
+
+Le titre et les accès de la première expédition affichent Atlantide. Le décor public/assets/atlantis-sanctuary.png habille l’arrivée et le fond de page. Le sanctuaire conserve ses éléments interactifs, avec pierre patinée, ruines et flammes turquoise.
+
+Les anciens accès au plan ouvrent désormais la scène interactive agrandie dans la fenêtre d’observation. La scène et son panneau sont déplacés puis remis à leur emplacement à la fermeture, pour conserver les actions et les mises à jour coopératives. Les anciens dessins restent des fichiers d’archive.
+
+Les objets accessibles dans la salle sont dispersés avec des coordonnées de présentation choisies pour cette interface. Le code source ne précisait pas leurs coordonnées dans la pièce. Le seau est placé près du bassin et le magnétophone près du mécanisme. Les positions de cache et les conditions de découverte restent issues du jeu existant. Aucun document de conception de la Salle Bleue n’a été retrouvé sur le Bureau lors de cette reprise.
+
+Vérifications effectuées : 14 tests réussis, ouverture du sanctuaire agrandi par ses deux accès, déplacement d’une flamme, collecte dans la vue agrandie et retour à la scène normale. Rendu contrôlé sur ordinateur et à 390 pixels. Aucun message d’erreur JavaScript observé. Version locale en attente d’autorisation de publication.
+
+## Priorité au sanctuaire et gardiens sculptés — 17 novembre 2026
+
+La scène occupe la pleine largeur de la page Atlantide. Inventaire et objets, puis chronologie, indice et progression sont présentés sous le sanctuaire. La disposition mobile garde une colonne et l’exploration agrandie reste disponible.
+
+Un gardien sculpté détouré (public/assets/atlantean-guardian.png) est réutilisé avec des variations de teinte et d’orientation sur les douze statues. Les objets réellement placés apparaissent sur les gardiens concernés. Cette réutilisation permet de conserver une seule illustration chargée pour l’ensemble des gardiens.
+
+La table centrale présente quatre logements avec des roues de tailles différentes. Les roues installées deviennent visibles et tournent brièvement avec l’activation du mécanisme, puis la table passe à sa seconde orientation. L’animation ne se relance pas lors des mises à jour coopératives et respecte la réduction des mouvements.
+
+Vérifications locales : 14 tests réussis, contrôle bureau et mobile, placement d’un objet depuis la scène, activation avec quatre roues installées et contrôle de la phase II et des quatre offrandes dans le navigateur. Les améliorations d’Atlantide restent locales en attente de confirmation de publication.
+
+## Torches portées par les gardiens — 17 novembre 2026
+
+Le gardien porte désormais un plateau d’une main et une torche de l’autre. Le fichier atlantean-guardian-torch.png contient la sculpture et la torche éteinte. La flamme animée est superposée à la coupe de la torche uniquement pour les statues allumées dans l’état partagé. Le point lumineux indépendant est supprimé. Torche et offrande suivent la même orientation que la sculpture, y compris dans les variantes retournées. Les circuits et les combinaisons du jeu sont conservés.
+
+Validation des torches : 14 tests existants réussis. Dans le navigateur, le déplacement d’une flamme a confirmé l’extinction de la torche quittée, quatre flammes attachées aux sculptures et aucun élément lumineux détaché à côté des statues. La nouvelle illustration est aussi utilisée dans les fiches d’observation. Modification disponible dans l’aperçu local.
+
+## Réactions animées aux découvertes — 17 novembre 2026
+
+La découverte de la première cache déclenche une secousse puis le glissement de la table, l’ouverture d’un trou sous son emplacement initial et la remontée de la roue moyenne et de la pioche. La table décalée et le trou restent visibles ensuite.
+
+Le déverrouillage de la fresque 2 déclenche une vibration, un halo et une fissure persistante. Sa destruction produit une secousse et de la poussière, puis révèle la petite roue. L’ouverture sous le premier gardien et la découverte de la relique possèdent également une animation.
+
+Les séquences sont déclenchées par les changements de l’état partagé reçu par chaque client, sont mises en file si plusieurs découvertes arrivent ensemble et ne se répètent pas lors des mises à jour ordinaires. Un chargement de partie déjà avancée montre l’état atteint sans rejouer les découvertes historiques. Un retour à un état initial vide la file. Les effets respectent la réduction des mouvements et sont accompagnés d’un message annoncé aux technologies d’assistance.
+
+Vérifications locales dans le navigateur : déverrouillage de la fresque, animation unseal-table active à l’ouverture, trou et objets visibles après déplacement, animation stone-impact et apparition treasure-rise de la petite roue à la destruction. Les essais utilisent une partie isolée au port 3190. Les règles et combinaisons du serveur sont conservées.
+
+## Son du glissement de pierre — 17 novembre 2026
+
+Le fichier public/assets/stone-slide.wav est un son original synthétisé de 3,6 secondes, mono PCM 16 bits à 44,1 kHz. Il combine grondement grave, frottement granuleux et choc final à 2,52 secondes, synchronisé avec l’arrivée de la table à sa position ouverte. Il est joué uniquement pour la découverte de la première cache.
+
+Le contrôleur public/sanctuary-audio.js utilise Web Audio et prépare le son après un geste utilisateur. La commande Sons est disponible dans les outils et dans le sanctuaire agrandi. La préférence est conservée localement. Couper le son, masquer l’onglet, quitter Atlantide ou réinitialiser la découverte interrompt la lecture. Une réponse audio tardive est recalée sur l’animation ou abandonnée si celle-ci est terminée. En mode de réduction des mouvements, seul le choc final est joué. Les erreurs audio ne bloquent pas la partie.
+
+Vérifications effectuées : 14 tests existants réussis, vérification du geste préalable, lecture unique, arrêt et silence en mode coupé, hors d’Atlantide et en arrière-plan avec un moteur audio simulé. Dans le navigateur, les commandes des deux vues ont été testées et la découverte a été déclenchée sans avertissement ou erreur audio. Le fichier est servi avec le type audio/wav. L’appréciation du timbre reste à faire par écoute du fichier fourni. Cette version reste locale.
+
+## Son validé et publication de l’ensemble Atlantide
+
+DoX a validé la proposition de dalle réelle et demandé la mise en ligne de l’ensemble des améliorations. Le son synthétique du test est remplacé par public/assets/stone-slab-slide.mp3, un extrait de 5,51 secondes de « stone_sliding.wav » par Rooms_Boxes, https://freesound.org/people/Rooms_Boxes/sounds/424169/, licence Creative Commons Zero (CC0). La source décrit une dalle déplacée sur un carrelage sablonneux. Extrait issu de l’aperçu MP3 haute qualité, de 7 à 12,5 secondes, sans modification de hauteur.
+
+L’ouverture de la table dure désormais 5,5 secondes pour accompagner cet extrait. La lecture comporte un fondu bref au début et à la fin. En réduction des mouvements, un court extrait de 0,8 seconde est joué. Les mentions du son synthétique dans le compte rendu précédent décrivent uniquement le premier essai, remplacé après son rejet par DoX.
