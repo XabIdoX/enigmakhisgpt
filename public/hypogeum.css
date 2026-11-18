@@ -1,0 +1,233 @@
+body[data-screen="red"] {
+  background: radial-gradient(ellipse at 52% 8%, #40231f 0%, #1d1615 57%, #141313 100%);
+}
+
+body[data-screen="red"] .topbar {
+  background: #241715ed;
+  border-color: #774c3d78;
+}
+
+#red-screen .game-intro {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 26px 32px 30px;
+  margin-bottom: 20px;
+  border: 1px solid #99695385;
+  border-radius: 8px;
+  background: #38241f;
+}
+
+#red-screen .game-intro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, #211412f5, #271715b8 47%, #301a1352),
+    url('/assets/hypogeum.jpg') center 54% / cover;
+}
+
+#red-screen .game-heading { margin-top: 48px; align-items: flex-end; gap: 18px; }
+#red-screen h1 { font-size: clamp(42px, 6.8vw, 82px); line-height: 1.05; }
+#red-screen .hero-copy { max-width: 470px; color: #f1dbca; }
+#red-screen .case-clock { flex-shrink: 0; background: #251816e8; border-color: #9d6756; }
+#red-screen .red-case-strip { background: #2c201ce8; }
+#red-screen .red-layout { display: block; }
+#red-screen .red-side-column {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  margin-top: 20px;
+  align-items: start;
+}
+.focus-mode #red-screen .red-side-column { display: none; }
+.focus-mode #red-screen .red-layout { max-width: none; }
+body[data-screen="red"] #field-tools { background: #33221feb; border-color: #ae7862; }
+body[data-screen="red"] #sound-toggle[aria-pressed="true"] { color: #ffd1ad; }
+#red-screen .panel, .hypogeum-dialog .red-inspector {
+  background: linear-gradient(145deg, #332521, #241c1a);
+  border-color: #81574487;
+}
+#red-screen .panel-heading h2 { color: #f4dfcb; }
+#red-screen .section-label, .hypogeum-dialog .section-label { color: #e5ac8c; }
+.red-map-panel [data-expand-red] { color: #f5c09e; text-align: right; }
+
+.hypogeum-exploration {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  margin: 4px 18px 18px;
+}
+
+.hypogeum-exploration .red-map-frame {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  margin: 0;
+  border: 1px solid #96694f;
+  border-radius: 6px;
+  background: linear-gradient(#271b18e3, #281a17df), url('/assets/hypogeum.jpg') center / cover;
+}
+
+.hypogeum-exploration .red-map-art { width: 100%; min-height: 0; }
+.hypogeum-corridor {
+  fill: none;
+  stroke: url(#hypogeum-passage);
+  stroke-width: 30;
+  stroke-linecap: round;
+}
+.hypogeum-survey-line {
+  fill: none;
+  stroke: #e1a97d;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 8;
+  opacity: .58;
+}
+.hypogeum-room { fill: url(#hypogeum-floor); stroke: #cf9b6e; stroke-width: 2.5; }
+.hypogeum-room.hypogeum-phoenix { stroke: #db8d77; }
+.hypogeum-fixture { fill: none; stroke: #dfa77e; stroke-width: 2.5; opacity: .46; }
+.hypogeum-secret {
+  fill: #130e0d;
+  fill-opacity: .7;
+  stroke: #cb9c7f;
+  stroke-width: 2;
+  stroke-dasharray: 4 6;
+  opacity: 0;
+}
+.hypogeum-secret.horse-seam { opacity: .6; }
+.red-map-art .hypogeum-labels text {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  fill: #f4d8ba;
+  opacity: 1;
+}
+.red-map-art .hypogeum-labels .map-subtitle { font-size: 11px; }
+
+.hypogeum-exploration .map-hotspot {
+  width: clamp(28px, 4vw, 48px);
+  height: auto;
+  aspect-ratio: 1;
+  font-size: clamp(14px, 2vw, 25px);
+  background: radial-gradient(circle at 45% 30%, #654334, #241813);
+  color: #ffe2b9;
+  border-color: #dda579;
+}
+.hypogeum-exploration .map-hotspot.hidden { display: none; }
+.hypogeum-exploration .map-hotspot:hover,
+.hypogeum-exploration .map-hotspot.is-selected {
+  background: #a05a43;
+  border-color: #ffe0aa;
+  box-shadow: 0 0 0 4px #e2a67938, 0 0 26px #ffa55c55;
+}
+.hypogeum-exploration .map-hotspot.is-visited { border-color: #f4cf99; }
+.hypogeum-exploration .hotspot-horse { left: 17.33%; top: 24%; }
+.hypogeum-exploration .hotspot-whale { left: 16.33%; top: 75%; }
+.hypogeum-exploration .hotspot-falcon { left: 46.78%; top: 53%; }
+.hypogeum-exploration .hotspot-phoenix { left: 83.56%; top: 72%; }
+.hypogeum-exploration .hotspot-detail {
+  width: clamp(21px, 2.4vw, 30px);
+  font-size: clamp(13px, 1.6vw, 18px);
+  color: #f7cdab;
+}
+.hypogeum-exploration .hotspot-horse-mark { left: 23.6%; top: 17%; }
+.hypogeum-exploration .hotspot-whale-mark { left: 20.6%; top: 71%; }
+.hypogeum-exploration .hotspot-falcon-mark { left: 40.5%; top: 47%; }
+.hypogeum-exploration .hotspot-phoenix-mark { left: 90.2%; top: 65%; }
+.hypogeum-exploration .hotspot-passage,
+.hypogeum-exploration .hotspot-wind,
+.hypogeum-exploration .hotspot-horse-annex,
+.hypogeum-exploration .hotspot-falcon-annex,
+.hypogeum-exploration .hotspot-relic {
+  width: clamp(23px, 3vw, 35px);
+  font-size: clamp(12px, 1.55vw, 19px);
+}
+.hypogeum-exploration .hotspot-passage { left: 29.8%; top: 24%; }
+.hypogeum-exploration .hotspot-wind { left: 55%; top: 51%; }
+.hypogeum-exploration .hotspot-horse-annex { left: 37%; top: 23%; }
+.hypogeum-exploration .hotspot-falcon-annex { left: 67.3%; top: 41%; }
+.hypogeum-exploration .hotspot-relic {
+  left: 72%;
+  top: 40%;
+  color: #fff2b9;
+  box-shadow: 0 0 24px #ffbf6488;
+}
+
+.hypogeum-vent-lines { opacity: 0; }
+.hypogeum-vent-lines path {
+  fill: none;
+  stroke: #f8cf9d;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-dasharray: 3 13;
+}
+.hypogeum-sockets { opacity: 0; fill: #2a1c17; stroke: #ecc398; }
+.red-map-frame.has-wind .hypogeum-vent-lines { opacity: .7; }
+.red-map-frame.has-wind .hypogeum-sockets { opacity: 1; }
+.hypogeum-sockets .is-filled { fill: #f4cb99; }
+.red-map-frame.horse-open .horse-seam,
+.red-map-frame.falcon-open .falcon-seam {
+  opacity: 1;
+  fill: #785740;
+  fill-opacity: .62;
+  stroke: #f0c399;
+  stroke-dasharray: none;
+}
+.red-map-frame .has-ventus { box-shadow: 0 0 18px #efb66e8c; border-color: #ffdb9f; }
+.red-map-frame.reveal-wind .hypogeum-vent-lines { animation: hypogeum-gust 2.2s ease-out; }
+.red-map-frame.reveal-horse .horse-seam,
+.red-map-frame.reveal-falcon .falcon-seam { animation: hypogeum-unseal 5.5s ease-out; transform-box: fill-box; transform-origin: center; }
+.red-map-frame.reveal-relic .hotspot-relic { animation: hypogeum-relic 2.2s ease-out; }
+
+@keyframes hypogeum-gust {
+  from { opacity: 0; stroke-dashoffset: 75; }
+  40% { opacity: 1; }
+  to { opacity: .7; stroke-dashoffset: 0; }
+}
+@keyframes hypogeum-unseal {
+  from { opacity: .5; transform: scale(.62); }
+  20% { opacity: 1; transform: translateX(2px) scale(.68); }
+  28% { transform: translateX(-2px) scale(.69); }
+  78% { filter: drop-shadow(0 0 6px #e6a367); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes hypogeum-relic {
+  from { opacity: 0; translate: 0 10px; }
+  55% { opacity: 1; box-shadow: 0 0 36px #ffd986; }
+  to { translate: 0 0; }
+}
+
+.hypogeum-discovery {
+  min-height: 22px;
+  margin: 8px 0;
+  color: #f5c998;
+  font-size: 13px;
+}
+.hypogeum-exploration .red-inspector { min-height: 150px; }
+.red-evidence-filters { flex-wrap: wrap; }
+.red-evidence-filters button { padding-inline: 8px; }
+.red-evidence-filters button[aria-pressed="true"] { background: #56372e; border-color: #b88067; color: #ffe3c7; }
+.evidence-entry small { color: #d1ab90; white-space: nowrap; }
+.red-side-column .suspect-card.is-selected { background: #51362d; }
+
+.hypogeum-dialog {
+  width: min(1220px, 96vw);
+  max-width: 1220px;
+  border-color: #b4896b;
+  background: #281b19;
+}
+.hypogeum-dialog .dialog-inner { padding: 34px 22px 20px; }
+.hypogeum-dialog #dialog-title {
+  margin: 5px 0 10px;
+  color: #f6dfce;
+  font-size: clamp(24px, 3vw, 38px);
+}
+.hypogeum-dialog [data-toggle-sound] { color: #f3c5a6; }
+.hypogeum-dialog .hypogeum-exploration { margin: 0; }
+.hypogeum-dialog .inspector-body h2 { margin: 4px 0 8px; color: #f6dfce; font-size: 23px; }
+.hypogeum-dialog .inspector-body p { color: #dfc9b9; }
+.hypogeum-dialog .dialog-inner .hypogeum-discovery { color: #f5c998; }
+.hypogeum-dialog .toast { position: sticky; left: auto; bottom: 8px; translate: none; transform: none; margin: 0 22px 12px; }
+.hypogeum-dialog .toast:not(.show) { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hypogeum-exploration .red-map-frame * { animation: none; transition: none; }
+}

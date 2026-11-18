@@ -288,7 +288,6 @@ body[data-screen="blue"] .legend-flame { background:#8bf2dd; box-shadow:0 0 8px 
   .scene-feedback { left:3%; right:3%; padding:8px 10px; font-size:11px; }
 }
 
-body[data-screen="red"] #sound-toggle { display:none; }
 .field-tools { max-width:calc(100vw - 20px); flex-wrap:wrap; justify-content:center; }
 #sound-toggle[aria-pressed="true"] { color:#b0f1d7; }
 #sound-toggle[aria-pressed="false"] { color:#a5b7b4; }

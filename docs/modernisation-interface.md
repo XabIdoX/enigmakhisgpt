@@ -153,3 +153,31 @@ L’ouverture de la table dure désormais 5,5 secondes pour accompagner cet extr
 L’ensemble des améliorations d’Atlantide a été publié le 17 novembre 2026, commit 78ef38c, déploiement Render dep-dbudc2kipgvc738je1p0 confirmé live. La page, app.js, experience.js, sanctuary.css, sanctuary-audio.js, les deux illustrations utilisées et le son MP3 approuvé ont été comparés avec les fichiers locaux et sont identiques après normalisation des fins de ligne des fichiers texte. L’API répond correctement. Aucun log applicatif de niveau erreur n’a été remonté pendant le déploiement. L’extrait validé est servi avec le type audio/mpeg.
 
 La consigne générale de priorité au web sur ordinateur est enregistrée dans les deux fichiers AGENTS.md du projet. Les adaptations et vérifications spécifiques aux mobiles et tablettes sont reportées à la finalisation complète du jeu.
+
+## Hypogée interactif de la Salle Rouge
+
+La scène interactive occupe toute la largeur au-dessus des dossiers, des pièces
+à conviction, de la progression et de la chronologie. Le tracé s’appuie sur
+`salle_rouge_map.png` et `La_salle_rouge.docx`. Il reprend l’entrée au sud,
+le Cheval au nord-ouest, la Baleine au sud-ouest, le Faucon au centre et le
+Phénix au sud-est, relié par la galerie nord. Les annexes disposent de leurs
+propres accès. La fenêtre agrandie conserve la scène et ses commandes actives,
+y compris les mises à jour coopératives.
+
+Les fresques apparaissent sur le plan à l’exploration de leur secteur. Le vent,
+les ouvertures des annexes et la relique réagissent aux changements de l’état
+partagé. Les deux ouvertures utilisent le son de pierre validé pour Atlantide.
+Les pièces à conviction sont filtrables et les bouchons indiquent s’ils ont été
+installés. Le tableau de progression et le nom de l’indice ne dévoilent plus la
+réponse de l’inscription latine. Les récits des indices et les règles du serveur
+sont conservés.
+
+Vérifications locales sur ordinateur : 14 tests du dépôt réussis et résolution
+de la Salle Rouge dans Edge avec deux joueurs. Le contrôle couvre la saisie du
+code pendant une mise à jour en direct, le son des annexes, la fermeture de la
+vue agrandie avec retour au bouton d’ouverture, les filtres et l’immersion.
+
+Le décor d’arrivée `public/assets/hypogeum.jpg` a été créé avec l’outil ImageGen
+intégré. Prompt utilisé :
+
+> Use case: stylized-concept. Wide 16:9 environment-only backdrop for a desktop mystery game. Photorealistic cinematic view from inside the Hypogeum of Hal Saflieni, Malta, imagined 1920s archaeological dig. Honey limestone hewn into rounded megalithic chambers, three deep dark carved portals and shallow stepped thresholds, ochre red faded spiral wall pigment and pools of warm amber lantern light. Rich tactile limestone, low-key burgundy shadows. Eye-level wide angle, atmospheric architectural photograph, room in foreground for UI overlay. No text, no people, no props that resemble clues, no weapons, no bodies, no controls, no map markings. This image is atmospheric backdrop behind a separate precise playable floor plan.

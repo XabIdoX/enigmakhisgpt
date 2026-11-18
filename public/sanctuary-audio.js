@@ -55,19 +55,19 @@ const sanctuaryAudio = (() => {
     current.source.stop(now + .03);
   }
 
-  function canPlay() {
+  function canPlay(screen) {
     return !muted && context?.state === 'running' &&
-      !document.hidden && document.body.dataset.screen === 'blue';
+      !document.hidden && document.body.dataset.screen === screen;
   }
 
-  async function playStone() {
+  async function playStone(screen = 'blue') {
     stop();
-    if (!canPlay()) return;
+    if (!canPlay(screen)) return;
     const request = generation;
     const started = performance.now();
     try {
       const buffer = await loadBuffer();
-      if (request !== generation || !canPlay()) return;
+      if (request !== generation || !canPlay(screen)) return;
       const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const offset = reduced ? 0 : (performance.now() - started) / 1000;
       if (offset >= buffer.duration) return;

@@ -2,7 +2,7 @@
 const expeditions = [
   { tone:'blue', place:'ATLANTIQUE · BERMUDES', title:'Le site englouti', room:'Atlantide', state:'Première expédition · jouable', body:'Sous l’Atlantique, un sanctuaire oublié attend. Observez les fresques, guidez les flammes et réveillez un mécanisme ancien.', screen:'blue' },
   { tone:'green', place:'JAVA · INDONÉSIE', title:'Gunung Padang', room:'Salle verte', state:'Deuxième expédition · à venir', body:'Des strates anciennes gardent la mémoire d’un passage. La trace d’Omar se poursuit au cœur de l’Indonésie.' },
-  { tone:'red', place:'ĦAL SAFLIENI · MALTE', title:'Le dernier témoin', room:'Salle rouge', state:'Troisième expédition · jouable', body:'George Herbert est retrouvé mort. Quatre archéologues, des alibis à confronter et un secret enfoui sous la pierre.', screen:'red' },
+  { tone:'red', place:'ĦAL SAFLIENI · MALTE', title:'Ħal Saflieni', room:'Malte', state:'Troisième expédition · jouable', body:'George Herbert est retrouvé mort. Quatre archéologues, des alibis à confronter et un secret enfoui sous la pierre.', screen:'red' },
   { tone:'gold', place:'GIZEH · ÉGYPTE', title:'Les pierres du désert', room:'Salle jaune', state:'Quatrième expédition · à venir', body:'La piste se rapproche de l’origine du pacte. À Gizeh, les pierres gardent encore ce qu’Omar ne pouvait révéler.' },
   { tone:'black', place:'PYRAMIDE DE MYKÉRINOS', title:'La chambre scellée', room:'Salle noire', state:'Dernière expédition · à venir', body:'Sous la pyramide, une salle relie les fragments de l’histoire. C’est ici qu’Omar a découvert le secret et signé son pacte.' },
 ];
@@ -47,6 +47,11 @@ dialog.addEventListener('close', () => {
     home.append($('#sanctuary-inspector'));
     dialog.classList.remove('sanctuary-dialog');
   }
+  if (dialogMode === 'hypogeum') {
+    $('#red-screen .red-map-panel').append($('#hypogeum-exploration'));
+    document.body.append($('#toast'));
+    dialog.classList.remove('hypogeum-dialog');
+  }
   dialogMode = null;
   inspectedItemId = null;
   // Shared updates can replace the opener while a dialog is displayed.
@@ -77,6 +82,15 @@ function openSanctuary() {
   dialog.classList.add('sanctuary-dialog');
   sanctuaryAudio.updateButton();
   $('#expanded-sanctuary').append($('#sanctuary-scene'), $('#sanctuary-inspector'));
+}
+
+function openHypogeum(opener) {
+  openDialog('hypogeum', '<div class="dialog-inner"><span class="section-kicker">ĦAL SAFLIENI · 2E SOUS-SOL</span><h2 id="dialog-title">Explorer l’hypogée</h2><button type="button" class="text-button sanctuary-audio-control" data-toggle-sound aria-pressed="true">Sons</button><div id="expanded-hypogeum"></div></div>');
+  previousFocus = opener;
+  dialog.classList.add('hypogeum-dialog');
+  sanctuaryAudio.updateButton();
+  $('#expanded-hypogeum').append($('#hypogeum-exploration'));
+  dialog.append($('#toast'));
 }
 
 function inspectObject(id, refresh = false) {
@@ -154,6 +168,7 @@ document.addEventListener('click', (event) => {
   }
   if (button.hasAttribute('data-inspect')) inspectObject(button.dataset.inspect);
   if (button.hasAttribute('data-inspect-plan')) inspectObject('map');
+  if (button.hasAttribute('data-expand-red')) openHypogeum(button);
   if (button.hasAttribute('data-object-filter')) {
     objectFilter = button.dataset.objectFilter;
     document.querySelectorAll('[data-object-filter]').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
@@ -178,11 +193,6 @@ document.addEventListener('keydown', (event) => {
 document.addEventListener('expedition:updated', () => {
   renderDestination();
   if (dialogMode === 'object' && inspectedItemId) inspectObject(inspectedItemId, true);
-  // Reopen collected evidence without searching the map again.
-  $('#red-evidence-list').querySelectorAll('.evidence-entry span').forEach((label) => {
-    const clue = Object.entries(redClues).find(([id, clue]) => game.red.inspected.includes(id) && clue.evidence === label.textContent);
-    if (clue) { const button = document.createElement('button'); button.dataset.redClue = clue[0]; button.textContent = label.textContent; label.replaceWith(button); }
-  });
   for (const [screen, finished, title, description] of [
     ['game-screen',game.finished,'La porte est ouverte.','Vous avez réveillé le mécanisme et retrouvé la relique bleue. Cette étape de l’expédition est accomplie.'],
     ['red-screen',game.red.finished,'Le dossier est résolu.','La relique est retrouvée. La vision d’Omar indique la prochaine destination : Gizeh.'],

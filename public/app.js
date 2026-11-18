@@ -51,8 +51,8 @@ const redClues = {
   'crime-scene': { title:'Le corps de George', kicker:'RAPPORT DE SCÈNE', icon:'✳', evidence:'Trois impacts de balle', body:'George a été atteint par trois balles au cœur et au foie. Le corps est encore chaud à 14 h 04 : le meurtre remonte à moins de vingt minutes. Les gardes ont verrouillé l’entrée après le cri d’Evelyn. Personne ne peut quitter le site.', actions:['entry-log','handkerchief'] },
   'handkerchief': { title:'Le mouchoir ensanglanté', kicker:'INDICE · EMPREINTES', icon:'▤', evidence:'Mouchoir de Hugh', body:'Un mouchoir portant le sang de George et les empreintes de la victime et des trois suspects est retrouvé au sol. Hugh dit l’avoir prêté à George en quittant le site. Evelyn affirme l’avoir touché pour vérifier si George était vivant. Les empreintes seules ne désignent donc pas le tireur.', actions:['entry-log'] },
   'entry-log': { title:'Registre des entrées', kicker:'INDICE · FENÊTRE DU MEURTRE', icon:'◷', evidence:'Horaires du registre', body:'Hugh est entré à 10 h 13 et ressorti à 13 h 53. George est arrivé à 13 h 47, Howard à 13 h 50 et Evelyn à 11 h 45. Le corps encore chaud resserre la fenêtre à 13 h 44–14 h 04 : Hugh reste donc à vérifier malgré son départ déclaré.', actions:['crime-scene'] },
-  'horse-inscription': { title:'L’inscription du passage', kicker:'ÉNIGME · LATIN', icon:'E', evidence:'Inscription EQUUS', body:'Une phrase presque effacée évoque « le nom latin de la monture » et les premiers signes à suivre. Dans la fresque, le sage quitte son refuge pour revenir à Malte. Quelle est la monture ?', actions:['equus-door','horse-cache'] },
-  'wind-holes': { title:'La fresque à trous', kicker:'ÉNIGME · LE VENT', icon:'◎', evidence:'Fresque à trous', body:'Trois bouchons de pierre manquent à cette fresque centrale. Les notes indiquent que le vent ne soufflera qu’après avoir activé le signe Ventus dans chacune des trois salles accessibles.', actions:['plug-corridor'] },
+  'horse-inscription': { title:'L’inscription du passage', kicker:'ÉNIGME · LATIN', icon:'E', evidence:'Inscription latine', body:'Une phrase presque effacée évoque « le nom latin de la monture » et les premiers signes à suivre. Dans la fresque, le sage quitte son refuge pour revenir à Malte. Quelle est la monture ?', actions:['equus-door','horse-cache'] },
+  'wind-holes': { title:'La fresque à trous', kicker:'ÉNIGME · LE VENT', icon:'◎', evidence:'Fresque à trous', body:'Trois bouchons de pierre manquent à cette fresque centrale. Les notes indiquent que le vent ne soufflera qu’après avoir activé le signe Ventus dans chacune des trois salles accessibles.', actions:['wind-controls','plug-corridor','falcon-cache'] },
   'plug-whale': { title:'Un bouchon dans un bassin', kicker:'OBJET · PIERRE SCULPTÉE', icon:'●', evidence:'Bouchon de la Baleine', body:'Au fond d’un bassin asséché, vous trouvez un bouchon de pierre ajusté à la taille des trous de la fresque centrale.' },
   'plug-corridor': { title:'Un bouchon dans le couloir', kicker:'OBJET · PIERRE SCULPTÉE', icon:'●', evidence:'Bouchon du couloir', body:'Coincé derrière une dalle déplacée, un deuxième bouchon porte le même symbole en spirale que la fresque du Faucon.' },
   'plug-phoenix': { title:'Un bouchon près du Phénix', kicker:'OBJET · PIERRE SCULPTÉE', icon:'●', evidence:'Bouchon du Phénix', body:'Une troisième pièce de pierre est retrouvée sous un fragment de fresque tombé au sol. Son revers est marqué d’un signe de vent.' },
@@ -61,6 +61,15 @@ const redClues = {
   'red-relic': { title:'La relique du Faucon', kicker:'VISION · PROCHAINE DESTINATION', icon:'✦', evidence:'Relique retrouvée', body:'Omar actionne le mécanisme final. Une relique apparaît dans le mur et une vision le submerge. Le message le dirige vers la prochaine étape : Gizeh, la salle jaune.' },
 };
 let activeRedClue = null;
+let requestedRedClue = null;
+let redEvidenceFilter = 'all';
+let previousHypogeumState = null;
+const hypogeumDiscoveries = [
+  { key:'windReady', effect:'wind', text:'Un courant d’air traverse les galeries. La fresque à trous s’éveille.' },
+  { key:'horseOpen', effect:'horse', text:'La pierre cède. L’annexe du Cheval est ouverte.', sound:true },
+  { key:'falconOpen', effect:'falcon', text:'La fresque se déplace et dévoile l’annexe du Faucon.', sound:true },
+  { key:'relicFound', effect:'relic', text:'La relique apparaît dans l’annexe du Faucon.' },
+];
 
 const $ = (selector) => document.querySelector(selector);
 const esc = (value) => String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
@@ -325,7 +334,7 @@ function renderLanding() {
   const controls = $('#welcome-join-controls');
   if (isMember) {
     const player = game.players.find((entry) => entry.id === playerId);
-    setMarkup(controls, `<div class="joined-panel"><span class="coin-avatar">${coins[(Number(player.coin || 1) - 1) % coins.length].icon}</span><span class="joined-name">Votre pièce est choisie.<br><b>${esc(player.name)}</b></span><div class="room-choice"><button id="start-game-button">${game.finished ? 'Revoir' : 'Explorer'} Atlantide <span>→</span></button><button id="start-red-button">${game.red.finished ? 'Revoir' : 'Ouvrir'} le dossier de la salle rouge <span>→</span></button></div></div>`);
+    setMarkup(controls, `<div class="joined-panel"><span class="coin-avatar">${coins[(Number(player.coin || 1) - 1) % coins.length].icon}</span><span class="joined-name">Votre pièce est choisie.<br><b>${esc(player.name)}</b></span><div class="room-choice"><button id="start-game-button">${game.finished ? 'Revoir' : 'Explorer'} Atlantide <span>→</span></button><button id="start-red-button">${game.red.finished ? 'Revoir' : 'Explorer'} Ħal Saflieni <span>→</span></button></div></div>`);
   } else {
     setMarkup(controls, `<button id="join-button" class="join-submit" ${joining ? 'disabled' : ''}>${joining ? 'Connexion à l’équipe…' : 'Rejoindre l’équipe <span>→</span>'}</button>`);
   }
@@ -333,8 +342,15 @@ function renderLanding() {
   document.querySelectorAll('.coin-choice').forEach((button) => { button.disabled = isMember; });
 }
 function showScreen(screen) {
+  if (screen !== currentScreen) {
+    sanctuaryAudio.stop();
+    requestedRedClue = null;
+    if (currentScreen === 'red') {
+      $('#hypogeum-discovery').textContent = '';
+      for (const { effect } of hypogeumDiscoveries) $('#hypogeum-scene').classList.remove('reveal-' + effect);
+    }
+  }
   currentScreen = screen;
-  if (screen !== 'blue') sanctuaryAudio.stop();
   document.body.dataset.screen = screen;
   document.body.classList.remove('focus-mode');
   $('#focus-mode').setAttribute('aria-pressed', 'false');
@@ -399,56 +415,109 @@ function renderRedActions(clue, red) {
     if (id === 'equus-door') {
       return red.horseOpen ? '<span class="action-complete">✓ Passage ouvert · Howard est ligoté</span>' : '<div class="equus-form"><label for="equus-code">Nom latin de la monture</label><div><input id="equus-code" maxlength="5" placeholder="5 lettres"><button class="red-action-button" data-action="red-open-horse">Ouvrir</button></div></div>';
     }
-    if (id === 'wind-holes') {
-      if (!red.windReady) return `<button class="red-action-button secondary" data-red-clue="wind-holes">${redActionNames[id]}</button><small class="red-action-hint">Ventus activé : ${red.ventus.length}/3 salles</small>`;
+    if (id === 'wind-controls') {
+      if (!red.windReady) return `<small class="red-action-hint">Ventus activé : ${red.ventus.length}/3 salles</small>`;
       return `<div class="plug-controls"><span>Bouchons trouvés : ${red.plugs.length}/3 · trous remplis : ${red.plugged.length}/3</span><div>${[1,2,3].map((slot) => `<button class="plug-slot ${red.plugged.includes(slot) ? 'done' : ''}" data-action="red-place-plug" data-slot="${slot}" ${red.plugged.includes(slot) || red.plugs.length <= red.usedPlugs.length ? 'disabled' : ''}>${red.plugged.includes(slot) ? '✓' : `Trou ${slot}`}</button>`).join('')}</div></div>`;
     }
     if (id === 'horse-cache') return red.horseOpen ? `<button class="red-action-button secondary" data-red-clue="horse-cache">Ouvrir l’annexe du Cheval</button>` : '';
     if (id === 'falcon-cache') return red.falconOpen ? `<button class="red-action-button secondary" data-red-clue="falcon-cache">Entrer dans l’annexe du Faucon</button>` : '';
-    if (id === 'red-finalize') return '';
     const label = redActionNames[id] || `Examiner : ${id.replaceAll('-', ' ')}`;
     const already = red.inspected.includes(id);
     if (id.startsWith('plug-') && already) return `<span class="action-complete">✓ Bouchon récupéré</span>`;
-    if (id === 'falcon-cache' && !red.falconOpen) return '';
-    if (id === 'horse-cache' && !red.horseOpen) return '';
-    return `<button class="red-action-button secondary" data-red-clue="${id}">${already ? 'Relire' : label}</button>`;
+    return `<button class="red-action-button secondary" data-red-clue="${id}">${esc(already ? 'Relire · ' + redClues[id].title : label)}</button>`;
   }).filter(Boolean).join('');
   if (clue === redClues['falcon-cache']) {
     const murals = ['horse-mark','whale-mark','falcon-mark','phoenix-mark'];
     const ready = red.horseOpen && red.falconOpen && murals.every((id) => red.inspected.includes(id));
     return `${items}${red.finished ? '<button class="red-action-button secondary" data-red-clue="red-relic">Consulter la vision d’Omar →</button>' : ready ? '<button class="red-action-button finale-button" data-action="red-finalize">Activer le mécanisme final <span>→</span></button>' : `<small class="red-action-hint">${red.horseOpen ? 'Annexe du Cheval découverte' : 'Annexe du Cheval à découvrir'} · ${red.inspected.filter((id) => murals.includes(id)).length}/4 fresques lues</small>`}`;
   }
+  if (red.windReady && red.plugs.some((id) => redClues[id] === clue)) {
+    return '<button class="red-action-button secondary" data-red-clue="wind-holes">Rejoindre la fresque à trous →</button>';
+  }
   return items;
+}
+function renderRedEvidence(red) {
+  const clues = red.inspected.filter((id) => redClues[id]);
+  const shown = clues.filter((id) => {
+    if (redEvidenceFilter === 'testimony') return id.startsWith('suspect-') || id === 'entry-log';
+    if (redEvidenceFilter === 'fresco') return id.endsWith('-mark') || id === 'wind-holes' || id === 'horse-inscription';
+    if (redEvidenceFilter === 'object') return red.plugs.includes(id) || ['handkerchief','horse-cache','red-relic'].includes(id);
+    return true;
+  });
+  $('#red-evidence-count').textContent = clues.length;
+  const entries = shown.map((id) => {
+    const plug = red.plugs.includes(id);
+    const status = plug ? `<small>${red.usedPlugs.includes(id) ? 'Installé' : 'Disponible'}</small>` : '';
+    return `<div class="evidence-entry"><i aria-hidden="true">${plug ? '●' : '✦'}</i><button data-red-clue="${id}">${esc(redClues[id].evidence)}</button>${status}</div>`;
+  });
+  const empty = clues.length ? 'Aucune découverte dans ce filtre.' : 'Les découvertes de l’équipe apparaîtront ici.';
+  setMarkup($('#red-evidence-list'), entries.length ? entries.join('') : `<p class="empty-state">${empty}</p>`);
+}
+function renderHypogeum(red) {
+  const scene = $('#hypogeum-scene');
+  scene.classList.toggle('has-wind', red.windReady);
+  scene.classList.toggle('horse-open', red.horseOpen);
+  scene.classList.toggle('falcon-open', red.falconOpen);
+  $('.hotspot-wind').classList.toggle('hidden', !red.windReady && !red.inspected.includes('wind-holes'));
+  $('.hotspot-horse-annex').classList.toggle('hidden', !red.horseOpen);
+  $('.hotspot-falcon-annex').classList.toggle('hidden', !red.falconOpen);
+  $('.hotspot-relic').classList.toggle('hidden', !red.relicFound);
+  scene.querySelectorAll('[data-hypogeum-slot]').forEach((socket) => {
+    socket.classList.toggle('is-filled', red.plugged.includes(Number(socket.dataset.hypogeumSlot)));
+  });
+  scene.querySelectorAll('.map-hotspot').forEach((point) => {
+    const id = point.dataset.redClue;
+    if (point.dataset.redSector) point.classList.toggle('hidden', !red.inspected.includes(point.dataset.redSector));
+    point.classList.toggle('is-visited', red.inspected.includes(id));
+    point.classList.toggle('has-ventus', red.ventus.some((room) => id === room + '-zone'));
+  });
+  if (previousHypogeumState) {
+    const cleared = hypogeumDiscoveries.some(({ key }) => previousHypogeumState[key] && !red[key]);
+    const revealed = hypogeumDiscoveries.filter(({ key }) => !previousHypogeumState[key] && red[key]);
+    if (cleared) {
+      for (const { effect } of hypogeumDiscoveries) scene.classList.remove('reveal-' + effect);
+      $('#hypogeum-discovery').textContent = '';
+      if (currentScreen === 'red') sanctuaryAudio.stop();
+    }
+    if (currentScreen === 'red' && revealed.length) {
+      for (const { effect } of revealed) scene.classList.add('reveal-' + effect);
+      $('#hypogeum-discovery').textContent = revealed.map(({ text }) => text).join(' ');
+      if (revealed.some(({ sound }) => sound)) sanctuaryAudio.playStone('red');
+    }
+  }
+  previousHypogeumState = red;
 }
 function renderRed() {
   if (!game?.red) return;
   const red = game.red;
-  const evidenceIds = [...new Set([...red.inspected, ...red.plugs.map((plug) => `objet-${plug}`)])];
-  const labels = Object.fromEntries(Object.entries(redClues).map(([id, clue]) => [id, clue.evidence]));
-  $('#red-evidence-count').textContent = evidenceIds.length;
-  $('#red-evidence-list').innerHTML = evidenceIds.length ? evidenceIds.map((id) => `<div class="evidence-entry"><i>${id.startsWith('objet-') ? '●' : '✦'}</i><span>${esc(labels[id.replace('objet-','')] || (id === 'objet-plug-whale' ? 'Bouchon de la Baleine' : id === 'objet-plug-corridor' ? 'Bouchon du couloir' : id === 'objet-plug-phoenix' ? 'Bouchon du Phénix' : id.replaceAll('-', ' ')))}</span><b>✓</b></div>`).join('') : '<p class="empty-state">Les découvertes de l’équipe apparaîtront ici.</p>';
+  renderRedEvidence(red);
+  renderHypogeum(red);
   const steps = [
     `<div class="mechanism-row ${red.ventus.length === 3 ? 'complete' : ''}"><span class="mechanism-icon">≈</span><span><b>Réveiller le Ventus</b><small>${red.ventus.length}/3 fresques accessibles</small></span><i>${red.windReady ? '✓' : '·'}</i></div>`,
     `<div class="mechanism-row ${red.plugged.length === 3 ? 'complete' : ''}"><span class="mechanism-icon">◎</span><span><b>Ouvrir l’annexe du Faucon</b><small>${red.plugs.length}/3 bouchons · ${red.plugged.length}/3 trous</small></span><i>${red.falconOpen ? '✓' : '·'}</i></div>`,
-    `<div class="mechanism-row ${red.horseOpen ? 'complete' : ''}"><span class="mechanism-icon">♞</span><span><b>Ouvrir l’annexe du Cheval</b><small>${red.horseOpen ? 'Howard est démasqué' : 'Indice latin : EQUUS'}</small></span><i>${red.horseOpen ? '✓' : '·'}</i></div>`,
+    `<div class="mechanism-row ${red.horseOpen ? 'complete' : ''}"><span class="mechanism-icon">♞</span><span><b>Ouvrir l’annexe du Cheval</b><small>${red.horseOpen ? 'Howard est démasqué' : 'Déchiffrer l’inscription du passage'}</small></span><i>${red.horseOpen ? '✓' : '·'}</i></div>`,
     `<div class="mechanism-row ${red.finished ? 'complete' : ''}"><span class="mechanism-icon">✦</span><span><b>Retrouver la relique</b><small>${red.finished ? 'Vision de Gizeh reçue' : 'Les deux passages mènent au mécanisme final'}</small></span><i>${red.finished ? '✓' : '·'}</i></div>`,
   ];
   $('#red-mechanism-status').innerHTML = steps.join('');
-  for (const [selector, isOpen] of [['.hotspot-horse',red.horseOpen],['.hotspot-falcon',red.falconOpen]]) {
-    const node = $(selector);
-    const clueId = selector === '.hotspot-horse' ? (isOpen ? 'horse-cache' : 'horse-zone') : (isOpen ? 'falcon-cache' : 'falcon-zone');
-    node.dataset.redClue = clueId;
-    node.classList.toggle('is-open', isOpen);
+  if (activeRedClue && !red.inspected.includes(activeRedClue)) {
+    activeRedClue = null;
+    equusDraft = '';
   }
-  document.querySelectorAll('.map-hotspot').forEach((node) => node.classList.toggle('is-visited', red.inspected.includes(node.dataset.redClue)));
-  if (!activeRedClue || !redClues[activeRedClue]) return;
-  const clue = redClues[activeRedClue];
+  const clue = redClues[activeRedClue] || {
+    icon:'✦', kicker:'CARNET D’ENQUÊTE', title:'Choisissez un secteur sur le plan',
+    body:'Inspectez la scène du crime, comparez les horaires d’arrivée et écoutez les versions des quatre archéologues.',
+  };
   $('#red-inspector-icon').textContent = clue.icon;
   $('#red-inspector-kicker').textContent = clue.kicker;
   $('#red-inspector-title').textContent = clue.title;
   $('#red-inspector-copy').textContent = clue.body;
   setMarkup($('#red-inspector-actions'), renderRedActions(clue, red));
   if ($('#equus-code')) $('#equus-code').value = equusDraft;
+  document.querySelectorAll('#hypogeum-scene [data-red-clue], .suspect-list [data-red-clue]').forEach((button) => {
+    const selected = button.dataset.redClue === activeRedClue;
+    button.classList.toggle('is-selected', selected);
+    button.setAttribute('aria-pressed', String(selected));
+  });
 }
 async function join() {
   if (joining) return;
@@ -491,13 +560,23 @@ document.addEventListener('click', (event) => {
   const redClue = event.target.closest('[data-red-clue]');
   if (redClue) {
     const clueId = redClue.dataset.redClue;
-    act('red-inspect', { clueId }).then((success) => {
-      if (!success) return;
+    requestedRedClue = clueId;
+    const selectClue = () => {
+      if (requestedRedClue !== clueId || currentScreen !== 'red') return;
       activeRedClue = clueId;
       renderRed();
-      document.querySelectorAll('[data-red-clue]').forEach((button) => button.classList.toggle('is-selected', button.dataset.redClue === clueId));
-      if (matchMedia('(max-width: 850px)').matches) $('.red-inspector').scrollIntoView({ behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block:'center' });
-    });
+      const heading = $('#red-inspector-title');
+      heading.focus({ preventScroll:true });
+      heading.scrollIntoView({ behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block:'nearest' });
+    };
+    if (game?.red.inspected.includes(clueId)) selectClue();
+    else act('red-inspect', { clueId }).then((success) => { if (success) selectClue(); });
+  }
+  const redFilter = event.target.closest('[data-red-filter]');
+  if (redFilter) {
+    redEvidenceFilter = redFilter.dataset.redFilter;
+    document.querySelectorAll('[data-red-filter]').forEach((button) => button.setAttribute('aria-pressed', String(button === redFilter)));
+    if (game) renderRedEvidence(game.red);
   }
   const target = event.target.closest('[data-action]');
   if (target) {
