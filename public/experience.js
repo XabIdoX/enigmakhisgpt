@@ -46,6 +46,7 @@ dialog.addEventListener('close', () => {
     home.insertBefore($('#sanctuary-scene'), home.querySelector('.sanctuary-legend'));
     home.append($('#sanctuary-inspector'));
     dialog.classList.remove('sanctuary-dialog');
+    document.body.append($('#toast'));
   }
   if (dialogMode === 'hypogeum') {
     $('#red-screen .red-map-panel').append($('#hypogeum-exploration'));
@@ -82,6 +83,7 @@ function openSanctuary() {
   dialog.classList.add('sanctuary-dialog');
   sanctuaryAudio.updateButton();
   $('#expanded-sanctuary').append($('#sanctuary-scene'), $('#sanctuary-inspector'));
+  dialog.append($('#toast'));
 }
 
 function openHypogeum(opener) {

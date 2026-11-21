@@ -1,4 +1,48 @@
 /* The scene is built from independent elements so server updates preserve animation. */
+.sanctuary-navigation {
+  position:absolute; bottom:10px; left:16px; right:16px; z-index:8;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:8px; border:1px solid #7ea79a77; border-radius:9px;
+  background:#071f2ef0; box-shadow:0 6px 24px #00131a88;
+}
+.scene-filters,.scene-flame-shortcuts { display:flex; gap:5px; flex-wrap:wrap; }
+.sanctuary-navigation button {
+  min-height:36px; border:1px solid transparent; border-radius:5px; padding:7px 11px;
+  background:transparent; color:#c7dfd7; font:500 12px var(--font); cursor:pointer;
+}
+.sanctuary-navigation button:hover { background:#284b50; color:#fff2d7; }
+.scene-filters button[aria-pressed="true"] {
+  background:#d7bd8c; color:#112b33; border-color:#f5dbad;
+}
+.scene-flame-shortcuts button { display:flex; gap:7px; align-items:center; border-color:#53797588; }
+.scene-flame-shortcuts i {
+  width:7px; height:10px; background:#96f6dc; border-radius:60% 40% 60% 40%;
+  box-shadow:0 0 8px #7cefd9; transform:rotate(25deg);
+}
+.sanctuary-scene .scene-point { transition:opacity .2s,filter .2s; }
+.sanctuary-scene .scene-point.is-subdued { opacity:.24; }
+.sanctuary-scene .scene-point.is-subdued:hover,
+.sanctuary-scene .scene-point.is-subdued:focus-visible { opacity:1; }
+.sanctuary-scene[data-focus="objects"] .scene-loot:not([hidden]) {
+  outline:1px solid #f5d19b; box-shadow:0 0 15px #e6bb7055;
+}
+.scene-inspector-art {
+  flex:0 0 100px; align-self:stretch; display:grid; place-items:center; min-height:100px;
+  border:1px solid #71988a66; border-radius:8px;
+  background:radial-gradient(ellipse,#416e69aa,#0a293a); overflow:hidden;
+}
+.scene-inspector-art img { width:90px; height:100px; object-fit:contain; filter:drop-shadow(0 8px 8px #0006); }
+.scene-observation-label { display:block; color:#90c9c4; font:600 9px var(--font); letter-spacing:.18em; margin-bottom:7px; }
+.scene-gear-ledger { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:16px; }
+.scene-gear-ledger>div { display:flex; gap:8px; align-items:center; padding:9px; border:1px solid #62837d55; border-radius:6px; background:#061e2b77; }
+.scene-gear-ledger img { width:30px; height:30px; object-fit:contain; opacity:.4; }
+.scene-gear-ledger span { font-size:10px; line-height:1.5; color:#c1d3c9; }
+.scene-gear-ledger small { display:block; color:#88a7a2; font-size:10px; }
+.scene-gear-ledger .installed { border-color:#ba9f6577; background:#3a493966; }
+.scene-gear-ledger .installed img { opacity:1; }
+.scene-gear-ledger .installed small { color:#e4cc93; }
+.sanctuary-dialog .toast { position:sticky; left:auto; bottom:8px; transform:none; margin:8px 22px; }
+.sanctuary-dialog .toast:not(.show) { display:none; }
 .sanctuary-scene {
   position: relative; isolation: isolate; overflow: clip; aspect-ratio: 1.28;
   background: #06191f; container-type: inline-size; color: #d9e5db;
@@ -292,4 +336,25 @@ body[data-screen="blue"] .legend-flame { background:#8bf2dd; box-shadow:0 0 8px 
 #sound-toggle[aria-pressed="true"] { color:#b0f1d7; }
 #sound-toggle[aria-pressed="false"] { color:#a5b7b4; }
 #sound-toggle:disabled { opacity:.5; cursor:default; }
+
+.sanctuary-inspector {
+  display:flex; align-items:center; gap:20px; padding:22px;
+  background:linear-gradient(120deg,#163c48,#0c2937); border:1px solid #70968b77;
+  box-shadow:0 12px 30px #00131a33;
+}
+.sanctuary-inspector .scene-observation { flex:1 1 300px; }
+.sanctuary-inspector .scene-observation strong { font-size:25px; }
+.sanctuary-inspector .scene-observation p { font-size:13px; max-width:650px; }
+.sanctuary-inspector .scene-actions { flex:0 1 220px; }
+.sanctuary-inspector .scene-actions .mini-action {
+  background:#cdb07a; color:#102c35; border-color:#e8d09e; font-weight:700;
+  box-shadow:0 3px 0 #6a603f; transition:background .15s;
+}
+.sanctuary-inspector .scene-actions .mini-action:hover { background:#f0d7a5; }
+.sanctuary-dialog .scene-observation p { color:#b3cbc7; }
+@media (max-width:900px) {
+  .sanctuary-navigation { flex-wrap:wrap; }
+  .sanctuary-inspector { flex-wrap:wrap; }
+  .scene-gear-ledger { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
 .sanctuary-audio-control { margin:0 0 12px; padding:8px 12px; border:1px solid #769d8c66; border-radius:4px; color:#b0f1d7; }

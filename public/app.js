@@ -18,6 +18,7 @@ let equusDraft = '';
 const pendingActions = new Set();
 let toastTimer;
 let selectedSceneObject = 'center-table';
+let sanctuaryFocus = 'all';
 let previousDiscoveries = null;
 let discoveryQueue = [];
 let discoveryTimer = null;
@@ -150,7 +151,13 @@ function renderMap() {
       ${point('water','Bassin d’eau',50,70,'<span class="pool-water" aria-hidden="true"><i></i><i></i><i></i></span><span class="landmark-label">Bassin</span>','scene-pool')}
       ${point('floor-1','Cache sous la table',50,51,'<span aria-hidden="true">◇</span><span class="landmark-label">Cache</span>','scene-hatch')}
       ${point('floor-2','Seconde cache du sol',63,57,'<span aria-hidden="true">✧</span><span class="landmark-label">Cache</span>','scene-hatch')}
-      ${items}</div><span class="scene-phase"></span><div class="scene-feedback" role="status" aria-live="polite"></div>`;
+      ${items}</div><span class="scene-phase"></span><div class="scene-feedback" role="status" aria-live="polite"></div>
+      <div class="sanctuary-navigation"><div class="scene-filters" role="group" aria-label="Repères du sanctuaire">
+      <button data-scene-filter="all" aria-pressed="true">Vue d’ensemble</button>
+      <button data-scene-filter="objects" aria-pressed="false">Objets</button>
+      <button data-scene-filter="murals" aria-pressed="false">Fresques</button>
+      <button data-scene-filter="flames" aria-pressed="false">Flammes</button>
+      </div><div class="scene-flame-shortcuts" aria-label="Observer les flammes allumées"></div></div>`;
   }
   if (scene.dataset.rotated === 'false' && game.rotated && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     scene.classList.add('is-turning');
@@ -189,8 +196,24 @@ function renderMap() {
     node.classList.toggle('is-installed', game.insertedGears.includes(node.dataset.sceneGear)));
   scene.querySelector('.scene-table').setAttribute('aria-label',
     `Table centrale, ${game.insertedGears.length}/4 roues installées`);
+  setMarkup(scene.querySelector('.scene-flame-shortcuts'), game.torches.map((statue, index) =>
+    `<button data-observe-scene="statue-${statue}" aria-label="Observer la flamme ${index + 1} sur la statue ${statue}"><i aria-hidden="true"></i><span>Statue ${statue}</span></button>`).join(''));
   updateSceneDiscoveries(scene);
   renderSceneInspector();
+}
+
+function updateSanctuaryFocus() {
+  const scene = $('#sanctuary-scene');
+  scene.dataset.focus = sanctuaryFocus;
+  scene.querySelectorAll('[data-scene-filter]').forEach((button) =>
+    button.setAttribute('aria-pressed', String(button.dataset.sceneFilter === sanctuaryFocus)));
+  scene.querySelectorAll('[data-scene-object]').forEach((point) => {
+    const matches = sanctuaryFocus === 'all'
+      || (sanctuaryFocus === 'objects' && point.classList.contains('scene-loot'))
+      || (sanctuaryFocus === 'murals' && point.classList.contains('scene-mural'))
+      || (sanctuaryFocus === 'flames' && point.classList.contains('is-lit'));
+    point.classList.toggle('is-subdued', !matches && point.dataset.sceneObject !== selectedSceneObject);
+  });
 }
 
 function updateSceneDiscoveries(scene) {
@@ -255,7 +278,27 @@ function renderSceneInspector() {
   if (id === 'mural-2' && game.muralBroken && game.items.small_gear.location === 'hidden-wall')
     actions += objectButton('Ramasser la petite roue', 'take', { itemId:'small_gear' });
   if (game.items[id]?.location === 'inventory') actions = '<small>Objet dans l’inventaire commun.</small>';
-  setMarkup($('#sanctuary-inspector'), `<div class="scene-observation"><strong>${esc(name || 'Sanctuaire')}</strong><p>${esc(description)}</p></div><div class="scene-actions">${actions}</div>`);
+  if (id.startsWith('statue-') && game.statueItems[String(number)]) {
+    description += ` Une offrande repose sur son plateau · ${game.items[game.statueItems[String(number)]].name.toLowerCase()}.`;
+  }
+  if (game.items[id]?.pickable) {
+    description = game.items[id].location === 'inventory'
+      ? 'Cet objet a été recueilli par l’équipe.'
+      : 'Cet objet est à portée de main. Ramassez-le pour l’ajouter à l’inventaire commun.';
+  }
+  const image = game.items[id]?.image || (id.startsWith('statue-') ? 'atlantean-guardian-torch.png'
+    : id.startsWith('mural-') ? (game.muralBroken && id === 'mural-2' ? 'mural_broken.png' : 'mural_text.png')
+    : id === 'center-table' ? 'center_table.png' : id === 'water' ? 'bucket.png' : null);
+  const gears = id === 'center-table' ? `<div class="scene-gear-ledger" aria-label="Roues du mécanisme">${['old_gear','small_gear','medium_gear','big_gear'].map((gear) => {
+    const installed = game.insertedGears.includes(gear);
+    const carried = game.inventory.includes(gear);
+    return `<div class="${installed ? 'installed' : ''}"><img src="/assets/${game.items[gear].image}" alt=""><span>${esc(game.items[gear].name)}<small>${installed ? 'Installée' : carried ? 'Dans le sac' : 'À retrouver'}</small></span></div>`;
+  }).join('')}</div>` : '';
+  setMarkup($('#sanctuary-inspector'), `${image ? `<div class="scene-inspector-art"><img src="/assets/${image}" alt=""></div>` : ''}
+    <div class="scene-observation"><span class="scene-observation-label">CARNET D’OBSERVATION</span><strong>${esc(name || 'Sanctuaire')}</strong><p>${esc(description)}</p>${gears}</div><div class="scene-actions">${actions}</div>`);
+  $('#sanctuary-scene').querySelectorAll('[data-scene-object]').forEach((point) =>
+    point.setAttribute('aria-pressed', String(point.dataset.sceneObject === id)));
+  updateSanctuaryFocus();
 }
 function objectActions(item) {
   const inv = game.inventory;
@@ -384,7 +427,7 @@ function render() {
   if (!game) return;
   const focused = document.activeElement;
   const focusId = focused?.id;
-  const focusAttrs = ['data-coin','data-scene-object','data-map-mural','data-torch-id','data-action','data-item-id','data-statue-id','data-room','data-slot','data-red-clue','data-inspect'];
+  const focusAttrs = ['data-coin','data-scene-object','data-observe-scene','data-scene-filter','data-map-mural','data-torch-id','data-action','data-item-id','data-statue-id','data-room','data-slot','data-red-clue','data-inspect'];
   const focusSelector = focused ? focusAttrs.filter((key) => focused.hasAttribute(key)).map((key) => `[${key}="${CSS.escape(focused.getAttribute(key))}"]`).join('') : '';
   const selection = focused instanceof HTMLInputElement ? [focused.selectionStart, focused.selectionEnd] : null;
   const scrolls = ['object-grid','inventory-list','journal','red-journal','red-evidence-list'].map((id) => [id, document.getElementById(id)?.scrollTop]);
@@ -552,6 +595,17 @@ document.addEventListener('input', (event) => {
   if (event.target.id === 'equus-code') equusDraft = event.target.value;
 });
 document.addEventListener('click', (event) => {
+  const sceneFilter = event.target.closest('[data-scene-filter]');
+  if (sceneFilter) {
+    sanctuaryFocus = sceneFilter.dataset.sceneFilter;
+    updateSanctuaryFocus();
+  }
+  const observe = event.target.closest('[data-observe-scene]');
+  if (observe) {
+    selectedSceneObject = observe.dataset.observeScene;
+    renderMap();
+    $('#sanctuary-scene').querySelector(`[data-scene-object="${selectedSceneObject}"]`)?.focus({ preventScroll:true });
+  }
   const scenePoint = event.target.closest('[data-scene-object]');
   if (scenePoint) {
     selectedSceneObject = scenePoint.dataset.sceneObject;

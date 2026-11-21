@@ -156,6 +156,9 @@ La consigne générale de priorité au web sur ordinateur est enregistrée dans 
 
 ## Hypogée interactif de la Salle Rouge
 
+Publication vérifiée le 18 novembre 2026, commit 117381f, déploiement
+dep-dbv12cpsrm7s73b3dne0. Le chapitre porte le nom de Ħal Saflieni.
+
 La scène interactive occupe toute la largeur au-dessus des dossiers, des pièces
 à conviction, de la progression et de la chronologie. Le tracé s’appuie sur
 `salle_rouge_map.png` et `La_salle_rouge.docx`. Il reprend l’entrée au sud,
@@ -181,3 +184,19 @@ Le décor d’arrivée `public/assets/hypogeum.jpg` a été créé avec l’outi
 intégré. Prompt utilisé :
 
 > Use case: stylized-concept. Wide 16:9 environment-only backdrop for a desktop mystery game. Photorealistic cinematic view from inside the Hypogeum of Hal Saflieni, Malta, imagined 1920s archaeological dig. Honey limestone hewn into rounded megalithic chambers, three deep dark carved portals and shallow stepped thresholds, ochre red faded spiral wall pigment and pools of warm amber lantern light. Rich tactile limestone, low-key burgundy shadows. Eye-level wide angle, atmospheric architectural photograph, room in foreground for UI overlay. No text, no people, no props that resemble clues, no weapons, no bodies, no controls, no map markings. This image is atmospheric backdrop behind a separate precise playable floor plan.
+
+## Observation et repères d’Atlantide — 21 novembre 2026
+
+La scène possède une barre de repères pour mettre en évidence les objets,
+les fresques ou les flammes. Les éléments atténués restent sélectionnables.
+Quatre accès directs permettent d’observer les statues portant les flammes
+actuelles, actualisées avec la partie commune.
+
+La fiche d’observation présente une illustration, des actions bronze plus
+lisibles, les offrandes posées et un tableau des quatre roues du mécanisme.
+Chaque roue affiche sa présence dans le sac ou son installation. Le message
+d’erreur est également visible dans la fenêtre agrandie.
+
+Les 14 tests du dépôt passent. Vérification Edge sur ordinateur avec collecte,
+déplacement de flamme, filtres, roues, mise à jour depuis un second joueur et
+retour de la vue agrandie. La publication sur Render est demandée par DoX.
