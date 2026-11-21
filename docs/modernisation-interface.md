@@ -199,4 +199,29 @@ d’erreur est également visible dans la fenêtre agrandie.
 
 Les 14 tests du dépôt passent. Vérification Edge sur ordinateur avec collecte,
 déplacement de flamme, filtres, roues, mise à jour depuis un second joueur et
-retour de la vue agrandie. La publication sur Render est demandée par DoX.
+retour de la vue agrandie. Publication Render vérifiée, commit 15a4d09,
+déploiement dep-dc0g5rcs728c73a5r100.
+
+## Dossier visuel de Ħal Saflieni — 21 novembre 2026
+
+Le plan et la fiche d’observation se présentent côte à côte sur ordinateur.
+Les quatre personnages disposent de portraits originaux et leurs dossiers sont
+accessibles dans l’exploration normale et agrandie. Une barre permet d’accéder
+aux quatre secteurs. Les bouchons et le mouchoir apparaissent sur le plan après
+exploration de leur secteur, avec un repère de collecte pour les bouchons.
+
+Le registre présente les horaires en liste chronologique. Le joueur peut garder
+deux indices côte à côte pour les comparer. Cette sélection personnelle dure le
+temps de la page et respecte les découvertes partagées de la partie. Les trois
+logements de la fresque disposent de boutons visuels pour installer les bouchons.
+
+Les 14 tests du dépôt passent. Le parcours complet a été contrôlé dans Edge,
+y compris le code incorrect, les deux annexes, le son, la relique, la comparaison,
+les portraits, le registre, la collecte depuis le plan et la saisie conservée
+pendant une mise à jour d’un second joueur.
+
+Les portraits sont imaginés d’après les tenues du document de conception.
+Fichier `public/assets/hypogeum-portraits.jpg`, créé avec l’outil intégré ImageGen.
+Prompt utilisé :
+
+> Use case: stylized-concept. Asset for an original cooperative archaeological mystery game. Create a perfectly aligned 2 by 2 portrait contact sheet, four equally sized square panels filling the whole canvas edge to edge, no gaps, no borders, no lettering, no labels. Each panel a distinct fictional archaeologist portrait cropped chest-up at identical scale, front three-quarter pose, eyes visible, calm neutral expression, dignified, no sinister cues. Top left: 48-year-old man Howard, short brown hair with grey at temples, white shirt, black braces, clean shaven. Top right: 27-year-old woman Evelyn, brown sweater, brown expedition hat, dark brown hair. Bottom left: 40-year-old man Hugh, black jacket, white shirt, dark hat, short neat beard. Bottom right: 32-year-old man Omar, North African appearance, beige expedition hat, white shirt and black braces, light stubble. These are fictional versions from a game, do not imitate famous historical photos. Cinematic realistic painted portraits with photographic facial detail, archaeological field notebook atmosphere, soft side lighting, burgundy and warm amber brown shadows, neutral warm limestone background shared by all panels. All four equally trustworthy. No weapons, clues, jewelry, symbols, text or watermark. Square canvas 2048x2048. Preserve head and shoulders wholly within each quadrant.

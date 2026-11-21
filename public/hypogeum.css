@@ -231,3 +231,121 @@ body[data-screen="red"] #sound-toggle[aria-pressed="true"] { color: #ffd1ad; }
 @media (prefers-reduced-motion: reduce) {
   .hypogeum-exploration .red-map-frame * { animation: none; transition: none; }
 }
+
+/* The map and the open dossier share one exploration surface in both views. */
+.hypogeum-exploration {
+  grid-template-columns:minmax(0,1.6fr) minmax(310px,1fr);
+  grid-template-rows:auto auto auto auto auto;
+  gap:16px;
+}
+.hypogeum-sectors {
+  grid-column:1/-1; display:grid; grid-template-columns:repeat(4,1fr); gap:8px;
+}
+.hypogeum-sectors button {
+  display:grid; grid-template-columns:34px 1fr; column-gap:10px; text-align:left;
+  padding:14px; background:#281c19; border:1px solid #785342; border-radius:6px;
+  color:#f3d6ba; cursor:pointer;
+}
+.hypogeum-sectors button>span { grid-row:span 2; align-self:center; font:30px var(--serif); color:#dda87b; }
+.hypogeum-sectors b { font:18px var(--serif); font-weight:400; }
+.hypogeum-sectors small { color:#c2a18d; font:11px var(--font); margin-top:5px; }
+.hypogeum-sectors button:hover,.hypogeum-sectors button.is-selected { border-color:#ecc39a; background:#513329; }
+.hypogeum-exploration .suspect-panel { grid-column:1/-1; border:0; background:transparent!important; }
+.hypogeum-exploration .suspect-panel .panel-heading { padding:8px 0 12px; }
+.hypogeum-exploration .suspect-panel .panel-heading h2 { font-size:21px; color:#f4dfcb; }
+.hypogeum-exploration .suspect-list { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; padding:0; }
+.hypogeum-exploration .suspect-card {
+  position:relative; padding:0; display:block; border:1px solid #7c5945; border-radius:7px;
+  overflow:hidden; background:#241915; min-width:0;
+}
+.suspect-avatar,.dossier-portrait {
+  background-image:url('/assets/hypogeum-portraits.jpg')!important; background-size:200% 200%!important;
+  background-repeat:no-repeat; color:transparent!important;
+}
+.howard-avatar,.portrait-howard { background-position:0 0!important; }
+.evelyn-avatar,.portrait-evelyn { background-position:100% 0!important; }
+.hugh-avatar,.portrait-hugh { background-position:0 100%!important; }
+.omar-avatar,.portrait-omar { background-position:100% 100%!important; }
+.hypogeum-exploration .suspect-avatar {
+  display:block; width:100%; height:auto; aspect-ratio:1.65; border:0; border-radius:0;
+  background-size:200% 330%!important;
+}
+.hypogeum-exploration .howard-avatar,.hypogeum-exploration .evelyn-avatar { background-position-y:5%!important; }
+.hypogeum-exploration .hugh-avatar,.hypogeum-exploration .omar-avatar { background-position-y:76%!important; }
+.hypogeum-exploration .suspect-card>span:nth-child(2) { display:block; padding:11px 12px; }
+.hypogeum-exploration .suspect-card b { font-size:17px; color:#f8deca; }
+.hypogeum-exploration .suspect-card small { font-size:10px; color:#c5a38f; line-height:1.6; white-space:normal; min-height:32px; }
+.hypogeum-exploration .suspect-card>i { display:none; }
+.hypogeum-exploration .suspect-card:hover,.hypogeum-exploration .suspect-card.is-selected { border-color:#ffd3a3; background:#493025; }
+.hypogeum-exploration .suspect-card.is-read::after {
+  content:"Consulté"; position:absolute; top:8px; right:8px; padding:4px 7px;
+  border-radius:3px; color:#ffe0b7; background:#221612de; font:10px var(--font);
+}
+.hypogeum-exploration .red-map-frame {
+  grid-column:1; grid-row:3; align-self:start; container-type:inline-size;
+  box-shadow:inset 0 0 50px #0009;
+}
+.hypogeum-exploration .red-map-art { min-height:0; }
+.hypogeum-room { stroke-width:4; filter:drop-shadow(0 5px 3px #0008); }
+.hypogeum-exploration .map-hotspot { width:clamp(24px,5cqw,42px); font-size:clamp(12px,2.6cqw,23px); }
+.hypogeum-exploration .hotspot-detail,.hypogeum-exploration .hotspot-item,
+.hypogeum-exploration .hotspot-passage,.hypogeum-exploration .hotspot-wind,
+.hypogeum-exploration .hotspot-horse-annex,.hypogeum-exploration .hotspot-falcon-annex,.hypogeum-exploration .hotspot-relic {
+  width:clamp(20px,3.5cqw,30px); font-size:clamp(10px,2cqw,17px);
+}
+.hotspot-plug-whale { left:11%; top:71%; }
+.hotspot-plug-corridor { left:31%; top:55%; }
+.hotspot-plug-phoenix { left:78%; top:64%; }
+.hotspot-cloth { left:90%; top:78%; }
+.hypogeum-exploration .hotspot-item { border-radius:5px; color:#eccba7; }
+.hypogeum-exploration .hotspot-item.is-collected { background:#405141; border-color:#b7c6a0; }
+.hotspot-item.is-collected::after { content:"✓"; position:absolute; right:-6px; top:-6px; border-radius:50%; background:#243a29; font-size:11px; color:#e4eac4; }
+.hypogeum-exploration .red-inspector {
+  grid-column:2; grid-row:3/5; align-self:start; display:block; padding:22px;
+  border-radius:7px; border:1px solid #ac795c; box-shadow:0 12px 30px #120b0866;
+}
+.hypogeum-exploration .inspector-icon {
+  display:grid; width:64px; height:64px; border-radius:8px; margin-bottom:20px;
+  background:radial-gradient(#79533b,#38251c); border-color:#b98b60; color:#f6d2a5; font-size:34px;
+}
+.hypogeum-exploration .inspector-icon.dossier-portrait { width:100%; height:auto; aspect-ratio:1; max-width:190px; border-radius:5px; }
+.hypogeum-exploration .inspector-body h2 { font-size:27px; line-height:1.2; margin:10px 0 14px; }
+.hypogeum-exploration .inspector-body p { font-size:13px; line-height:1.85; color:#e1cab9; }
+.hypogeum-exploration .red-inspector-actions { margin-top:18px; gap:8px; }
+.hypogeum-exploration .red-action-button { min-height:40px; font-size:12px; background:#c59871; color:#271a14; border-color:#f1cba0; }
+.hypogeum-exploration .red-action-button.secondary { background:#37261f; color:#f0c8a2; border-color:#8c654e; }
+.hypogeum-exploration .red-action-button:hover { background:#e0b78d; color:#241810; }
+.hypogeum-exploration .red-action-button.done { background:#354735; color:#d1dfb7; border-color:#83956c; }
+.hypogeum-discovery { grid-column:1; grid-row:4; margin:0; }
+#red-pin-clue { margin-top:20px; padding-top:16px; border-top:1px solid #805b4566; width:100%; text-align:left; color:#e9be91; font-size:12px; line-height:1.7; }
+#red-pin-clue:disabled { opacity:.45; cursor:default; }
+.red-comparison { grid-column:1/-1; border-top:1px solid #95694877; padding-top:20px; }
+.red-comparison.hidden { display:none; }
+.comparison-heading { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:15px; }
+.comparison-heading h3 { margin:0; font:23px var(--serif); color:#f1d2b2; }
+.comparison-heading>span { color:#c5a890; font-size:11px; }
+#red-comparison-cards { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+.comparison-card { position:relative; padding:25px; border-radius:4px; background:#e8d7b6; color:#372b23; box-shadow:0 6px 12px #0003; }
+.comparison-card>span { font:600 9px var(--font); letter-spacing:.1em; color:#71543f; display:block; padding-right:20px; }
+.comparison-card h4 { margin:12px 0; font:23px var(--serif); }
+.comparison-card p,.hypogeum-dialog .comparison-card p { font-size:13px; line-height:1.85; color:#49392b; margin:0; }
+.unpin-clue { position:absolute; right:9px; top:9px; width:30px; height:30px; border:1px solid #a28b69; border-radius:50%; background:transparent; color:#49392b; cursor:pointer; font-size:21px; }
+.comparison-empty { display:grid; place-items:center; padding:30px; border:1px dashed #997356; border-radius:4px; color:#d5b797; font-size:13px; line-height:1.8; }
+.case-register { padding:0; margin:20px 0; list-style:none; border-left:2px solid #ad835d; }
+.case-register li { display:flex; align-items:center; gap:14px; padding:9px 0 9px 14px; font-size:12px; color:#e2c6b0; }
+.case-register time { white-space:nowrap; color:#f7d5a9; font-variant-numeric:tabular-nums; }
+.case-register .crime-time { background:#6b392d77; }
+.wind-socket-panel { display:flex; justify-content:space-between; gap:8px; padding:15px 8px; background:radial-gradient(#77583e,#35251d); border:1px solid #ab805a; border-radius:6px; }
+.wind-socket-panel .plug-slot { flex:1; display:grid; justify-items:center; border:0; background:transparent; padding:3px; }
+.wind-socket-panel .plug-slot>span { width:54px; height:54px; border:3px solid #ab8b62; border-radius:50%; background:#1b1410; box-shadow:inset 0 3px 8px #000; font-size:35px; color:#e1c292; line-height:45px; }
+.wind-socket-panel .plug-slot small { font-size:9px; margin-top:8px; color:#f0d4af; }
+.wind-socket-panel .plug-slot.done>span { background:#8c7350; color:#f9dcaa; box-shadow:0 2px 6px #0007; }
+.wind-socket-panel .plug-slot:enabled:hover>span { border-color:#ffe4b4; box-shadow:0 0 15px #eebf7466; }
+#red-screen .red-side-column { grid-template-columns:1.2fr 1fr 1fr; }
+.hypogeum-dialog .dialog-inner { padding-inline:24px; }
+@media (max-width:950px) {
+  .hypogeum-exploration { grid-template-columns:1fr; }
+  .hypogeum-exploration .red-inspector { grid-column:1; grid-row:5; }
+  .red-comparison { grid-row:6; }
+  .hypogeum-exploration .suspect-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}

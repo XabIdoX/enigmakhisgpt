@@ -64,6 +64,7 @@ const redClues = {
 let activeRedClue = null;
 let requestedRedClue = null;
 let redEvidenceFilter = 'all';
+let comparedRedClues = [];
 let previousHypogeumState = null;
 const hypogeumDiscoveries = [
   { key:'windReady', effect:'wind', text:'Un courant d’air traverse les galeries. La fresque à trous s’éveille.' },
@@ -460,7 +461,7 @@ function renderRedActions(clue, red) {
     }
     if (id === 'wind-controls') {
       if (!red.windReady) return `<small class="red-action-hint">Ventus activé : ${red.ventus.length}/3 salles</small>`;
-      return `<div class="plug-controls"><span>Bouchons trouvés : ${red.plugs.length}/3 · trous remplis : ${red.plugged.length}/3</span><div>${[1,2,3].map((slot) => `<button class="plug-slot ${red.plugged.includes(slot) ? 'done' : ''}" data-action="red-place-plug" data-slot="${slot}" ${red.plugged.includes(slot) || red.plugs.length <= red.usedPlugs.length ? 'disabled' : ''}>${red.plugged.includes(slot) ? '✓' : `Trou ${slot}`}</button>`).join('')}</div></div>`;
+      return `<div class="plug-controls"><span>Bouchons disponibles · ${red.plugs.length - red.usedPlugs.length}</span><div class="wind-socket-panel" aria-label="Les trois logements de la fresque">${[1,2,3].map((slot) => `<button class="plug-slot ${red.plugged.includes(slot) ? 'done' : ''}" data-action="red-place-plug" data-slot="${slot}" aria-label="${red.plugged.includes(slot) ? 'Bouchon installé dans le trou' : 'Installer un bouchon dans le trou'} ${slot}" ${red.plugged.includes(slot) || red.plugs.length <= red.usedPlugs.length ? 'disabled' : ''}><span aria-hidden="true">${red.plugged.includes(slot) ? '◉' : '○'}</span><small>Logement ${slot}</small></button>`).join('')}</div></div>`;
     }
     if (id === 'horse-cache') return red.horseOpen ? `<button class="red-action-button secondary" data-red-clue="horse-cache">Ouvrir l’annexe du Cheval</button>` : '';
     if (id === 'falcon-cache') return red.falconOpen ? `<button class="red-action-button secondary" data-red-clue="falcon-cache">Entrer dans l’annexe du Faucon</button>` : '';
@@ -512,6 +513,9 @@ function renderHypogeum(red) {
     const id = point.dataset.redClue;
     if (point.dataset.redSector) point.classList.toggle('hidden', !red.inspected.includes(point.dataset.redSector));
     point.classList.toggle('is-visited', red.inspected.includes(id));
+    point.classList.toggle('is-collected', red.plugs.includes(id));
+    if (point.classList.contains('hotspot-item') && red.plugs.includes(id)) point.setAttribute('aria-label', redClues[id].evidence + ' · récupéré, relire');
+    point.title = point.getAttribute('aria-label');
     point.classList.toggle('has-ventus', red.ventus.some((room) => id === room + '-zone'));
   });
   if (previousHypogeumState) {
@@ -529,6 +533,33 @@ function renderHypogeum(red) {
     }
   }
   previousHypogeumState = red;
+}
+function renderRedDossier(red) {
+  const portrait = activeRedClue?.startsWith('suspect-') ? activeRedClue.slice(8) : '';
+  const icon = $('#red-inspector-icon');
+  icon.className = portrait ? 'inspector-icon dossier-portrait portrait-' + portrait : 'inspector-icon';
+  if (portrait) icon.textContent = '';
+  const register = activeRedClue === 'entry-log' ? `<ol class="case-register" aria-label="Horaires du registre">
+    <li><time>10 h 13</time><span>Entrée de Hugh</span></li>
+    <li><time>11 h 45</time><span>Entrée d’Evelyn</span></li>
+    <li><time>13 h 47</time><span>Entrée de George</span></li>
+    <li><time>13 h 50</time><span>Entrée d’Howard</span></li>
+    <li><time>13 h 53</time><span>Sortie de Hugh</span></li>
+    <li class="crime-time"><time>14 h 04</time><span>Découverte du corps</span></li>
+  </ol>` : '';
+  setMarkup($('#red-inspector-detail'), register);
+  comparedRedClues = comparedRedClues.filter((id) => red.inspected.includes(id));
+  const pinned = comparedRedClues.includes(activeRedClue);
+  $('#red-pin-clue').disabled = !activeRedClue;
+  $('#red-pin-clue').setAttribute('aria-pressed', String(pinned));
+  $('#red-pin-clue').textContent = pinned ? '✓ Indice dans la comparaison' : '＋ Garder cet indice pour comparer';
+  $('#red-comparison').classList.toggle('hidden', !comparedRedClues.length);
+  setMarkup($('#red-comparison-cards'), comparedRedClues.map((id) =>
+    `<article class="comparison-card"><button class="unpin-clue" data-unpin-red="${id}" aria-label="Retirer ${esc(redClues[id].title)} de la comparaison">×</button><span>${esc(redClues[id].kicker)}</span><h4>${esc(redClues[id].title)}</h4><p>${esc(redClues[id].body)}</p></article>`).join('')
+    + (comparedRedClues.length === 1 ? '<div class="comparison-empty">Ouvrez un second dossier ou indice, puis choisissez « Garder cet indice pour comparer ».</div>' : ''));
+  document.querySelectorAll('.suspect-card').forEach((button) => {
+    button.classList.toggle('is-read', red.inspected.includes(button.dataset.redClue));
+  });
 }
 function renderRed() {
   if (!game?.red) return;
@@ -556,7 +587,8 @@ function renderRed() {
   $('#red-inspector-copy').textContent = clue.body;
   setMarkup($('#red-inspector-actions'), renderRedActions(clue, red));
   if ($('#equus-code')) $('#equus-code').value = equusDraft;
-  document.querySelectorAll('#hypogeum-scene [data-red-clue], .suspect-list [data-red-clue]').forEach((button) => {
+  renderRedDossier(red);
+  document.querySelectorAll('#hypogeum-scene [data-red-clue], .suspect-list [data-red-clue], .hypogeum-sectors [data-red-clue]').forEach((button) => {
     const selected = button.dataset.redClue === activeRedClue;
     button.classList.toggle('is-selected', selected);
     button.setAttribute('aria-pressed', String(selected));
@@ -595,6 +627,18 @@ document.addEventListener('input', (event) => {
   if (event.target.id === 'equus-code') equusDraft = event.target.value;
 });
 document.addEventListener('click', (event) => {
+  if (event.target.closest('#red-pin-clue') && activeRedClue) {
+    if (comparedRedClues.includes(activeRedClue)) comparedRedClues = comparedRedClues.filter((id) => id !== activeRedClue);
+    else if (comparedRedClues.length < 2) comparedRedClues.push(activeRedClue);
+    else toast('Retirez un indice de la comparaison pour en ajouter un autre.');
+    renderRedDossier(game.red);
+  }
+  const unpin = event.target.closest('[data-unpin-red]');
+  if (unpin) {
+    comparedRedClues = comparedRedClues.filter((id) => id !== unpin.dataset.unpinRed);
+    renderRedDossier(game.red);
+    $('#red-pin-clue').focus({ preventScroll:true });
+  }
   const sceneFilter = event.target.closest('[data-scene-filter]');
   if (sceneFilter) {
     sanctuaryFocus = sceneFilter.dataset.sceneFilter;

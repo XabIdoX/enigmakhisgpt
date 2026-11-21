@@ -113,6 +113,18 @@
         <div class="red-main-column">
           <section class="panel red-map-panel"><div class="panel-heading"><div><span class="section-label">2E SOUS-SOL</span><h2>L’hypogée de Ħal Saflieni</h2></div><button type="button" class="text-link" data-expand-red>⤢ Explorer en grand</button></div>
             <div id="hypogeum-exploration" class="hypogeum-exploration">
+              <nav class="hypogeum-sectors" aria-label="Explorer les secteurs de l’hypogée">
+                <button data-red-clue="horse-zone"><span>♞</span><b>Le Cheval</b><small>Dortoir</small></button>
+                <button data-red-clue="whale-zone"><span>≈</span><b>La Baleine</b><small>Bassins</small></button>
+                <button data-red-clue="falcon-zone"><span>⌁</span><b>Le Faucon</b><small>Inscriptions</small></button>
+                <button data-red-clue="phoenix-zone"><span>✳</span><b>Le Phénix</b><small>Scène du crime</small></button>
+              </nav>
+          <section class="panel suspect-panel"><div class="panel-heading compact"><div><span class="section-label">PERSONNES PRÉSENTES</span><h2>Les quatre archéologues</h2></div><span class="count-pill">4 dossiers</span></div><div class="suspect-list">
+            <button class="suspect-card" data-red-clue="suspect-howard"><span class="suspect-avatar howard-avatar">HC</span><span><b>Howard Carter</b><small>48 ans · archéologue · arrivé 13 h 50</small></span><i>↗</i></button>
+            <button class="suspect-card" data-red-clue="suspect-evelyn"><span class="suspect-avatar evelyn-avatar">EB</span><span><b>Evelyn Beauchamp</b><small>27 ans · chercheuse · a découvert le corps</small></span><i>↗</i></button>
+            <button class="suspect-card" data-red-clue="suspect-hugh"><span class="suspect-avatar hugh-avatar">HW</span><span><b>Hugh White</b><small>40 ans · historien · parti à 13 h 53</small></span><i>↗</i></button>
+            <button class="suspect-card" data-red-clue="suspect-omar"><span class="suspect-avatar omar-avatar">OZ</span><span><b>Omar Zboubi</b><small>32 ans · archéologue · arrivé trois jours plus tôt</small></span><i>↗</i></button>
+          </div></section>
               <div id="hypogeum-scene" class="red-map-frame" role="group" aria-label="Plan interactif du deuxième sous-sol">
                 <svg class="red-map-art" viewBox="0 0 900 480" aria-hidden="true">
                   <defs>
@@ -144,6 +156,10 @@
                 <button class="map-hotspot hotspot-detail hotspot-whale-mark hidden" data-red-sector="whale-zone" data-red-clue="whale-mark" aria-label="Lire la fresque de la Baleine">▧</button>
                 <button class="map-hotspot hotspot-detail hotspot-falcon-mark hidden" data-red-sector="falcon-zone" data-red-clue="falcon-mark" aria-label="Lire la fresque du Faucon">▧</button>
                 <button class="map-hotspot hotspot-detail hotspot-phoenix-mark hidden" data-red-sector="phoenix-zone" data-red-clue="phoenix-mark" aria-label="Lire la fresque du Phénix">▧</button>
+                <button class="map-hotspot hotspot-item hotspot-plug-whale hidden" data-red-sector="whale-zone" data-red-clue="plug-whale" aria-label="Fouiller le bassin de la Baleine"><span aria-hidden="true">●</span></button>
+                <button class="map-hotspot hotspot-item hotspot-plug-corridor hidden" data-red-sector="falcon-zone" data-red-clue="plug-corridor" aria-label="Fouiller la dalle du couloir"><span aria-hidden="true">●</span></button>
+                <button class="map-hotspot hotspot-item hotspot-plug-phoenix hidden" data-red-sector="phoenix-zone" data-red-clue="plug-phoenix" aria-label="Fouiller les débris du Phénix"><span aria-hidden="true">●</span></button>
+                <button class="map-hotspot hotspot-item hotspot-cloth hidden" data-red-sector="phoenix-zone" data-red-clue="handkerchief" aria-label="Examiner le mouchoir"><span aria-hidden="true">▱</span></button>
                 <button class="map-hotspot hotspot-wind hidden" data-red-clue="wind-holes" aria-label="Examiner la fresque à trous">◎</button>
                 <button class="map-hotspot hotspot-horse-annex hidden" data-red-clue="horse-cache" aria-label="Entrer dans l’annexe du Cheval">↗</button>
                 <button class="map-hotspot hotspot-falcon-annex hidden" data-red-clue="falcon-cache" aria-label="Entrer dans l’annexe du Faucon">↗</button>
@@ -151,17 +167,13 @@
                 <div class="map-compass" aria-hidden="true"><span>N</span><i>✥</i></div>
               </div>
               <p id="hypogeum-discovery" class="hypogeum-discovery" role="status"></p>
-              <section class="panel red-inspector" aria-labelledby="red-inspector-title"><div class="inspector-icon" id="red-inspector-icon" aria-hidden="true">✦</div><div class="inspector-body"><span class="section-label" id="red-inspector-kicker">CARNET D’ENQUÊTE</span><h2 id="red-inspector-title" tabindex="-1">Choisissez un secteur sur le plan</h2><p id="red-inspector-copy">Inspectez la scène du crime, comparez les horaires d’arrivée et écoutez les versions des quatre archéologues.</p><div id="red-inspector-actions" class="red-inspector-actions"></div></div></section>
+              <section class="panel red-inspector" aria-labelledby="red-inspector-title"><div class="inspector-icon" id="red-inspector-icon" aria-hidden="true">✦</div><div class="inspector-body"><span class="section-label" id="red-inspector-kicker">CARNET D’ENQUÊTE</span><h2 id="red-inspector-title" tabindex="-1">Choisissez un secteur sur le plan</h2><p id="red-inspector-copy">Inspectez la scène du crime, comparez les horaires d’arrivée et écoutez les versions des quatre archéologues.</p><div id="red-inspector-detail"></div><div id="red-inspector-actions" class="red-inspector-actions"></div><button type="button" id="red-pin-clue" class="text-link" disabled>Garder cet indice pour comparer</button></div></section>
+              <section class="red-comparison hidden" id="red-comparison" aria-label="Indices à comparer"><div class="comparison-heading"><h3>Recouper les indices</h3><span>Votre sélection personnelle</span></div><div id="red-comparison-cards"></div></section>
             </div>
           </section>
         </div>
         <aside class="red-side-column">
-          <section class="panel suspect-panel"><div class="panel-heading compact"><div><span class="section-label">PERSONNES PRÉSENTES</span><h2>Les quatre archéologues</h2></div><span class="count-pill">4 dossiers</span></div><div class="suspect-list">
-            <button class="suspect-card" data-red-clue="suspect-howard"><span class="suspect-avatar howard-avatar">HC</span><span><b>Howard Carter</b><small>48 ans · archéologue · arrivé 13 h 50</small></span><i>↗</i></button>
-            <button class="suspect-card" data-red-clue="suspect-evelyn"><span class="suspect-avatar evelyn-avatar">EB</span><span><b>Evelyn Beauchamp</b><small>27 ans · chercheuse · a découvert le corps</small></span><i>↗</i></button>
-            <button class="suspect-card" data-red-clue="suspect-hugh"><span class="suspect-avatar hugh-avatar">HW</span><span><b>Hugh White</b><small>40 ans · historien · parti à 13 h 53</small></span><i>↗</i></button>
-            <button class="suspect-card" data-red-clue="suspect-omar"><span class="suspect-avatar omar-avatar">OZ</span><span><b>Omar Zboubi</b><small>32 ans · archéologue · arrivé trois jours plus tôt</small></span><i>↗</i></button>
-          </div></section>
+
           <section class="panel evidence-panel"><div class="panel-heading compact"><div><span class="section-label">PIÈCES À CONVICTION</span><h2>Éléments partagés</h2></div><span id="red-evidence-count" class="count-pill">0</span></div><div class="object-toolbar red-evidence-filters" role="group" aria-label="Filtrer les découvertes"><button data-red-filter="all" aria-pressed="true">Tout</button><button data-red-filter="testimony" aria-pressed="false">Témoignages</button><button data-red-filter="fresco" aria-pressed="false">Fresques</button><button data-red-filter="object" aria-pressed="false">Objets</button></div><div id="red-evidence-list" class="evidence-list"><p class="empty-state">Les découvertes de l’équipe apparaîtront ici.</p></div></section>
           <section class="panel red-mechanism-panel"><div class="panel-heading compact"><div><span class="section-label">LES DEUX PASSAGES SECRETS</span><h2>Progression</h2></div><span class="red-lock">✧</span></div><div class="mechanism-status" id="red-mechanism-status"></div></section>
           <section class="panel red-log-panel"><div class="panel-heading compact"><div><span class="section-label">ÉQUIPE EN DIRECT</span><h2>Chronologie</h2></div><span class="journal-live"><i></i> LIVE</span></div><div id="red-journal" class="journal red-journal"></div></section>
