@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="/sanctuary.css">
   <link rel="stylesheet" href="/hypogeum.css">
   <link rel="stylesheet" href="/voice.css">
+  <link rel="stylesheet" href="/green.css">
   <link rel="icon" href="/assets/compass.svg" type="image/svg+xml">
 </head>
 <body>
@@ -121,6 +122,38 @@
       <footer class="game-footer">ENIGMAKHI <span>·</span> EXPÉDITION 01 <span>·</span> ATLANTIQUE <span class="footer-right">CONÇU POUR JOUER ENSEMBLE</span></footer>
     </section>
 
+    <section id="green-screen" class="game-screen green-screen hidden" aria-labelledby="green-title">
+      <div class="green-heading"><button class="text-button" data-home-anchor="atlas">Retour à l’atlas</button><span>EXPÉDITION 02 · JAVA, INDONÉSIE</span><span class="green-prototype">PROTOTYPE JOUABLE</span></div>
+      <header class="green-intro"><div><p class="green-kicker">GUNUNG PADANG · LA SALLE VERTE</p><h1 id="green-title">La cour des <em>deux rois.</em></h1></div><p>La jungle s’est tue. Sous les racines, deux souverains attendent depuis des siècles que quelqu’un achève leur bataille.</p></header>
+      <p class="green-draft-note">Première version à explorer : le récit et le défi d’échecs sont provisoires.</p>
+      <div class="green-layout">
+        <div class="green-main">
+          <section class="green-court" aria-label="La cour de basalte et ses trois inscriptions">
+            <div class="green-landscape" aria-hidden="true"><div class="green-moon"></div><div class="green-ridge ridge-far"></div><div class="green-ridge ridge-near"></div><div class="green-pillars"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+            <div class="green-court-caption"><span>LE SANCTUAIRE DES SERMENTS</span><small>Examinez les trois vestiges</small></div>
+            <div class="green-monuments">
+              <button class="green-monument ivory-monument" data-green-clue="ivory"><span class="green-crown" aria-hidden="true">♔</span><span class="green-plinth"></span><b>Le roi d’Ivoire</b><small>Lire son serment</small></button>
+              <button class="green-monument stele-monument" data-green-clue="stele"><span class="green-stele" aria-hidden="true">◇<br>╱╲<br>◇</span><b>La stèle brisée</b><small>Observer les gravures</small></button>
+              <button class="green-monument basalt-monument" data-green-clue="basalt"><span class="green-crown" aria-hidden="true">♚</span><span class="green-plinth"></span><b>Le roi de Basalte</b><small>Lire son serment</small></button>
+            </div>
+            <div class="green-court-floor" aria-hidden="true"></div>
+          </section>
+          <section class="green-inscription" aria-labelledby="green-clue-title"><span class="green-kicker" id="green-clue-kicker">CARNET D’EXPLORATION</span><h2 id="green-clue-title" tabindex="-1">Deux couronnes. Un dernier mouvement.</h2><p id="green-clue-body">Vous descendez entre les colonnes de basalte. Au centre de la cour, une dalle quadrillée sépare deux trônes. Approchez-vous des rois et de la stèle pour comprendre ce qui les retient ici.</p><blockquote id="green-clue-quote">« La pierre se souvient de ce que les hommes ont oublié. »</blockquote></section>
+          <section class="green-battle" id="green-battle" aria-labelledby="green-battle-title">
+            <div class="green-section-head"><div><span class="green-kicker">LE CHAMP DE BATAILLE</span><h2 id="green-battle-title">Le dernier coup</h2></div><span id="green-battle-state">Endormi</span></div>
+            <div id="green-battle-locked" class="green-battle-locked"><span aria-hidden="true">♜</span><p>Les armées sont encore prisonnières de la pierre.<br>Rassemblez les trois inscriptions pour réveiller leur souvenir.</p><button id="green-awaken" class="green-primary" disabled>Réveiller la bataille</button></div>
+            <div id="green-battle-active" hidden>
+              <p class="green-battle-story">Les deux armées s’élancent. Leurs silhouettes traversent la cour, puis tout se fige : le roi de Basalte est acculé. À vous d’écrire le dernier mouvement.</p>
+              <div class="green-chess-layout"><div><div id="green-board" class="green-board" role="group" aria-label="Échiquier, les blancs jouent. Sélectionnez la dame en f7 puis une destination."></div><p class="green-board-caption">IVOIRE · BLANCS AU TRAIT · MAT EN 1 COUP</p></div><div class="green-chess-guide"><h3>Mettre fin à la bataille</h3><p>Vous guidez le camp d’Ivoire. Déplacez sa dame pour que le roi de Basalte n’ait plus aucune échappatoire.</p><ol><li>Sélectionnez la dame en <b>f7</b>.</li><li>Choisissez sa destination.</li><li>Validez le coup avec l’équipe.</li></ol><p id="green-move-preview" role="status">Aucun coup sélectionné.</p><button id="green-confirm" class="green-primary" disabled>Jouer ce coup</button><button id="green-clear" class="green-secondary">Effacer ma sélection</button><details><summary>Un indice</summary><p>La dame doit être protégée par le roi d’Ivoire. Cherchez près de lui une case qui ferme aussi les issues g8 et h7.</p></details><p id="green-move-feedback" role="status"></p></div></div>
+              <div id="green-ending" class="green-ending" hidden><span aria-hidden="true">✧</span><div><h3>Le silence revient.</h3><p>Dame g7. Échec et mat. La dame contrôle g8, h8 et h7 ; le roi d’Ivoire en f6 protège g7. Le roi de Basalte n’a plus de coup légal.</p><p>Les deux couronnes s’inclinent. Entre les trônes, un sceau vert s’illumine et une ligne apparaît : « La pierre garde une autre mémoire, sous les terres de Malte. »</p><small>Fin de cette première version. La véritable énigme et la récompense restent à imaginer.</small><button class="green-primary" data-start-expedition="red">Poursuivre vers Ħal Saflieni</button></div></div>
+            </div>
+          </section>
+        </div>
+        <aside class="green-sidebar"><section><span class="green-kicker">VOTRE EXPÉDITION</span><h2>Les serments oubliés</h2><ol class="green-progress" id="green-progress"></ol><p class="green-coop-note">Les inscriptions et la résolution sont partagées avec l’équipe. Votre sélection sur l’échiquier reste personnelle jusqu’à validation.</p></section><section><span class="green-kicker">FRAGMENT DU RÉCIT</span><h2>Une guerre sans fin</h2><p>L’un voulait ouvrir le sanctuaire. L’autre avait juré d’en garder le seuil. Ni la force, ni le temps n’ont départagé les deux rois.</p><p>La cour ne réclame plus une armée. Elle attend un geste exact.</p><span class="green-fiction">Récit imaginé pour ce prototype, sans prétention historique.</span></section><section><span class="green-kicker">CARNET COMMUN</span><h2>Traces de l’équipe</h2><div id="green-journal" class="green-journal" aria-live="polite"></div></section></aside>
+      </div>
+      <footer class="game-footer">ENIGMAKHI · EXPÉDITION 02 · GUNUNG PADANG <span class="footer-right">LA BATAILLE ATTEND VOTRE DERNIER COUP</span></footer>
+    </section>
+
     <section id="red-screen" class="game-screen red-screen hidden">
       <div class="game-intro red-game-intro"><button id="back-to-welcome-red" class="text-button">← Vue d’ensemble</button><div class="chapter-breadcrumb">EXPÉDITION 03 <span>/</span> ĦAL SAFLIENI, MALTE</div><div class="game-heading"><div><div class="eyebrow"><span class="eyebrow-line red-line"></span> ENQUÊTE COOPÉRATIVE <span class="eyebrow-slash">/</span> 2E SOUS-SOL</div><h1><em class="red-title">Ħal Saflieni</em></h1><p class="hero-copy">George Herbert a été assassiné. La police est en route. Examinez la scène du crime et confrontez les alibis des quatre suspects.</p></div><div class="case-clock"><span>FENÊTRE DU CRIME</span><strong>13:44 <i>—</i> 14:04</strong><small>Le corps est découvert encore chaud à 14 h 04.</small></div></div></div>
       <div class="red-case-strip"><div><span>DOSSIER</span><b>GEORGE HERBERT</b></div><div><span>SCÈNE</span><b>ĦAL SAFLIENI · MALTE</b></div><div><span>CAUSE PROBABLE</span><b>3 IMPACTS DE BALLE</b></div><div><span>ÉQUIPE SUR PLACE</span><b>4 SUSPECTS</b></div></div>
@@ -203,6 +236,7 @@
   <script src="/sanctuary-audio.js" defer></script>
   <script src="/app.js" defer></script>
   <script src="/experience.js" defer></script>
+  <script src="/green.js" defer></script>
   <script src="/voice.js" defer></script>
 </body>
 </html>

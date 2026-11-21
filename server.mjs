@@ -1,5 +1,6 @@
 import { startApprovalBot } from './discord-approvals.mjs';
 import { handleVoice } from './voice.mjs';
+import { freshGreenState, actGreen } from './green-room.mjs';
 import { buildIdeaJournal, fetchHistory, journalForRelay } from './discord-ideas.mjs';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -48,6 +49,7 @@ function freshState() {
     statueItems: {},
     insertedGears: ['old_gear'],
     finished: false,
+    green: freshGreenState(),
     red: { started: false, inspected: [], plugs: [], plugged: [], usedPlugs: [], ventus: [], windReady: false, horseOpen: false, falconOpen: false, howardSecured: false, relicFound: false, finished: false },
     items: Object.fromEntries(Object.entries(itemSeed).map(([id, [name, image, location, pickable]]) => [id, { id, name, image, location, pickable }])),
   };
@@ -271,6 +273,10 @@ const muralTarget = [6, 3, 12, 9];
 function act(data) {
   const { action, itemId, torchId, playerId } = data;
   const actor = state.players.find((p) => p.id === playerId)?.name || 'Un joueur';
+  if (String(action || '').startsWith('green-')) {
+    if (!state.players.some((player) => player.id === playerId)) return 'Rejoins l’équipe pour explorer la Salle Verte.';
+    return actGreen(state.green, data, actor, note);
+  }
   const red = state.red;
   if (String(action || '').startsWith('red-') && !state.players.some((player) => player.id === playerId)) return 'Rejoins l’équipe pour participer à l’enquête.';
 

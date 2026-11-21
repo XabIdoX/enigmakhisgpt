@@ -1,7 +1,7 @@
 /* Presentation and personal tools. Shared puzzle state remains server-owned. */
 const expeditions = [
   { tone:'blue', place:'ATLANTIQUE · BERMUDES', title:'Le site englouti', room:'Atlantide', state:'Première expédition · jouable', body:'Sous l’Atlantique, un sanctuaire oublié attend. Observez les fresques, guidez les flammes et réveillez un mécanisme ancien.', screen:'blue' },
-  { tone:'green', place:'JAVA · INDONÉSIE', title:'Gunung Padang', room:'Salle verte', state:'Deuxième expédition · à venir', body:'Des strates anciennes gardent la mémoire d’un passage. La trace d’Omar se poursuit au cœur de l’Indonésie.' },
+  { tone:'green', place:'JAVA · INDONÉSIE', title:'La cour des deux rois', room:'Salle verte', state:'Deuxième expédition · prototype jouable', body:'À Gunung Padang, deux souverains de pierre se font face. Déchiffrez leurs serments, réveillez leur bataille et trouvez le dernier coup.', screen:'green' },
   { tone:'red', place:'ĦAL SAFLIENI · MALTE', title:'Ħal Saflieni', room:'Malte', state:'Troisième expédition · jouable', body:'George Herbert est retrouvé mort. Quatre archéologues, des alibis à confronter et un secret enfoui sous la pierre.', screen:'red' },
   { tone:'gold', place:'GIZEH · ÉGYPTE', title:'Les pierres du désert', room:'Salle jaune', state:'Quatrième expédition · à venir', body:'La piste se rapproche de l’origine du pacte. À Gizeh, les pierres gardent encore ce qu’Omar ne pouvait révéler.' },
   { tone:'black', place:'PYRAMIDE DE MYKÉRINOS', title:'La chambre scellée', room:'Salle noire', state:'Dernière expédition · à venir', body:'Sous la pyramide, une salle relie les fragments de l’histoire. C’est ici qu’Omar a découvert le secret et signé son pacte.' },
@@ -128,6 +128,10 @@ function openNotes() {
   $('#personal-notes').focus();
 }
 function openHelp() {
+  if (currentScreen === 'green') {
+    openDialog('help', '<div class="dialog-inner"><span class="section-kicker">LA COUR DES DEUX ROIS</span><h2 id="dialog-title">Un seul mouvement.</h2><p>Examinez les deux rois et la stèle. Une fois les trois inscriptions déchiffrées, réveillez la bataille. Sélectionnez la dame en f7, choisissez une case puis validez votre coup. Les touches fléchées permettent aussi de parcourir l’échiquier.</p><p>Votre sélection reste personnelle ; le coup validé et les découvertes sont partagés avec toute l’équipe. Un indice est disponible près de l’échiquier.</p><p>Ce défi est un exemple de mat en un coup. Le récit et l’énigme définitive restent à construire.</p></div>');
+    return;
+  }
   openDialog('help', `<div class="dialog-inner"><span class="section-kicker">LE GUIDE DES AKHIS</span><h2 id="dialog-title">L’enquête se joue ensemble.</h2><ol class="help-list"><li><b>Observez la carte.</b> ${currentScreen === 'red' ? 'Choisissez un secteur ou un suspect pour ouvrir son dossier.' : 'Cliquez sur une flamme pour la déplacer. Les repères bleus permettent d’examiner les fresques.'}</li><li><b>Explorez les détails.</b> ${currentScreen === 'red' ? 'Relisez les éléments partagés et confrontez les alibis.' : 'Filtrez les éléments autour de vous. Cliquez sur l’image d’un objet pour l’examiner en grand.'}</li><li><b>Partagez vos découvertes.</b> Les actions, l’inventaire et la chronologie se synchronisent avec toute l’équipe. Le bouton « Inviter l’équipe » copie le lien.</li><li><b>Gardez vos hypothèses.</b> « Mes notes » ouvre votre carnet personnel. Le mode Immersion agrandit l’espace d’exploration.</li></ol><p>Les découvertes de la partie sont conservées tant que le serveur reste actif. Un redémarrage remet l’expédition à zéro.</p></div>`);
 }
 async function shareExpedition() {

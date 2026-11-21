@@ -38,11 +38,13 @@ test('voice rosters and signaling stay within each room and update on disconnect
     return { ready: await next(), next, leave: () => controller.abort() };
   }
 
-  assert.equal((await post('join', { room: 'green' })).status, 404);
+  assert.equal((await post('join', { room: 'unknown' })).status, 404);
   const zino = await join('welcome', 'player-a');
   const guest = await join('welcome');
   const blue = await join('blue');
   const red = await join('red');
+  const green = await join('green');
+  assert.deepEqual(green.ready.peers, []);
   assert.deepEqual(zino.ready.peers, []);
   assert.deepEqual(guest.ready.peers, [{ id: zino.ready.id, name: 'Zino' }]);
   assert.deepEqual(blue.ready.peers, []);

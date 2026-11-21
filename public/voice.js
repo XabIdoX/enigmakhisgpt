@@ -1,5 +1,5 @@
 (() => {
-  const titles = { welcome: 'Vocal de l’accueil', blue: 'Vocal d’Atlantide', red: 'Vocal de Ħal Saflieni' };
+  const titles = { welcome: 'Vocal de l’accueil', blue: 'Vocal d’Atlantide', green: 'Vocal de Gunung Padang', red: 'Vocal de Ħal Saflieni' };
   const element = (name) => document.getElementById(`voice-${name}`);
   const title = element('title');
   const status = element('status');

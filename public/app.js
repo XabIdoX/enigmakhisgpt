@@ -378,7 +378,7 @@ function renderLanding() {
   const controls = $('#welcome-join-controls');
   if (isMember) {
     const player = game.players.find((entry) => entry.id === playerId);
-    setMarkup(controls, `<div class="joined-panel"><span class="coin-avatar">${coins[(Number(player.coin || 1) - 1) % coins.length].icon}</span><span class="joined-name">Votre pièce est choisie.<br><b>${esc(player.name)}</b></span><div class="room-choice"><button id="start-game-button">${game.finished ? 'Revoir' : 'Explorer'} Atlantide <span>→</span></button><button id="start-red-button">${game.red.finished ? 'Revoir' : 'Explorer'} Ħal Saflieni <span>→</span></button></div></div>`);
+    setMarkup(controls, `<div class="joined-panel"><span class="coin-avatar">${coins[(Number(player.coin || 1) - 1) % coins.length].icon}</span><span class="joined-name">Votre pièce est choisie.<br><b>${esc(player.name)}</b></span><div class="room-choice"><button id="start-game-button">${game.finished ? 'Revoir' : 'Explorer'} Atlantide <span>→</span></button><button data-start-expedition="green">Explorer Gunung Padang · prototype</button><button id="start-red-button">${game.red.finished ? 'Revoir' : 'Explorer'} Ħal Saflieni <span>→</span></button></div></div>`);
   } else {
     setMarkup(controls, `<button id="join-button" class="join-submit" ${joining ? 'disabled' : ''}>${joining ? 'Connexion à l’équipe…' : 'Rejoindre l’équipe <span>→</span>'}</button>`);
   }
@@ -404,6 +404,7 @@ function showScreen(screen) {
   $('#welcome-screen').classList.toggle('hidden', !showWelcome);
   $('#game-screen').classList.toggle('hidden', screen !== 'blue');
   $('#red-screen').classList.toggle('hidden', screen !== 'red');
+  $('#green-screen').classList.toggle('hidden', screen !== 'green');
   window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
   if (screen === 'blue' && game) playNextDiscovery($('#sanctuary-scene'));
   if (screen === 'red' && playerId) act('red-enter');

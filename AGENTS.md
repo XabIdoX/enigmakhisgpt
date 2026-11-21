@@ -40,7 +40,7 @@ Ces améliorations sont des propositions à reprendre quand elles seront demand�
 
 ## Interface et expérience d’expédition
 
-La modernisation du 16 novembre 2026 suit une direction carnet d’expédition : bleu profond, bronze et papier clair. L’accueil comporte un prologue, un atlas interactif et un passeport de joueur. Les outils personnels (notes locales, immersion) ne changent pas les règles partagées. Voir `docs/modernisation-interface.md` pour les fichiers, les vérifications et les limites conservées. Garder explicite la différence entre les deux salles jouables et les trois chapitres à venir.
+La modernisation du 16 novembre 2026 suit une direction carnet d’expédition : bleu profond, bronze et papier clair. L’accueil comporte un prologue, un atlas interactif et un passeport de joueur. Les outils personnels (notes locales, immersion) ne changent pas les règles partagées. Voir `docs/modernisation-interface.md` pour les fichiers, les vérifications et les limites conservées. Garder explicite la différence entre les deux salles jouables existantes, le prototype de la Salle Verte et les deux chapitres à venir.
 
 
 ## Plateformes et priorité de développement
@@ -49,4 +49,8 @@ Priorité actuelle au web sur ordinateur pour l’ensemble du projet. Reporter l
 
 ## Vocal intégré
 
-Le site propose un salon commun à l’accueil et un salon pour chacune des deux salles jouables. Le micro est activé après un clic et l’autorisation du navigateur. Une personne déjà en vocal suit le changement de salle en gardant son réglage de micro. La configuration du relais audio pour les réseaux restrictifs est détaillée dans `README.md`.
+Le site propose un salon commun à l’accueil et un salon pour chacune des trois salles accessibles. Le micro est activé après un clic et l’autorisation du navigateur. Une personne déjà en vocal suit le changement de salle en gardant son réglage de micro. La configuration du relais audio pour les réseaux restrictifs est détaillée dans `README.md`.
+
+## Salle Verte — premier cadre
+
+Le 21 novembre 2026, DoX demande un cadre provisoire autour de deux rois dont la bataille devient un problème d’échecs, avec publication directe sur Render. La cour des deux rois à Gunung Padang est accessible comme prototype : trois inscriptions, réveil de la bataille, mat en un coup de démonstration et vocal dédié. Le récit, les noms et la véritable énigme restent à définir ; voir docs/salle-verte.md.

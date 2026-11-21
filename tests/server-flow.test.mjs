@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 // Node 24 test runner; each run owns a fresh server on an OS-assigned port.
 // The Discord module is stubbed before import. No real game or Discord is touched.
-test('two cooperative expeditions, assets and live synchronization', { timeout: 30000 }, async (t) => {
+test('three cooperative expeditions, assets and live synchronization', { timeout: 30000 }, async (t) => {
   const serverUrl = new URL('../server.mjs', import.meta.url).href;
   const bootstrap = `import { registerHooks } from 'node:module';
     registerHooks({ resolve(specifier, context, next) {
@@ -38,7 +38,7 @@ test('two cooperative expeditions, assets and live synchronization', { timeout: 
   const page = await (await fetch(origin)).text();
   assert.match(page, /Certains secrets/);
   assert.equal((page.match(/id="player-name"/g) || []).length, 1);
-  for (const path of ['/experience.js','/expedition.css','/assets/expedition-box.jpg','/assets/compass.svg']) {
+  for (const path of ['/experience.js','/expedition.css','/green.js','/green.css','/assets/expedition-box.jpg','/assets/compass.svg']) {
     const response = await fetch(origin + path);
     assert.equal(response.status, 200, path);
     if (path.endsWith('.jpg')) assert.match(response.headers.get('content-type'), /image\/jpeg/);
@@ -102,6 +102,27 @@ test('two cooperative expeditions, assets and live synchronization', { timeout: 
   const final = await state();
   assert.equal(final.red.finished, true);
   assert.equal(final.red.relicFound, true);
+  // Green remains independent after the other rooms have been solved.
+  await action('green-battle', {}, first.id, 400);
+  await action('green-inspect', {clueId:'ivory'}, 'unknown', 400);
+  await action('green-inspect', {clueId:'bad'}, first.id, 400);
+  await action('green-move', {from:'f7',to:'g7'}, first.id, 400);
+  await action('green-inspect', {clueId:'ivory'}, first.id);
+  await action('green-inspect', {clueId:'ivory'}, second.id);
+  assert.equal((await state()).green.inspected.length, 1);
+  await action('green-inspect', {clueId:'basalt'}, second.id);
+  await action('green-inspect', {clueId:'stele'}, first.id);
+  await action('green-battle', {}, second.id);
+  await action('green-move', {from:'f7',to:'f8'}, first.id, 400);
+  await action('green-move', {from:'f6',to:'g7'}, first.id, 400);
+  assert.equal((await state()).green.finished, false);
+  await action('green-move', {from:'f7',to:'g7'}, second.id);
+  await action('green-move', {from:'f7',to:'g7'}, first.id, 400);
+  const greenFinal = await state();
+  assert.equal(greenFinal.green.finished, true);
+  assert.equal(greenFinal.red.finished, true);
+  assert.equal(greenFinal.finished, true);
+  assert.deepEqual(greenFinal.inventory, final.inventory);
   child.kill();
   await once(child, 'exit');
 });
