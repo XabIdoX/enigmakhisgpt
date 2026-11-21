@@ -3,7 +3,7 @@ const expeditions = [
   { tone:'blue', place:'ATLANTIQUE · BERMUDES', title:'Le site englouti', room:'Atlantide', state:'Première expédition · jouable', body:'Sous l’Atlantique, un sanctuaire oublié attend. Observez les fresques, guidez les flammes et réveillez un mécanisme ancien.', screen:'blue' },
   { tone:'green', place:'JAVA · INDONÉSIE', title:'La cour des deux rois', room:'Salle verte', state:'Deuxième expédition · prototype jouable', body:'À Gunung Padang, deux souverains de pierre se font face. Déchiffrez leurs serments, réveillez leur bataille et trouvez le dernier coup.', screen:'green' },
   { tone:'red', place:'ĦAL SAFLIENI · MALTE', title:'Ħal Saflieni', room:'Malte', state:'Troisième expédition · jouable', body:'George Herbert est retrouvé mort. Quatre archéologues, des alibis à confronter et un secret enfoui sous la pierre.', screen:'red' },
-  { tone:'gold', place:'GIZEH · ÉGYPTE', title:'Les pierres du désert', room:'Salle jaune', state:'Quatrième expédition · à venir', body:'La piste se rapproche de l’origine du pacte. À Gizeh, les pierres gardent encore ce qu’Omar ne pouvait révéler.' },
+  { tone:'gold', place:'GIZEH · ÉGYPTE', title:'Les pierres du désert', room:'Salle jaune', state:'Quatrième expédition · exploration sans énigme', body:'Du plateau au couchant à la chambre intérieure, découvrez l’atmosphère de la pyramide et retrouvez les Akhis dans le vocal de Gizeh. L’énigme reste à imaginer.', screen:'yellow' },
   { tone:'black', place:'PYRAMIDE DE MYKÉRINOS', title:'La chambre scellée', room:'Salle noire', state:'Dernière expédition · à venir', body:'Sous la pyramide, une salle relie les fragments de l’histoire. C’est ici qu’Omar a découvert le secret et signé son pacte.' },
 ];
 let selectedExpedition = 0;
@@ -128,6 +128,10 @@ function openNotes() {
   $('#personal-notes').focus();
 }
 function openHelp() {
+  if (currentScreen === 'yellow') {
+    openDialog('help', '<div class="dialog-inner"><span class="section-kicker">GIZEH · EXPLORATION LIBRE</span><h2 id="dialog-title">Habiter les lieux.</h2><p>Choisissez le plateau, le passage ou la chambre sous l’illustration. Le repère dans chaque scène ouvre une observation et l’inscrit dans le carnet de toute l’équipe. Les trois lieux sont accessibles dès votre arrivée.</p><p>La lanterne et l’ambiance sonore sont personnelles. Le son démarre uniquement à votre demande et s’arrête lorsque vous quittez la salle. Utilisez le vocal de Gizeh pour parler aux équipiers présents dans cette salle.</p><p>Aucune énigme n’est proposée pour le moment : aucun code, objet caché, mécanisme ou récompense. Les observations ne débloquent rien. Le carnet commun est conservé jusqu’au redémarrage du serveur ; vos notes personnelles restent dans ce navigateur.</p></div>');
+    return;
+  }
   if (currentScreen === 'green') {
     openDialog('help', '<div class="dialog-inner"><span class="section-kicker">LA COUR DES DEUX ROIS</span><h2 id="dialog-title">Un seul mouvement.</h2><p>Examinez les deux rois et la stèle. Une fois les trois inscriptions déchiffrées, réveillez la bataille. Sélectionnez la dame en f7, choisissez une case puis validez votre coup. Les touches fléchées permettent aussi de parcourir l’échiquier.</p><p>Votre sélection reste personnelle ; le coup validé et les découvertes sont partagés avec toute l’équipe. Un indice est disponible près de l’échiquier.</p><p>Ce défi est un exemple de mat en un coup. Le récit et l’énigme définitive restent à construire.</p></div>');
     return;
@@ -204,7 +208,7 @@ document.addEventListener('expedition:updated', () => {
     ['red-screen',game.red.finished,'Le dossier est résolu.','La relique est retrouvée. La vision d’Omar indique la prochaine destination : Gizeh.'],
   ]) {
     let banner = document.querySelector(`#${screen} .completion-banner`);
-    if (finished && !banner) { banner = document.createElement('div'); banner.className = 'completion-banner'; banner.setAttribute('role','status'); banner.innerHTML = `<strong>${title}</strong>${description}`; document.querySelector(`#${screen} .game-intro`).after(banner); }
+    if (finished && !banner) { banner = document.createElement('div'); banner.className = 'completion-banner'; banner.setAttribute('role','status'); banner.innerHTML = `<strong>${title}</strong>${description}${screen === 'red-screen' ? '<p><button class="text-button" data-start-expedition="yellow">Découvrir Gizeh · exploration sans énigme</button></p>' : ''}`; document.querySelector(`#${screen} .game-intro`).after(banner); }
     if (!finished && banner) banner.remove();
   }
 });

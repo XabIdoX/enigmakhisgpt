@@ -78,6 +78,6 @@ Redémarrer le service remet l’état du prototype à zéro. Le redémarrage Re
 
 ## Vocal
 
-Le vocal est accessible à tous depuis l’accueil. Atlantide et Ħal Saflieni disposent de leur propre salon. Un joueur connecté au vocal change de salon en naviguant dans le jeu et garde son micro coupé s’il l’avait désactivé.
+Le vocal est accessible à tous depuis l’accueil. Atlantide, Gunung Padang, Ħal Saflieni et Gizeh disposent de leur propre salon. Un joueur connecté au vocal change de salon en naviguant dans le jeu et garde son micro coupé s’il l’avait désactivé.
 
 Pour les réseaux qui bloquent WebRTC en connexion directe, le serveur accepte un relais TURN de type coturn avec authentification par secret partagé. Renseigner `VOICE_TURN_URLS` (URL `turn:` ou `turns:` séparées par des virgules) et `VOICE_TURN_SECRET` dans l’environnement Render. Le navigateur reçoit des identifiants temporaires. En l’absence de relais, les connexions directes restent disponibles.

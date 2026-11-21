@@ -44,6 +44,17 @@ test('voice rosters and signaling stay within each room and update on disconnect
   const blue = await join('blue');
   const red = await join('red');
   const green = await join('green');
+  const yellow = await join('yellow', 'player-a');
+  const yellowGuest = await join('yellow');
+  assert.deepEqual(yellow.ready.peers, []);
+  assert.deepEqual(yellowGuest.ready.peers, [{ id: yellow.ready.id, name: 'Zino' }]);
+  assert.deepEqual(await yellow.next(), { type: 'joined', peer: { id: yellowGuest.ready.id, name: 'Invité' } });
+  const yellowSignal = { to: yellow.ready.id, description: { type: 'offer', sdp: 'yellow-test' } };
+  assert.equal((await post('signal', { ...yellowSignal, token: green.ready.token })).status, 404);
+  assert.equal((await post('signal', { ...yellowSignal, token: yellowGuest.ready.token })).status, 200);
+  assert.deepEqual(await yellow.next(), { type: 'signal', from: yellowGuest.ready.id, description: yellowSignal.description });
+  yellowGuest.leave();
+  assert.deepEqual(await yellow.next(), { type: 'left', id: yellowGuest.ready.id });
   assert.deepEqual(green.ready.peers, []);
   assert.deepEqual(zino.ready.peers, []);
   assert.deepEqual(guest.ready.peers, [{ id: zino.ready.id, name: 'Zino' }]);

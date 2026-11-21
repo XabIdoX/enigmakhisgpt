@@ -1,6 +1,6 @@
 import { createHmac, randomUUID } from 'node:crypto';
 
-const rooms = new Map(['welcome', 'blue', 'green', 'red'].map((room) => [room, new Map()]));
+const rooms = new Map(['welcome', 'blue', 'green', 'red', 'yellow'].map((room) => [room, new Map()]));
 const sessions = new Map();
 const roomLimit = 24;
 const heartbeatMs = 20_000;

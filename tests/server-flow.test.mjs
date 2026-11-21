@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 // Node 24 test runner; each run owns a fresh server on an OS-assigned port.
 // The Discord module is stubbed before import. No real game or Discord is touched.
-test('three cooperative expeditions, assets and live synchronization', { timeout: 30000 }, async (t) => {
+test('four cooperative expeditions, assets and live synchronization', { timeout: 30000 }, async (t) => {
   const serverUrl = new URL('../server.mjs', import.meta.url).href;
   const bootstrap = `import { registerHooks } from 'node:module';
     registerHooks({ resolve(specifier, context, next) {
@@ -38,7 +38,7 @@ test('three cooperative expeditions, assets and live synchronization', { timeout
   const page = await (await fetch(origin)).text();
   assert.match(page, /Certains secrets/);
   assert.equal((page.match(/id="player-name"/g) || []).length, 1);
-  for (const path of ['/experience.js','/expedition.css','/green.js','/green.css','/assets/expedition-box.jpg','/assets/compass.svg']) {
+  for (const path of ['/experience.js','/expedition.css','/green.js','/green.css','/yellow.js','/yellow.css','/assets/yellow-plateau.svg','/assets/yellow-passage.svg','/assets/yellow-chamber.svg','/assets/expedition-box.jpg','/assets/compass.svg']) {
     const response = await fetch(origin + path);
     assert.equal(response.status, 200, path);
     if (path.endsWith('.jpg')) assert.match(response.headers.get('content-type'), /image\/jpeg/);
@@ -50,6 +50,21 @@ test('three cooperative expeditions, assets and live synchronization', { timeout
   assert.equal(returning.id, first.id);
   assert.equal((await state()).players.length, 2);
   const action = async (name, data = {}, who = first.id, status = 200) => post('/api/action', {action:name,playerId:who,...data}, status);
+
+  const beforeYellow = await state();
+  await action('yellow-observe', {place:'plateau'}, 'unknown', 400);
+  await action('yellow-observe', {place:'unknown'}, first.id, 400);
+  await action('yellow-observe', {place:'__proto__'}, first.id, 400);
+  await action('yellow-finish', {}, first.id, 400);
+  // All viewpoints are free: the chamber requires no earlier observation.
+  await action('yellow-observe', {place:'chamber'}, second.id);
+  await action('yellow-observe', {place:'chamber'}, first.id);
+  await action('yellow-observe', {place:'plateau'}, first.id);
+  await action('yellow-observe', {place:'passage'}, second.id);
+  const afterYellow = await state();
+  assert.deepEqual(afterYellow.yellow, {observed:['chamber','plateau','passage']});
+  assert.equal(afterYellow.log.filter((entry) => entry.text.includes(' à Gizeh.')).length, 3);
+  for (const key of ['red','green','inventory','finished','phase']) assert.deepEqual(afterYellow[key], beforeYellow[key]);
 
   // Check actual SSE delivery between different players, not just HTTP responses.
   const controller = new AbortController();

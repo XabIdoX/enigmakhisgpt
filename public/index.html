@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="/hypogeum.css">
   <link rel="stylesheet" href="/voice.css">
   <link rel="stylesheet" href="/green.css">
+  <link rel="stylesheet" href="/yellow.css">
   <link rel="icon" href="/assets/compass.svg" type="image/svg+xml">
 </head>
 <body>
@@ -229,6 +230,36 @@
       </div>
       <footer class="game-footer">ENIGMAKHI <span>·</span> EXPÉDITION 03 <span>·</span> ĦAL SAFLIENI <span class="footer-right">LE DOSSIER EST PARTAGÉ</span></footer>
     </section>
+    <section id="yellow-screen" class="game-screen yellow-screen hidden" aria-labelledby="yellow-title">
+      <div class="yellow-heading"><button class="text-button" data-home-anchor="atlas">Retour à l’atlas</button><span>EXPÉDITION 04 · ÉGYPTE</span><span class="yellow-status">EXPLORATION LIBRE</span></div>
+      <header class="yellow-intro"><div><p class="yellow-kicker">GIZEH · LA SALLE JAUNE</p><h1 id="yellow-title">Les pierres <em>du désert.</em></h1></div><p>Le vent efface vos pas. Devant vous, la pyramide garde la chaleur du jour. Sous la pierre, le silence prend une autre dimension.</p></header>
+      <div class="yellow-layout">
+        <div class="yellow-main">
+          <section class="yellow-exploration" aria-label="Exploration de Gizeh">
+            <div class="yellow-scene" id="yellow-scene" data-place="plateau">
+              <img id="yellow-art" src="/assets/yellow-plateau.svg" width="1200" height="700" alt="Une pyramide de pierre dorée et son entrée, au soleil couchant, sur le plateau de Gizeh">
+              <div class="yellow-lamplight" aria-hidden="true"></div><div class="yellow-dust" aria-hidden="true"></div>
+              <div class="yellow-scene-caption"><span id="yellow-scene-atmosphere">LE SOLEIL DÉCLINE</span><span>GIZEH / CARNET DE TERRAIN</span></div>
+              <button class="yellow-hotspot" id="yellow-observe"><span class="yellow-hotspot-ring" aria-hidden="true">+</span><span id="yellow-hotspot-label">Observer la pyramide</span></button>
+              <div class="yellow-scene-bottom"><span id="yellow-sensation">Le sable sous vos pas. Le vent au loin.</span><span class="yellow-compass" aria-hidden="true">N ⟡</span></div>
+            </div>
+            <nav class="yellow-places" aria-label="Se déplacer dans la Salle Jaune">
+              <button data-yellow-place="plateau" aria-pressed="true"><span aria-hidden="true">△</span><span><b>Le plateau</b><small>Au bord du désert</small></span></button>
+              <button data-yellow-place="passage" aria-pressed="false"><span aria-hidden="true">⋂</span><span><b>Le passage</b><small>Sous la pierre</small></span></button>
+              <button data-yellow-place="chamber" aria-pressed="false"><span aria-hidden="true">◇</span><span><b>La chambre</b><small>Dans le silence</small></span></button>
+            </nav>
+            <div class="yellow-scene-tools"><span>Déplacez-vous librement, puis observez un lieu.</span><div><button id="yellow-light" aria-pressed="false">Lanterne éteinte</button><button id="yellow-sound" aria-pressed="false">Activer l’ambiance</button></div></div>
+          </section>
+          <section class="yellow-observation" aria-labelledby="yellow-observation-title"><div class="yellow-observation-symbol" aria-hidden="true">△</div><div><span class="yellow-kicker" id="yellow-observation-kicker">PREMIERS PAS · LE PLATEAU</span><h2 id="yellow-observation-title" tabindex="-1">À l’heure où la pierre devient or.</h2><p id="yellow-observation-copy">La pyramide se détache sur un ciel de cuivre. Une ouverture sombre interrompt sa silhouette. Prenez le temps d’observer, puis avancez dans le passage lorsque vous le souhaitez.</p><p id="yellow-observation-detail" class="yellow-detail">Les observations décrivent le décor. Aucun indice à résoudre n’est caché dans cette première version.</p><p id="yellow-feedback" role="status"></p></div></section>
+        </div>
+        <aside class="yellow-sidebar">
+          <section class="yellow-field-note"><span class="yellow-kicker">LE CARNET DE GIZEH</span><h2>Prendre le temps<br>de regarder.</h2><p>Après Ħal Saflieni, l’expédition rejoint l’Égypte. Pour l’instant, cette étape vous invite simplement à habiter les lieux.</p><div class="yellow-stage-note"><b>Le décor est ouvert.</b><p>L’énigme reste à imaginer. Il n’y a ni code à trouver, ni objet à ramasser, ni épreuve à terminer.</p></div><p class="yellow-fiction">Mise en scène fictive à Gizeh. La pyramide précise et le récit de cette salle restent à définir.</p></section>
+          <section><span class="yellow-kicker">AVEC LES AKHIS</span><h2>Explorer ensemble</h2><p>Le vocal de Gizeh vous accompagne. Chacun choisit son point de vue ; les observations sont inscrites dans le carnet commun.</p><button class="yellow-secondary" data-open-notes>Ouvrir mes notes</button></section>
+          <section><span class="yellow-kicker">CARNET COMMUN</span><h2>Regards de l’équipe</h2><ul id="yellow-observed" class="yellow-observed"></ul><div id="yellow-journal" class="yellow-journal" aria-live="polite"></div></section>
+        </aside>
+      </div>
+      <footer class="yellow-footer"><span>ENIGMAKHI · GIZEH</span><span>La Salle Noire, sous Mykérinos, reste un chapitre distinct à venir.</span></footer>
+    </section>
   </main>
   <div class="field-tools hidden" id="field-tools" aria-label="Outils d’expédition"><button data-open-notes><span aria-hidden="true">▤</span> Mes notes</button><button data-open-help><span aria-hidden="true">?</span> Comment jouer</button><button id="sound-toggle" aria-pressed="true" aria-label="Couper les sons"><span aria-hidden="true">♫</span> Sons</button><button id="focus-mode" aria-pressed="false"><span aria-hidden="true">⤢</span> Immersion</button></div>
   <dialog id="experience-dialog" aria-labelledby="dialog-title"><button class="dialog-close" aria-label="Fermer la fenêtre" autofocus>×</button><div id="dialog-content"></div></dialog>
@@ -237,6 +268,7 @@
   <script src="/app.js" defer></script>
   <script src="/experience.js" defer></script>
   <script src="/green.js" defer></script>
+  <script src="/yellow.js" defer></script>
   <script src="/voice.js" defer></script>
 </body>
 </html>
