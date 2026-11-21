@@ -396,6 +396,7 @@ function showScreen(screen) {
   }
   currentScreen = screen;
   document.body.dataset.screen = screen;
+  document.dispatchEvent(new CustomEvent('expedition:screen', { detail: screen }));
   document.body.classList.remove('focus-mode');
   $('#focus-mode').setAttribute('aria-pressed', 'false');
   $('#field-tools').classList.toggle('hidden', screen === 'welcome');

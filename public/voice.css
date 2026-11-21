@@ -1,0 +1,33 @@
+.voice-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 22px;
+  padding: 12px 4.5%;
+  background: #172e30;
+  color: #f3f0e8;
+  border-block: 1px solid #53615a;
+}
+.voice-summary h2 { margin: 0; font-size: 15px; font-weight: 700; }
+.voice-summary p { margin: 3px 0 0; color: #d3dcd5; font-size: 13px; }
+.voice-peers { display: flex; flex-wrap: wrap; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.voice-peers li {
+  padding: 3px 9px;
+  border: 1px solid #657873;
+  border-radius: 20px;
+  font-size: 12px;
+}
+.voice-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
+.voice-actions button {
+  border: 1px solid #a3afa7;
+  border-radius: 4px;
+  padding: 7px 12px;
+  background: transparent;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 700;
+}
+.voice-actions button:hover, .voice-actions button[aria-pressed="true"] { background: #314a48; }
+.voice-actions #voice-join { background: #e5c49b; border-color: #e5c49b; color: #172e30; }
+.voice-actions #voice-join:hover { background: #f2d8b8; }
+.voice-bar [hidden] { display: none; }

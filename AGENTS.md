@@ -46,3 +46,7 @@ La modernisation du 16 novembre 2026 suit une direction carnet d’expédition :
 ## Plateformes et priorité de développement
 
 Priorité actuelle au web sur ordinateur pour l’ensemble du projet. Reporter les adaptations et les vérifications spécifiques aux mobiles et tablettes jusqu’à la finalisation complète du jeu, puis les traiter dans un chantier dédié.
+
+## Vocal intégré
+
+Le site propose un salon commun à l’accueil et un salon pour chacune des deux salles jouables. Le micro est activé après un clic et l’autorisation du navigateur. Une personne déjà en vocal suit le changement de salle en gardant son réglage de micro. La configuration du relais audio pour les réseaux restrictifs est détaillée dans `README.md`.

@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="/expedition.css">
   <link rel="stylesheet" href="/sanctuary.css">
   <link rel="stylesheet" href="/hypogeum.css">
+  <link rel="stylesheet" href="/voice.css">
   <link rel="icon" href="/assets/compass.svg" type="image/svg+xml">
 </head>
 <body>
@@ -26,6 +27,20 @@
   </header>
 
   <main id="main-content">
+    <section class="voice-bar" aria-labelledby="voice-title">
+      <div class="voice-summary">
+        <h2 id="voice-title">Vocal de l’accueil</h2>
+        <p id="voice-status" role="status">Ouvert à tous les Akhis</p>
+      </div>
+      <ul id="voice-peers" class="voice-peers" aria-label="Participants au vocal" hidden></ul>
+      <div class="voice-actions">
+        <button id="voice-join" type="button">Rejoindre le vocal</button>
+        <button id="voice-unblock" type="button" hidden>Activer l’écoute</button>
+        <button id="voice-mute" type="button" aria-pressed="false" hidden>Couper le micro</button>
+        <button id="voice-leave" type="button" hidden>Quitter le vocal</button>
+      </div>
+      <div id="voice-audio" hidden></div>
+    </section>
     <section id="welcome-screen" class="welcome-screen">
       <section class="arrival-hero" id="accueil" aria-labelledby="hero-title">
         <img class="hero-art" src="/assets/expedition-box.jpg" alt="Une boîte ancienne ouverte et ses huit pièces de bronze sur une table d’archéologue" fetchpriority="high" width="1536" height="1024">
@@ -188,5 +203,6 @@
   <script src="/sanctuary-audio.js" defer></script>
   <script src="/app.js" defer></script>
   <script src="/experience.js" defer></script>
+  <script src="/voice.js" defer></script>
 </body>
 </html>

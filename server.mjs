@@ -1,4 +1,5 @@
 import { startApprovalBot } from './discord-approvals.mjs';
+import { handleVoice } from './voice.mjs';
 import { buildIdeaJournal, fetchHistory, journalForRelay } from './discord-ideas.mjs';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -466,6 +467,9 @@ const mime = { '.mp3': 'audio/mpeg', '.html': 'text/html; charset=utf-8', '.css'
 const server = createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   if (url.pathname.startsWith('/mcp/')) return handleMcp(req, res);
+  if (url.pathname.startsWith('/api/voice/')) {
+    return handleVoice(req, res, url.pathname, reply, state.players);
+  }
   if (url.pathname === '/api/state' && req.method === 'GET') return reply(res, 200, publicState());
   if (url.pathname === '/api/events' && req.method === 'GET') {
     res.writeHead(200, { 'content-type': 'text/event-stream', 'cache-control': 'no-cache', connection: 'keep-alive', 'x-accel-buffering': 'no' });
