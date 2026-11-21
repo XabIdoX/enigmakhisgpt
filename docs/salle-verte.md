@@ -23,8 +23,12 @@ Les inscriptions, le réveil et la résolution sont synchronisés par le serveur
 - `tests/server-flow.test.mjs` : parcours à deux joueurs, refus d’actions prématurées, invalides ou anonymes, erreurs de coup, résolution unique et indépendance des autres salles.
 - `tests/voice.test.mjs` : accueil du vocal vert et isolation des salons.
 
-Les 15 tests passent avec `node --test tests/*.test.mjs`. La vérification navigateur locale n’a pas abouti (connexion navigateur puis contrôle de fenêtre indisponibles) ; vérifier l’interface sur Render après le déploiement. Les adaptations et vérifications spécifiques mobile/tablette restent pour le chantier dédié.
+Les 15 tests passent avec `node --test tests/*.test.mjs`. La vérification navigateur locale n’a pas abouti (connexion navigateur puis contrôle de fenêtre indisponibles). Le parcours a ensuite été vérifié sur Render le 21 novembre 2026 : entrée depuis le passeport, trois inscriptions, réveil, refus de Df8, validation de Dg7#, conclusion, transition vers Malte et retour à la Salle Verte. Aucune erreur JavaScript observée pendant cet essai. Le vocal a été testé côté signalisation, sans appel audio réel. Les adaptations et vérifications spécifiques mobile/tablette restent pour le chantier dédié.
 
 ## À définir avec les créateurs
 
 Les identités et motivations définitives des rois, le lien exact avec Omar, les scènes de bataille, la vraie position d’échecs, la difficulté et le nombre de coups, la récompense et les indices coopératifs. La première version porte explicitement la mention « prototype jouable ».
+
+## Publication
+
+Version `bebb0af`, déploiement Render `dep-dc0magl9el5s73eiqn80`, confirmé `live`. URL : https://enigmakhi-preview.onrender.com/. La session de test porte le nom « Éclaireur test ». Aucun redémarrage ou effacement de partie n’a été effectué pour nettoyer cet essai.
