@@ -222,6 +222,15 @@ pendant une mise à jour d’un second joueur.
 
 Les portraits sont imaginés d’après les tenues du document de conception.
 Fichier `public/assets/hypogeum-portraits.jpg`, créé avec l’outil intégré ImageGen.
+
+Publication finale vérifiée le 21 novembre 2026 à 9 h 54 (Paris), commit
+6c6256b, déploiement Render dep-dc0lnv67bikc73b6ihpg confirmé live.
+Les fichiers publics et les portraits correspondent au dépôt. Atlas, affichage
+des quatre dossiers, vue agrandie et connexion SSE vérifiés sur le site public.
+Aucune erreur applicative relevée pendant le déploiement. Le contrôle local
+interrompu par le quota a été repris et a confirmé la remise à zéro des libellés
+des bouchons lors d’une nouvelle partie.
+
 Prompt utilisé :
 
 > Use case: stylized-concept. Asset for an original cooperative archaeological mystery game. Create a perfectly aligned 2 by 2 portrait contact sheet, four equally sized square panels filling the whole canvas edge to edge, no gaps, no borders, no lettering, no labels. Each panel a distinct fictional archaeologist portrait cropped chest-up at identical scale, front three-quarter pose, eyes visible, calm neutral expression, dignified, no sinister cues. Top left: 48-year-old man Howard, short brown hair with grey at temples, white shirt, black braces, clean shaven. Top right: 27-year-old woman Evelyn, brown sweater, brown expedition hat, dark brown hair. Bottom left: 40-year-old man Hugh, black jacket, white shirt, dark hat, short neat beard. Bottom right: 32-year-old man Omar, North African appearance, beige expedition hat, white shirt and black braces, light stubble. These are fictional versions from a game, do not imitate famous historical photos. Cinematic realistic painted portraits with photographic facial detail, archaeological field notebook atmosphere, soft side lighting, burgundy and warm amber brown shadows, neutral warm limestone background shared by all panels. All four equally trustworthy. No weapons, clues, jewelry, symbols, text or watermark. Square canvas 2048x2048. Preserve head and shoulders wholly within each quadrant.
