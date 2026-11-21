@@ -514,7 +514,9 @@ function renderHypogeum(red) {
     if (point.dataset.redSector) point.classList.toggle('hidden', !red.inspected.includes(point.dataset.redSector));
     point.classList.toggle('is-visited', red.inspected.includes(id));
     point.classList.toggle('is-collected', red.plugs.includes(id));
-    if (point.classList.contains('hotspot-item') && red.plugs.includes(id)) point.setAttribute('aria-label', redClues[id].evidence + ' · récupéré, relire');
+    if (point.classList.contains('hotspot-item') && id.startsWith('plug-')) {
+      point.setAttribute('aria-label', redClues[id].evidence + (red.plugs.includes(id) ? ' · récupéré, relire' : ' · examiner'));
+    }
     point.title = point.getAttribute('aria-label');
     point.classList.toggle('has-ventus', red.ventus.some((room) => id === room + '-zone'));
   });
